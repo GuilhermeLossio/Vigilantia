@@ -92,7 +92,6 @@ Simulator diagnostics alone do not complete the hardware criterion. Exposure ana
 ## Open Decisions
 
 - **Python and dependency versions:** resolve compatibility in an isolated environment, run import/circuit/inference checks, then pin the tested environment before benchmarking.
-- **Four numerical features:** inspect the snapshot and feature provenance; use training data only and freeze names/order before test evaluation.
 - **Backend and quota:** confirm the accessible Open Plan instance, remaining quota, backend limits, and estimated execution usage before submission; record the selected backend and configuration.
 - **Public authentication and AWS limits:** resolve during the later deployment phase, before exposing analysis routes publicly.
 
@@ -137,7 +136,7 @@ The original dataset has been acquired and structurally validated locally: 235,7
 - Record the acquisition date, source version, file checksum, sampling seed, and attribution.
 - Drop `FILENAME` from model inputs. Preserve URL and domain fields for deduplication and grouping, rather than treating them as memorized identifiers.
 - Keep equivalent registrable domains in the same split, using a documented Public Suffix List rule. Handle missing or invalid domains explicitly.
-- Select four reproducible numerical features using training data only. Freeze their names, ordering, training-fitted scaling to `[0, pi]`, and clipping behavior before evaluation and serving.
+- Select four reproducible numerical features using training data only. Freeze their names, ordering, training-fitted scaling to `[0, pi/2]`, and clipping behavior before evaluation and serving.
 - Audit similarity, reputation, and derived probability features before use. Their construction must not expose test labels or unavailable inference-time information.
 - Fit scaling and feature selection on training rows only. If cross-validation is introduced later, refit transformations inside each training fold.
 
@@ -273,6 +272,9 @@ Vigilantia/
 │   │   └── index.html
 │   ├── __init__.py
 │   └── results.py
+├── configs/
+│   ├── benchmark-split.json
+│   └── feature-scaler.json
 ├── data/
 │   └── README.md
 ├── docs/
@@ -286,13 +288,23 @@ Vigilantia/
 │   └── README.md
 ├── scripts/
 │   ├── check_repository.py
-│   └── download_dataset.py
+│   ├── download_dataset.py
+│   ├── prepare_benchmark.py
+│   └── scale_benchmark.py
+├── src/
+│   ├── data/
+│   │   └── benchmark_split.py
+│   └── features/
+│       ├── host_features.py
+│       └── scaling.py
 ├── tests/
 │   ├── unit/
+│   │   ├── test_benchmark_split.py
 │   │   ├── test_download_dataset.py
 │   │   ├── test_download_dataset_cli.py
 │   │   ├── test_repository_checks.py
-│   │   └── test_results_app.py
+│   │   ├── test_results_app.py
+│   │   └── test_scaling.py
 │   └── README.md
 ├── .dockerignore
 ├── .env.example
@@ -306,6 +318,7 @@ Vigilantia/
 ├── README.md
 ├── requirements-app.txt
 ├── requirements-dev.txt
+├── requirements-model.txt
 └── requirements.txt
 ```
 
@@ -351,6 +364,24 @@ docker run --rm -p 8000:8000 vigilantia-results
 ```
 
 Open `http://127.0.0.1:8000/`. Set `VIGILANTIA_RESULTS_PATH` to read results from another file.
+
+### Build the benchmark sample
+
+Use a Python 3.12 environment for modeling; Qiskit Aer may not support newer versions yet.
+
+```powershell
+py -3.12 -m venv .venv-qml
+.\.venv-qml\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv-qml\Scripts\python.exe scripts/prepare_benchmark.py
+```
+
+The script checks the CSV checksum, then writes `configs/benchmark-split.json` and the local `data/processed/benchmark-sample.csv`. Then fit the training-only angle scaler:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/scale_benchmark.py
+```
+
+It writes `configs/feature-scaler.json` and the local `data/processed/benchmark-scaled.csv`. See the [benchmark protocol](docs/benchmark-protocol.md) for the rules.
 
 ### Prepare the future application environment
 
@@ -442,8 +473,8 @@ Tests should cover target mapping, domain isolation, training-only preprocessing
 - [x] Select Python, Flask, Qiskit, and IBM Quantum Open Plan; retain AWS as a later target.
 - [x] Document the initial four-qubit circuit and 24/12 hardware benchmark protocol.
 - [x] Acquire the original data; record attribution, checksums, structural checks, and class counts.
-- [ ] Inspect feature types/provenance, duplicates, and domain quality before modeling.
-- [ ] Freeze the split protocol and initial feature contract.
+- [x] Inspect feature provenance, duplicates, and domain quality; exclude collection shortcuts.
+- [x] Freeze the domain-disjoint 24/12 split and four host-only features.
 - [x] Adopt the hybrid design: classical training on a simulated kernel, quantum classification on hardware.
 - [ ] Implement classical baselines, simulator checks, and hardware kernel acquisition.
 - [ ] Collect the complete QPU test and calibration kernels and preserve job/result evidence within the verified Open Plan quota.
@@ -464,7 +495,7 @@ Delivery priority: data inspection, frozen protocol, local circuit checks, QPU a
 - Historical phishing data does not establish performance against current attacks or banking-specific campaigns.
 - Small samples increase uncertainty; feature reduction may remove useful signals.
 - The quantum SVM is trained on ideal similarities and classifies with noisy hardware ones. Calibration is a linear approximation, and no model trained on hardware measurements is evaluated.
-- Derived dataset attributes may introduce shortcuts or leakage unless their provenance is audited.
+- PhiUSIIL has collection shortcuts: every legitimate URL is a bare `https://www.` homepage. The benchmark uses only host-based features, but those still reflect how the data was collected.
 - Simulator results do not establish quantum speedup or production readiness.
 - PhiUSIIL cannot validate breach authenticity. Controlled exposure scenarios only test the stated laboratory checks.
 - Exposure experiments must separate source databases and their variants across splits; recognizing generator artifacts is not proof of authenticity.

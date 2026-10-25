@@ -8,7 +8,7 @@
 
 Use Qiskit's functional constructor `zz_feature_map(feature_dimension=4, reps=1, entanglement="linear", alpha=2.0)`. The [official API](https://quantum.cloud.ibm.com/docs/en/api/qiskit/qiskit.circuit.library.zz_feature_map) defines the phase functions and supported entanglement patterns.
 
-The input is the ordered vector of four numerical features transformed to `[0, pi]` by the training-fitted preprocessing described in the [benchmark protocol](benchmark-protocol.md). The feature names are pending inspection, but there is exactly one encoded value per logical qubit.
+The input is the ordered vector of four numerical features transformed to `[0, pi/2]` by the training-fitted preprocessing described in the [benchmark protocol](benchmark-protocol.md). The frozen features are `host_entropy`, `host_label_count`, `host_digit_ratio`, and `host_hyphen_count`, one per logical qubit in that order. The range stops at pi/2 because each qubit receives a phase of `2 * x`; a range up to pi would make the smallest and largest values produce the same single-qubit phase.
 
 Starting from `|0000>`:
 

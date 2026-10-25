@@ -10,13 +10,62 @@ Deduplicate equivalent URLs before sampling. Group rows by registrable domain us
 
 Use seed **42** to build a deterministic domain-disjoint split and select **24 training examples and 12 test examples**. Target 12 legitimate / 12 phishing training examples and 6 / 6 test examples. Preserve domain isolation if exact balance is infeasible; report actual counts, and stop if either partition lacks a class or the requested size cannot be obtained. Freeze row identifiers, group identifiers, ordering, and class counts before fitting. Do not redraw the split after inspecting model results.
 
+**Implemented and frozen.** `scripts/prepare_benchmark.py` builds the sample and writes the versioned manifest `configs/benchmark-split.json`. The manifest stores the CSV checksum, package versions, rules, exclusion counts, the feature-selection record, and each row's index, hashed group, and label. It contains no URLs or hosts. Running the script again reproduces the same manifest. The implemented rules are:
+
+- Exact duplicate URLs are removed, keeping the first occurrence: 425 rows.
+- Hosts come from the `Domain` field, lowercased, with a trailing dot, a port, and one leading `www.` removed.
+- Groups use the registrable domain from the Public Suffix List snapshot bundled with `tldextract`, with private suffixes included. Each customer subdomain of a hosting suffix such as `web.app` is therefore its own group. A host that is itself a suffix, such as `cloudflare-ipfs.com`, is its own group. IP hosts are grouped by address.
+- Rows without a usable host are excluded: 2 rows. Groups with both labels are excluded: 106 groups, 606 rows.
+- The test rows are drawn first, one row from each of 6 + 6 distinct groups. Features are then selected on the remaining pool, which excludes every test group. The training rows are drawn last from that pool, one row from each of 12 + 12 distinct groups. Exact balance was obtained.
+
 This deliberately small, approximately balanced sample supports an exploratory comparison, not an estimate of production prevalence or banking-sector performance.
 
 ## Shared features and preprocessing
 
-The four numerical feature names remain pending dataset inspection. Exclude the target and identifiers; audit derived similarity, probability, and reputation features for unavailable inference-time information or leakage. Select features using training data and provenance only, document the rationale, and freeze the ordered names before accessing test outcomes.
+### Dataset shortcut audit
 
-All four models receive the same four features, sample ordering, and training-fitted transformation. Fit a MinMax transformation to `[0, pi]` on the 24 training rows only. Clip test and inference values to that interval and record clipping counts. Map a feature constant in training to zero for every partition and record it. Reject missing or non-finite values until an explicit training-only imputation policy is introduced. Save training minima, maxima, constant-feature flags, and feature order with the artifact.
+PhiUSIIL contains collection shortcuts that separate the classes without describing phishing:
+
+| Pattern in the source data | Legitimate | Phishing |
+| --- | --- | --- |
+| URL has a path or query | 0% | 60% |
+| Host starts with `www.` | 100% | 41% |
+| `IsHTTPS` equals 1 | 100% | 49% |
+| `URLSimilarityIndex` equals 100 | 100% | 0.8% |
+
+Every legitimate URL is a bare `https://www.<host>` homepage. Features built from the path, query, scheme, or `www.` prefix would learn this collection process. Page features, such as `LineOfCode` or `HasTitle`, also require fetching the page, which the MVP does not do. The provided derived features `URLSimilarityIndex`, `TLDLegitimateProb`, and `URLCharProb` depend on reference statistics whose construction is not reproducible here. All of these are excluded.
+
+### Host-only candidate features
+
+Eight candidates are computed by `src/features/host_features.py` from the host alone, after removing a leading `www.`: host length, digit ratio, hyphen count, label count, Shannon entropy of its characters, longest label length, TLD length, and whether the host is an IP address. The same function can compute them for a new host at inference time.
+
+### Selection rule and frozen features
+
+Selection uses only the training-side pool, which excludes every test group. A class-balanced sample of 20,000 pool rows, drawn with seed 42, ranks the candidates by mutual information with the target. Candidates are taken in that order, skipping any with an absolute Spearman correlation of 0.7 or more to an already selected feature. The rule stops at four.
+
+The frozen ordered features are:
+
+1. `host_entropy`
+2. `host_label_count`
+3. `host_digit_ratio`
+4. `host_hyphen_count`
+
+`host_length` ranked third but was skipped as redundant with `host_entropy`. The manifest records every score. These host features still reflect how this dataset was collected, for example phishing pages on free hosting subdomains. They are not evidence of performance on current attacks.
+
+### Preprocessing
+
+All four models receive the same four features, sample ordering, and training-fitted transformation. Fit a MinMax transformation to `[0, pi/2]` on the 24 training rows only. The upper bound is pi/2, not pi: the circuit applies a phase of `2 * x`, and with `x = pi` that phase is a full turn, identical to `x = 0`. Capping at pi/2 keeps the smallest and largest training values distinguishable on every qubit. This change was made before any model was trained or evaluated. Clip test and inference values to that interval and record clipping counts. Map a feature constant in training to zero for every partition and record it. Reject missing or non-finite values until an explicit training-only imputation policy is introduced. Save training minima, maxima, constant-feature flags, and feature order with the artifact.
+
+**Implemented.** `src/features/scaling.py` holds the scaler, and `scripts/scale_benchmark.py` fits it on the 24 training rows after checking the sample against the split manifest. The fitted parameters and test clipping counts are versioned in `configs/feature-scaler.json`. No feature is constant in training, and no training value is clipped.
+
+| Feature | Training minimum | Training maximum | Test values clipped |
+| --- | --- | --- | --- |
+| `host_entropy` | 2.3219 | 4.5739 | 1 |
+| `host_label_count` | 2 | 3 | 2 |
+| `host_digit_ratio` | 0 | 0.1558 | 1 |
+| `host_hyphen_count` | 0 | 6 | 0 |
+
+`host_label_count` takes only two values in training, so it becomes a binary angle of 0 or pi/2. Test hosts with more labels are clipped to pi/2.
 
 ## Fixed model configurations
 

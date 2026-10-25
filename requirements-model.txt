@@ -1,0 +1,8 @@
+# Pinned data-preparation and classical-modeling dependencies.
+# These versions produced configs/benchmark-split.json; changing them can change the sample
+# or the feature selection, so regenerate and review the manifest after any upgrade.
+numpy==2.5.4
+pandas==3.1.0
+scipy==1.18.1
+scikit-learn==1.9.1
+tldextract==5.4.0

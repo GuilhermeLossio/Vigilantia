@@ -85,5 +85,5 @@
 <text x="640" y="626" font-size="14" font-weight="normal" text-anchor="start">K(x,y) = probability of 0000; 1,024 shots per pair.</text>
 <text x="640" y="651" font-size="12" font-weight="normal" text-anchor="start">All qubits are logical; physical layout is chosen by transpilation.</text>
 <rect x="40" y="710" width="1160" height="50" rx="12" fill="#eff6ff" stroke="#d0d7de"/>
-<text x="60" y="740" font-size="14" font-weight="normal" text-anchor="start">Inputs: four training-scaled values in [0, pi]. No trainable ansatz. Hardware results are pending.</text>
+<text x="60" y="740" font-size="14" font-weight="normal" text-anchor="start">Inputs: four training-scaled values in [0, pi/2]. No trainable ansatz. Hardware results are pending.</text>
 </g></svg>

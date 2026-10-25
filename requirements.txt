@@ -7,12 +7,9 @@
 # API: the Flask results service has pinned dependencies in requirements-app.txt.
 -r requirements-app.txt
 
-# Data acquisition, preparation, and classical baselines
-numpy
-pandas
-scikit-learn
+# Data preparation and classical baselines: pinned in requirements-model.txt.
+-r requirements-model.txt
 ucimlrepo
-tldextract
 
 # Quantum circuits, local simulation, and quantum-kernel classifiers
 qiskit

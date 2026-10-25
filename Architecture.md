@@ -18,8 +18,8 @@ The [MVP criteria](README.md#mvp-completion-criteria) require complete hardware 
 
 The acquisition entry point `scripts/download_dataset.py` is implemented: it stages and validates the UCI archive, publishes a complete snapshot, and verifies an existing snapshot before reuse. See the [data guide](data/README.md) for observed counts, checksums, and validation limits. This does not implement the broader data pipeline below.
 
-- **Data preparation (`src/data/`)**: acquisition metadata, checksums, deduplication, target mapping, and domain-group splits.
-- **Features (`src/features/`)**: training-only fitting, feature ordering, transformations, and inference schema. Begin with four numerical features; the actual names remain undecided.
+- **Data preparation (`src/data/`)**: implemented for the benchmark. Deduplication, target mapping, registrable-domain grouping, and the frozen domain-disjoint split are produced by `scripts/prepare_benchmark.py`.
+- **Features (`src/features/`)**: host-only lexical features are implemented, and four are frozen: `host_entropy`, `host_label_count`, `host_digit_ratio`, and `host_hyphen_count`. Training-only scaling to `[0, pi/2]` is implemented and fitted; the inference schema remains planned.
 - **Models (`src/models/`)**: majority baseline, logistic regression, RBF SVM, and SVM with a precomputed quantum kernel. The training kernel comes from exact simulation; the test kernel comes from the QPU. Validate four-qubit circuit logic in simulation before hardware acquisition.
 - **Hardware acquisition (within `src/models/`)**: Qiskit Runtime SamplerV2 jobs, ISA transpilation, job/result mapping, raw counts, and resumable retrieval on the intended Open Plan instance.
 - **Evaluation (`reports/`, `configs/`, `notebooks/`)**: frozen configurations, one domain-disjoint held-out evaluation, predictive metrics, and runtime reporting. No tuning or fold/seed variability estimate in the initial run.
@@ -31,7 +31,7 @@ These paths are planned and do not currently exist.
 
 ## Data and serving contracts
 
-Map the original dataset target to `is_phishing = 1 - label`. Keep equivalent registrable domains together across splits. Choose features and fit scaling to `[0, pi]` using training rows only; clip test/inference values and record clipping. Package the model with preprocessing, feature order, reference examples required by the kernel, and version metadata. See the [data guide](data/README.md) and [benchmark protocol](docs/benchmark-protocol.md).
+Map the original dataset target to `is_phishing = 1 - label`. Keep equivalent registrable domains together across splits. Choose features and fit scaling to `[0, pi/2]` using training rows only; clip test/inference values and record clipping. Package the model with preprocessing, feature order, reference examples required by the kernel, and version metadata. See the [data guide](data/README.md) and [benchmark protocol](docs/benchmark-protocol.md).
 
 Run training and hardware benchmark jobs outside HTTP requests. The local API uses the classical model for live inputs; recorded QPU test predictions must identify the sample and source run and be labeled replay. New quantum predictions require reference-kernel jobs and an asynchronous workflow outside the initial API scope. Return explicit failures for missing or incompatible artifacts. Describe scores according to their actual semantics; calibration is required before presenting SVM margins as probabilities.
 
@@ -74,6 +74,9 @@ Vigilantia/
 │   │   └── index.html
 │   ├── __init__.py
 │   └── results.py
+├── configs/
+│   ├── benchmark-split.json
+│   └── feature-scaler.json
 ├── data/
 │   └── README.md
 ├── docs/
@@ -87,13 +90,23 @@ Vigilantia/
 │   └── README.md
 ├── scripts/
 │   ├── check_repository.py
-│   └── download_dataset.py
+│   ├── download_dataset.py
+│   ├── prepare_benchmark.py
+│   └── scale_benchmark.py
+├── src/
+│   ├── data/
+│   │   └── benchmark_split.py
+│   └── features/
+│       ├── host_features.py
+│       └── scaling.py
 ├── tests/
 │   ├── unit/
+│   │   ├── test_benchmark_split.py
 │   │   ├── test_download_dataset.py
 │   │   ├── test_download_dataset_cli.py
 │   │   ├── test_repository_checks.py
-│   │   └── test_results_app.py
+│   │   ├── test_results_app.py
+│   │   └── test_scaling.py
 │   └── README.md
 ├── .dockerignore
 ├── .env.example
@@ -107,6 +120,7 @@ Vigilantia/
 ├── README.md
 ├── requirements-app.txt
 ├── requirements-dev.txt
+├── requirements-model.txt
 └── requirements.txt
 ```
 

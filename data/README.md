@@ -57,9 +57,10 @@ Run the downloader before using that checksum command on a fresh checkout. Store
 
 - Snapshot checksum and acquisition metadata: **verified locally**.
 - Structural CSV checks, original labels, row/class counts, and empty cells: **verified locally**.
-- Feature types/provenance and modeling-target transformation: **pending**.
-- Deduplication, invalid-host exclusions, and Public Suffix List configuration: **pending**.
-- Domain-disjoint 24/12 split and seed 42 manifest: **pending**.
-- Four ordered numerical features and training-fitted scaler: **pending**.
+- Feature provenance audit and modeling-target transformation: **done**. Source URL, page, and derived similarity features are excluded as shortcuts or unavailable at inference.
+- Deduplication, invalid-host exclusions, and Public Suffix List configuration: **done**, recorded in `configs/benchmark-split.json`.
+- Domain-disjoint 24/12 split and seed 42 manifest: **done**, recorded in `configs/benchmark-split.json`.
+- Four ordered numerical features: **frozen** as `host_entropy`, `host_label_count`, `host_digit_ratio`, and `host_hyphen_count`. See the [benchmark protocol](../docs/benchmark-protocol.md) for the shortcut audit and selection rule.
+- Training-fitted scaler: **done**, recorded in `configs/feature-scaler.json`.
 
 See the [benchmark protocol](../docs/benchmark-protocol.md) for selection and leakage controls and the [README](../README.md) for project status.

@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "dataset": {
+    "csv_sha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+    "csv_rows": 235795
+  },
+  "environment": {
+    "python": "3.12.10",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "tldextract": "5.4.0",
+    "public_suffix_list": "tldextract bundled snapshot; private suffixes included"
+  },
+  "rules": {
+    "seed": 42,
+    "target": "is_phishing = 1 - label",
+    "deduplication": "exact URL, first occurrence kept",
+    "grouping": "registrable domain of the host without www.; IP hosts by address",
+    "conflicting_label_groups": "excluded",
+    "rows_per_group": 1,
+    "test_per_class": 6,
+    "train_per_class": 12,
+    "order": "test drawn first; features selected on the pool without test groups; training drawn from that pool"
+  },
+  "counts": {
+    "prepared_rows": 234762,
+    "training_pool_rows": 234734,
+    "exclusions": {
+      "duplicate_url": 425,
+      "unusable_host": 2,
+      "label_conflicting_group_rows": 606,
+      "label_conflicting_groups": 106
+    }
+  },
+  "feature_selection": {
+    "candidates": [
+      "host_length",
+      "host_digit_ratio",
+      "host_hyphen_count",
+      "host_label_count",
+      "host_entropy",
+      "longest_label_length",
+      "tld_length",
+      "host_is_ip"
+    ],
+    "method": "mutual information on a class-balanced pool sample, greedy order, skip candidates with |Spearman| >= 0.7 to a selected one",
+    "selected": [
+      "host_entropy",
+      "host_label_count",
+      "host_digit_ratio",
+      "host_hyphen_count"
+    ],
+    "mutual_information": {
+      "host_entropy": 0.121376,
+      "host_label_count": 0.11539,
+      "host_length": 0.113801,
+      "host_digit_ratio": 0.110528,
+      "host_hyphen_count": 0.059545,
+      "longest_label_length": 0.029827,
+      "tld_length": 0.023644,
+      "host_is_ip": 0.002293
+    },
+    "skipped_as_redundant": {
+      "host_length": "|Spearman| >= 0.7 with host_entropy"
+    },
+    "selection_rows": 20000
+  },
+  "features": [
+    "host_entropy",
+    "host_label_count",
+    "host_digit_ratio",
+    "host_hyphen_count"
+  ],
+  "train": [
+    {
+      "position": 0,
+      "row_index": 194874,
+      "group_hash": "73a8e0deefe35177",
+      "is_phishing": 0
+    },
+    {
+      "position": 1,
+      "row_index": 65195,
+      "group_hash": "2c78b9067f9a40ba",
+      "is_phishing": 0
+    },
+    {
+      "position": 2,
+      "row_index": 108877,
+      "group_hash": "97dbbe536014a0ad",
+      "is_phishing": 0
+    },
+    {
+      "position": 3,
+      "row_index": 215358,
+      "group_hash": "42e8e7ea97bd77c5",
+      "is_phishing": 0
+    },
+    {
+      "position": 4,
+      "row_index": 95678,
+      "group_hash": "97f51b44526c8f52",
+      "is_phishing": 0
+    },
+    {
+      "position": 5,
+      "row_index": 23411,
+      "group_hash": "c1659e7014079766",
+      "is_phishing": 0
+    },
+    {
+      "position": 6,
+      "row_index": 85075,
+      "group_hash": "b8e95dc1871cac17",
+      "is_phishing": 0
+    },
+    {
+      "position": 7,
+      "row_index": 44146,
+      "group_hash": "f5c46643599ef956",
+      "is_phishing": 0
+    },
+    {
+      "position": 8,
+      "row_index": 119739,
+      "group_hash": "7b60545b28c5f535",
+      "is_phishing": 0
+    },
+    {
+      "position": 9,
+      "row_index": 32555,
+      "group_hash": "825b327a924a3253",
+      "is_phishing": 0
+    },
+    {
+      "position": 10,
+      "row_index": 60276,
+      "group_hash": "dc6068b81ec572e8",
+      "is_phishing": 0
+    },
+    {
+      "position": 11,
+      "row_index": 3075,
+      "group_hash": "e684a622a9a7cd3c",
+      "is_phishing": 0
+    },
+    {
+      "position": 12,
+      "row_index": 21679,
+      "group_hash": "e5e34271e8293eb0",
+      "is_phishing": 1
+    },
+    {
+      "position": 13,
+      "row_index": 14204,
+      "group_hash": "0e2a8eb24d9ebab9",
+      "is_phishing": 1
+    },
+    {
+      "position": 14,
+      "row_index": 105186,
+      "group_hash": "a311e3e5aeb039d4",
+      "is_phishing": 1
+    },
+    {
+      "position": 15,
+      "row_index": 45541,
+      "group_hash": "323b23c2f984c389",
+      "is_phishing": 1
+    },
+    {
+      "position": 16,
+      "row_index": 223818,
+      "group_hash": "2529c68b5d27b453",
+      "is_phishing": 1
+    },
+    {
+      "position": 17,
+      "row_index": 139949,
+      "group_hash": "b32a9f3bc041e13c",
+      "is_phishing": 1
+    },
+    {
+      "position": 18,
+      "row_index": 174007,
+      "group_hash": "745b79bda70f864a",
+      "is_phishing": 1
+    },
+    {
+      "position": 19,
+      "row_index": 111776,
+      "group_hash": "27940a1200cf4067",
+      "is_phishing": 1
+    },
+    {
+      "position": 20,
+      "row_index": 161358,
+      "group_hash": "9b31946ab16abf0b",
+      "is_phishing": 1
+    },
+    {
+      "position": 21,
+      "row_index": 124671,
+      "group_hash": "98e58402409ffd43",
+      "is_phishing": 1
+    },
+    {
+      "position": 22,
+      "row_index": 166810,
+      "group_hash": "01a507ac8b9a8f2e",
+      "is_phishing": 1
+    },
+    {
+      "position": 23,
+      "row_index": 214754,
+      "group_hash": "d859e9f6fde5d443",
+      "is_phishing": 1
+    }
+  ],
+  "test": [
+    {
+      "position": 0,
+      "row_index": 15517,
+      "group_hash": "fd393998db75545c",
+      "is_phishing": 0
+    },
+    {
+      "position": 1,
+      "row_index": 174792,
+      "group_hash": "b2d1a9ba5000a09a",
+      "is_phishing": 0
+    },
+    {
+      "position": 2,
+      "row_index": 217648,
+      "group_hash": "84d275114cab3730",
+      "is_phishing": 0
+    },
+    {
+      "position": 3,
+      "row_index": 161204,
+      "group_hash": "c660c6c6a7b6fffe",
+      "is_phishing": 0
+    },
+    {
+      "position": 4,
+      "row_index": 94665,
+      "group_hash": "010ccedeafebd986",
+      "is_phishing": 0
+    },
+    {
+      "position": 5,
+      "row_index": 18899,
+      "group_hash": "9a021f91155117e4",
+      "is_phishing": 0
+    },
+    {
+      "position": 6,
+      "row_index": 219334,
+      "group_hash": "55624b9e9738e434",
+      "is_phishing": 1
+    },
+    {
+      "position": 7,
+      "row_index": 41538,
+      "group_hash": "e51ce3301401094b",
+      "is_phishing": 1
+    },
+    {
+      "position": 8,
+      "row_index": 121258,
+      "group_hash": "62c0d81c126f3930",
+      "is_phishing": 1
+    },
+    {
+      "position": 9,
+      "row_index": 235425,
+      "group_hash": "0efd30f928e7c167",
+      "is_phishing": 1
+    },
+    {
+      "position": 10,
+      "row_index": 166805,
+      "group_hash": "e845723dda3918d3",
+      "is_phishing": 1
+    },
+    {
+      "position": 11,
+      "row_index": 88834,
+      "group_hash": "79a39c435af85683",
+      "is_phishing": 1
+    }
+  ]
+}
