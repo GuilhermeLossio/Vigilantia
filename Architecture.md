@@ -61,26 +61,43 @@ The initial API runs locally. IBM Quantum is the hardware execution provider, no
 
 ```text
 Vigilantia/
+├── .github/
+│   ├── rulesets/
+│   │   └── protected-branches.json
+│   ├── workflows/
+│   │   └── ci.yml
+│   └── dependabot.yml
 ├── data/
 │   └── README.md
 ├── docs/
 │   ├── architecture-flow.svg
 │   ├── benchmark-protocol.md
+│   ├── ci-and-branch-protection.md
 │   ├── documentation-checklist.md
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
+├── scripts/
+│   └── check_repository.py
+├── tests/
+│   ├── unit/
+│   │   └── test_repository_checks.py
+│   └── README.md
 ├── .env.example
 ├── .gitattributes
 ├── .gitignore
 ├── Architecture.md
 ├── CONTRIBUTING.md
 ├── LICENSE
+├── pyproject.toml
 ├── README.md
+├── requirements-dev.txt
 └── requirements.txt
 ```
 
 ## Limitations and next steps
 
 The README provides environment preparation commands, but installation compatibility and application startup remain unverified. Acquire and inspect the dataset, finalize the feature contract, implement baselines and grouped evaluation, then implement and validate inference. Pin compatible dependencies and document reproducible commands once they exist. No measured performance, quantum advantage, production readiness, or live incident monitoring is claimed.
+
+Repository tooling now includes unit-tested offline documentation/configuration checks and a Python CI workflow. These do not implement or validate the proposed application. See [CI and branch protection](docs/ci-and-branch-protection.md) for the workflow and remote activation requirements.
 
 See the [README](README.md) for scope and roadmap, [docs/](docs/) for diagrams and protocol, [CONTRIBUTING.md](CONTRIBUTING.md) for change workflow, and the [documentation checklist](docs/documentation-checklist.md) for pre-commit review.
