@@ -1,5 +1,5 @@
-"""Flask service: recorded benchmark results, replayed quantum predictions, and live
-classical inference for new hosts. It never fetches URLs, trains models, or submits jobs."""
+"""Flask service: recorded benchmark results, replayed quantum predictions, the external
+validation report, and live classical inference for new hosts. It never fetches URLs, trains models, or submits jobs."""
 
 from __future__ import annotations
 
@@ -8,12 +8,14 @@ from pathlib import Path
 
 from flask import Flask, abort, jsonify, render_template, request, send_file
 
+from app import external as external_module
 from app import replay as replay_module
 from app import results as results_module
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RESULTS_PATH = ROOT / "reports" / "benchmark-results.json"
 DEFAULT_REPLAY_PATH = ROOT / "reports" / "benchmark-replay.json"
+DEFAULT_EXTERNAL_PATH = ROOT / "reports" / "external-validation.json"
 DEFAULT_CHART_PATH = ROOT / "docs" / "benchmark-results.svg"
 MAX_REQUEST_BYTES = 2048
 SECURITY_HEADERS = {
@@ -44,6 +46,7 @@ def create_app(
     replay_path: str | Path | None = None,
     chart_path: str | Path | None = None,
     predictor_factory=None,
+    external_path: str | Path | None = None,
 ) -> Flask:
     app = Flask(__name__)
 
@@ -57,6 +60,7 @@ def create_app(
     env = os.environ.get
     results_file = Path(results_path or env("VIGILANTIA_RESULTS_PATH") or DEFAULT_RESULTS_PATH)
     replay_file = Path(replay_path or env("VIGILANTIA_REPLAY_PATH") or DEFAULT_REPLAY_PATH)
+    external_file = Path(external_path or env("VIGILANTIA_EXTERNAL_PATH") or DEFAULT_EXTERNAL_PATH)
     chart_file = Path(chart_path or env("VIGILANTIA_CHART_PATH") or DEFAULT_CHART_PATH)
     factory = predictor_factory or _default_predictor
     state: dict = {}
@@ -110,6 +114,13 @@ def create_app(
             return jsonify(error=error, detail=detail), STATUS_CODES[error]
         return jsonify(data)
 
+    @app.get("/v1/external-validation")
+    def external_validation():
+        data, error, detail = read(external_module.load, external_file)
+        if error:
+            return jsonify(error=error, detail=detail), STATUS_CODES[error]
+        return jsonify(data)
+
     @app.get("/benchmark.svg")
     def chart():
         if not chart_file.is_file():
@@ -130,6 +141,7 @@ def create_app(
     def index():
         results, error, detail = read(results_module.load, results_file)
         replay_data, replay_error, _ = read(replay_module.load, replay_file)
+        external, external_error, external_detail = read(external_module.load, external_file)
         query = request.args.get("host", "").strip()
         prediction, prediction_status = (None, 200)
         if query:
@@ -145,6 +157,11 @@ def create_app(
             replay_error=replay_error,
             replay_labels=REPLAY_LABELS,
             chart=chart_file.is_file(),
+            external=external,
+            external_error=external_error,
+            external_detail=external_detail,
+            external_steps=external_module.STEPS,
+            external_sources=external_module.SOURCES,
             query=query,
             prediction=prediction,
             prediction_status=prediction_status,

@@ -192,3 +192,6 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 Things to remember.md
+
+# External validation snapshot (downloaded by scripts/download_external.py)
+data/external/

@@ -1,6 +1,6 @@
 # Four-Qubit Quantum Kernel
 
-**Status: planned.** No circuit has been executed or submitted by this documentation update. The circuit is a fixed data-encoding map, not a variational classifier with trainable gate angles.
+**Status: implemented and executed.** `src/quantum/kernel.py` builds this circuit, and the first benchmark run measured it on `ibm_fez`; see [hardware runs](hardware-runs.md). The circuit is a fixed data-encoding map, not a variational classifier with trainable gate angles. The external validation uses only its exact simulation.
 
 ![Planned quantum kernel circuit](quantum-circuit.svg)
 
@@ -42,4 +42,4 @@ The [benchmark protocol](benchmark-protocol.md) defines the hybrid design, the 3
 
 Training and benchmark jobs run outside HTTP requests. New live quantum predictions require kernels against reference training examples and can incur queue delays. The local API will serve the classical model for live inputs and may expose saved QPU test predictions as explicitly labeled replay until a separate asynchronous inference design is implemented. A replay must identify its sample, model, and source run; it is not live QPU inference.
 
-See the [README](../README.md) and [architecture](../Architecture.md).
+See the [README](../README.md), the [architecture](../Architecture.md), and the [service guide](service.md).

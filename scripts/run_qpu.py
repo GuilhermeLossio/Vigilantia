@@ -42,20 +42,48 @@ def latest_pilot_projection(backend: str) -> dict | None:
     return projections[-1] if projections else None
 
 
-def command_submit(args: argparse.Namespace) -> int:
-    settings = ibm.settings()
+def required_backend(settings: dict) -> str | None:
+    """The fixed IBM_QUANTUM_BACKEND, checked before anything connects to IBM."""
     backend_name = settings.get("IBM_QUANTUM_BACKEND", "").strip()
     if not backend_name:
         print("Set IBM_QUANTUM_BACKEND (for example ibm_fez) so the whole run uses one backend.")
-        return 1
-    data = benchmark_inputs.load()
-    plan = qpu_run.plan_for(data, args.pilot)
+        return None
+    return backend_name
 
+
+def open_instance(settings: dict) -> tuple | None:
+    """Connect and read the instance usage; None when its usage limit is reached."""
     service = ibm.connect(settings)
     usage = service.usage()
     if usage.get("usage_limit_reached"):
         print("The instance has reached its usage limit; nothing was submitted.")
+        return None
+    return service, usage
+
+
+def confirmed(skip: bool) -> bool:
+    """Ask for the typed confirmation unless `skip` (--yes) is set."""
+    if skip:
+        return True
+    answer = input(f"Type {CONFIRMATION} to use QPU quota: ").strip()
+    if answer != CONFIRMATION:
+        print("Cancelled; nothing was submitted.")
+        return False
+    return True
+
+
+def command_submit(args: argparse.Namespace) -> int:
+    settings = ibm.settings()
+    backend_name = required_backend(settings)
+    if backend_name is None:
         return 1
+    data = benchmark_inputs.load()
+    plan = qpu_run.plan_for(data, args.pilot)
+
+    opened = open_instance(settings)
+    if opened is None:
+        return 1
+    service, usage = opened
     backend = service.backend(backend_name)
     circuits = hardware.build_circuits(plan, data.train_angles, data.test_angles)
     isa, stats = hardware.transpile_for(backend, circuits)
@@ -78,11 +106,8 @@ def command_submit(args: argparse.Namespace) -> int:
                     if value is not None
                 )
             )
-    if not args.yes:
-        answer = input(f"Type {CONFIRMATION} to use QPU quota: ").strip()
-        if answer != CONFIRMATION:
-            print("Cancelled; nothing was submitted.")
-            return 1
+    if not confirmed(args.yes):
+        return 1
 
     run_id, record = qpu_run.new_record(
         data, backend.name, plan, bool(args.pilot), stats, len(qpu_run.full_plan(data))

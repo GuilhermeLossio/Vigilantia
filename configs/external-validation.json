@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "name": "External validation on the Hannousse and Yahiouche web page phishing dataset",
+  "status": "frozen before any external evaluation was run",
+  "frozen_at_utc": "2026-10-25T11:10:26+00:00",
+  "dataset": {
+    "title": "Web page phishing detection",
+    "authors": "Abdelhakim Hannousse and Salima Yahiouche",
+    "publisher": "Mendeley Data",
+    "doi": "10.17632/c2gw7fy2j4.2",
+    "version": 2,
+    "published_utc": "2020-09-28",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "paper": "Hannousse, A. and Yahiouche, S. (2021). Towards benchmark datasets for machine learning based website phishing detection: An experimental study. Engineering Applications of Artificial Intelligence, 104, 104347.",
+    "file": "dataset_B_05_2020.csv",
+    "file_id": "575316f4-ee1d-453e-a04f-7b950915b61b",
+    "download_url": "https://data.mendeley.com/public-files/datasets/c2gw7fy2j4/files/575316f4-ee1d-453e-a04f-7b950915b61b/file_downloaded",
+    "size_bytes": 3661166,
+    "sha256": "21093e2902e5441c86a6daf95e86e7c332046e477fdf109a579d7bd81e586d6c",
+    "expected_rows": 11430,
+    "expected_labels": {"legitimate": 5715, "phishing": 5715},
+    "columns_used": ["url", "status"],
+    "label_map": {"phishing": 1, "legitimate": 0},
+    "changes": "Only the url and status columns are used; the 87 published features are ignored. Rows are filtered and deduplicated as described under preparation."
+  },
+  "models": {
+    "source": "the frozen benchmark models in artifacts/benchmark/models.pkl, trained by scripts/train_benchmark.py on the 24 PhiUSIIL training examples",
+    "evaluated": ["majority", "logistic_regression", "rbf_svm", "quantum_kernel_svm"],
+    "quantum_kernel": "exact statevector simulation between each external example and the 24 training examples; no QPU",
+    "scaler": "configs/feature-scaler.json, unchanged; values outside the training range are clipped and counted",
+    "decision_rule": "each model's default predict; no threshold, calibration, or retraining"
+  },
+  "preparation": [
+    {"step": "invalid_host", "rule": "derive the host from url with src.inference.predictor.extract_host, which also applies normalize_host (lowercase, drop port and trailing dot, strip one leading www.); exclude rows it rejects"},
+    {"step": "conflicting_labels", "rule": "group rows by registrable domain with src.data.benchmark_split.group_key; exclude every group whose rows carry both labels"},
+    {"step": "phiusiil_overlap", "rule": "exclude every group that also occurs among the registrable domains of any row of the PhiUSIIL snapshot, so no external domain was available to the benchmark"},
+    {"step": "duplicate_group", "rule": "keep the first row of each remaining group in file order; exclude the rest"}
+  ],
+  "primary_set": "the rows remaining after all four preparation steps",
+  "metrics": {
+    "reported": ["accuracy", "balanced_accuracy", "precision", "recall", "f1", "average_precision"],
+    "positive_class": "phishing",
+    "zero_division": 0,
+    "confusion_matrix": "[[TN, FP], [FN, TP]]",
+    "confidence_intervals": {"method": "percentile bootstrap over rows of the primary set", "level": 0.95, "resamples": 2000, "seed": 42}
+  },
+  "reporting": [
+    "Publish all four models regardless of their results.",
+    "Report the count excluded by each preparation step, the class counts of the primary set, and how many values each feature clipped.",
+    "Publish no host or URL; the published file holds only aggregates.",
+    "Label the quantum-kernel SVM as exact simulation; this validation runs no hardware jobs.",
+    "Nothing in the benchmark or in this file changes after the external results are seen."
+  ]
+}

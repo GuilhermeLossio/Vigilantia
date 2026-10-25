@@ -1,6 +1,38 @@
-# PhiUSIIL Data Guide
+# Data Guide
+
+This guide covers the two public datasets the project uses: PhiUSIIL, which provides every training and benchmark example, and the external validation dataset of Hannousse and Yahiouche, used for evaluation only. Neither is included in the repository; the scripts download them from their original sources into Git-ignored directories.
 
 **Acquisition status: locally verified.** The original UCI ZIP and CSV were downloaded and structurally checked on October 25, 2026. The acquisition manifest records checksums, source metadata, and observed counts. Downloaded files remain local and are not included in the repository; run the command below on a fresh checkout.
+
+## Dataset overview
+
+**Selected source:** [PhiUSIIL Phishing URL (Website), UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset).
+
+| Property | Published value |
+| --- | --- |
+| Instances | 235,795 |
+| Legitimate examples | 134,850 |
+| Phishing examples | 100,945 |
+| Features | 54 |
+| Format | CSV, approximately 54 MB uncompressed |
+| Original labels | `1 = legitimate`, `0 = phishing` |
+| Modeling target | `is_phishing = 1 - label` |
+| License | CC BY 4.0 |
+| Authors | Arvind Prasad and Shalini Chandra |
+| Python retrieval option | `ucimlrepo.fetch_ucirepo(id=967)` |
+
+The 54-feature count is the source's feature count, not the total number of CSV columns. The dataset contains pre-extracted URL and webpage features. Reproducing the benchmark does not require visiting suspicious URLs. The service accepts a host or URL and computes features from the host alone; accepting full URLs as features would require a compatible extraction pipeline.
+
+## Data preparation rules
+
+- Record the acquisition date, source version, file checksum, sampling seed, and attribution.
+- Drop `FILENAME` from model inputs. Preserve URL and domain fields for deduplication and grouping, rather than treating them as memorized identifiers.
+- Keep equivalent registrable domains in the same split, using a documented Public Suffix List rule. Handle missing or invalid domains explicitly.
+- Select four reproducible numerical features using training data only. Freeze their names, ordering, training-fitted scaling to `[0, pi/2]`, and clipping behavior before evaluation and serving.
+- Audit similarity, reputation, and derived probability features before use. Their construction must not expose test labels or unavailable inference-time information.
+- Fit scaling and feature selection on training rows only. If cross-validation is introduced later, refit transformations inside each training fold.
+
+The implemented rules, exclusion counts, and shortcut audit are in the [benchmark protocol](../docs/benchmark-protocol.md#dataset-and-split).
 
 ## Source and attribution
 
@@ -62,5 +94,29 @@ Run the downloader before using that checksum command on a fresh checkout. Store
 - Domain-disjoint 24/12 split and seed 42 manifest: **done**, recorded in `configs/benchmark-split.json`.
 - Four ordered numerical features: **frozen** as `host_entropy`, `host_label_count`, `host_digit_ratio`, and `host_hyphen_count`. See the [benchmark protocol](../docs/benchmark-protocol.md) for the shortcut audit and selection rule.
 - Training-fitted scaler: **done**, recorded in `configs/feature-scaler.json`.
+
+## External validation dataset
+
+Hannousse, A. and Yahiouche, S. (2020). *Web page phishing detection*, version 2. Mendeley Data. DOI [10.17632/c2gw7fy2j4.2](https://doi.org/10.17632/c2gw7fy2j4.2). Licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Associated paper: *Towards benchmark datasets for machine learning based website phishing detection: An experimental study*, Engineering Applications of Artificial Intelligence 104 (2021) 104347.
+
+| Property | Value recorded in the frozen protocol |
+| --- | --- |
+| File | `dataset_B_05_2020.csv` |
+| Rows | 11,430 (5,715 legitimate, 5,715 phishing) |
+| Size | 3,661,166 bytes |
+| SHA-256 | `21093e2902e5441c86a6daf95e86e7c332046e477fdf109a579d7bd81e586d6c` |
+| Columns used | `url` and `status`; the 87 published features are ignored |
+| Labels | `status`: `phishing` maps to 1, `legitimate` to 0 |
+| Use | Evaluation of the frozen benchmark models only; never training or tuning |
+
+From the repository root, run:
+
+```powershell
+python scripts/download_external.py
+```
+
+The script uses only the standard library. It downloads the file from the Mendeley Data URL recorded in [configs/external-validation.json](../configs/external-validation.json), checks the size and SHA-256 against the protocol and the row and label counts, and writes the CSV and `acquisition.json` to `data/external/hannousse-2020/`. Like the PhiUSIIL downloader, it stages files before publishing them, reuses an intact snapshot without downloading again, and fails without replacing an existing inconsistent snapshot. `data/external/` is ignored by Git.
+
+Changes made for the evaluation: rows are filtered and deduplicated by the frozen preparation steps (invalid host, conflicting labels, overlap with any PhiUSIIL registrable domain, one row per registrable domain). The resulting counts are in [External validation](../docs/external-validation.md#preparation). Do not commit the CSV or follow the URLs in it; published reports hold aggregates only.
 
 See the [benchmark protocol](../docs/benchmark-protocol.md) for selection and leakage controls and the [README](../README.md) for project status.

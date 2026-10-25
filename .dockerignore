@@ -12,3 +12,5 @@
 **/__pycache__/
 **/*.pyc
 reports/runs/
+reports/qpu-evidence/
+reports/qpu-evidence-external/

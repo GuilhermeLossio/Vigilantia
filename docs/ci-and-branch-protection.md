@@ -6,7 +6,7 @@ The workflow, test tooling, unit tests for repository checks, and an importable 
 
 ## Python checks
 
-[Python CI](../.github/workflows/ci.yml) runs on pushes to `develop` and `main`, pull requests targeting either branch, and manual dispatch. It has no path filters, so documentation-only PRs still produce the required check. Python 3.12 and 3.13 are the CI targets for tooling; this is not yet a compatibility guarantee for the full QML runtime.
+[Python CI](../.github/workflows/ci.yml) runs on pushes to `develop` and `main`, pull requests targeting either branch, and manual dispatch. It has no path filters, so documentation-only PRs still produce the required check. Python 3.12 and 3.13 are the CI targets; the full QML runtime was tested end to end on Python 3.12 (see the [reproduction guide](reproducing.md#tested-environment)).
 
 The lint job runs Ruff lint and format checks. Each Python matrix job installs [requirements-dev.txt](../requirements-dev.txt), runs `pip check`, Pytest, and the offline repository checks. The stable **CI required** job succeeds only when lint and the whole test matrix succeed. Failure, cancellation, or a skipped dependency cannot produce a passing gate.
 
@@ -23,7 +23,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe scripts/check_repository.py
 ```
 
-On macOS/Linux, replace `.\.venv\Scripts\python.exe` with `.venv/bin/python`. The repository checker validates local inline Markdown file targets and commented environment settings; it does not validate heading anchors, remote URLs, rendered layout, or detect every possible secret. Continue the [documentation checklist](documentation-checklist.md).
+On macOS/Linux, replace `.\.venv\Scripts\python.exe` with `.venv/bin/python`. The repository checker validates local inline Markdown file targets and commented environment settings; it does not validate heading anchors, remote URLs, rendered layout, or detect every possible secret. Continue the [documentation checklist](documentation-checklist.md). The [development guide](development.md) lists every pipeline script.
 
 ## Activate protection after publishing CI
 
@@ -38,4 +38,4 @@ The repository is private. GitHub plan eligibility must be checked before enabli
 
 ## Dependency updates
 
-[Dependabot](../.github/dependabot.yml) proposes weekly GitHub Actions and Python dependency updates targeting `develop`. GitHub reads this configuration from the default branch, so it must reach `main` to activate. Updates must pass the same CI and PR process; no automatic merging is configured. Runtime dependencies remain an unpinned design-stage proposal; only direct test/lint tool versions are pinned here.
+[Dependabot](../.github/dependabot.yml) proposes weekly GitHub Actions and Python dependency updates targeting `develop`. GitHub reads this configuration from the default branch, so it must reach `main` to activate. Updates must pass the same CI and PR process; no automatic merging is configured. Every runtime, model, and tooling dependency is pinned in the `requirements*.txt` files.

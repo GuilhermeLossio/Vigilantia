@@ -8,24 +8,26 @@ Use before the initial documentation commit and whenever the design changes. Che
 - [ ] The MVP requires a simulated training kernel, IBM Quantum hardware test kernels, classical comparison, and a local API; exposure and AWS deployment are later phases.
 - [ ] Samples, shots, circuit definition, matrix handling, and metrics agree with the benchmark protocol.
 - [ ] Open decisions have explicit resolution criteria and no invented versions, features, backend, or results.
-- [ ] Roadmap and directory trees match the checkout; future paths are labeled as planned.
-- [ ] MIT code licensing is consistent with LICENSE; dataset attribution remains CC BY 4.0.
+- [ ] The [roadmap](roadmap.md) and the single directory tree in [Architecture.md](../Architecture.md#repository-structure) match the checkout; future paths are labeled as planned.
+- [ ] MIT code licensing is consistent with LICENSE; attribution of both datasets (PhiUSIIL and the external validation dataset) remains CC BY 4.0.
 
 ## Navigation and presentation
 
 - [ ] Local Markdown links and heading anchors resolve.
+- [ ] Every new Markdown file or notebook is listed in [CATALOG.md](../CATALOG.md).
 - [ ] All SVG diagrams, including the generated results chart, render in light and dark mode with readable labels, accessible descriptions, and no clipping or overlapping connectors.
-- [ ] README and architecture link both diagrams and the supporting documents.
+- [ ] README and architecture link the diagrams and the supporting documents, and the [documentation index](README.md) lists every document.
 - [ ] English text, Unicode directory trees, and formatting are consistent.
 
 ## Configuration and evidence
 
-- [ ] Dependency installation is described as unverified until compatibility is tested and versions are pinned.
-- [ ] `.env.example` is tracked, contains only commented placeholders, and states that no loader exists yet.
+- [ ] Dependency installation matches the pinned `requirements*.txt` files and the tested environment in the [reproduction guide](reproducing.md).
+- [ ] `.env.example` is tracked, contains only commented placeholders, and documents which settings the hardware scripts read.
 - [ ] `.env` variants and project-local credential files are ignored; no credentials appear in the diff.
 - [ ] Raw datasets, generated kernels, and local model artifacts are excluded from the documentation commit.
 - [ ] No private scheduling notes appear in public files or the proposed commit message.
-- [ ] Simulation, hardware execution, and replay are identified accurately; pending checks remain pending.
+- [ ] Simulation, hardware execution, replay, and the external validation are identified accurately; pending checks remain pending.
+- [ ] Every published number matches `reports/benchmark-results.json`, `reports/external-validation.json`, or the benchmark protocol, and no host or URL from either dataset appears.
 
 ## Suggested checks
 

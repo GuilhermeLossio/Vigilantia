@@ -27,6 +27,7 @@
     input[type=text] { flex: 1 1 280px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); font: inherit; }
     button { padding: 8px 16px; border: 1px solid var(--accent); border-radius: 6px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
     code { font-size: 13px; }
+    .ci { font-size: 12px; }
   </style>
 </head>
 <body>
@@ -119,6 +120,59 @@
     {% endif %}
   {% endif %}
 
+  <h2>External validation</h2>
+  {% if external %}
+    {% set prep = external.preparation %}
+    <div class="panel">
+      <div>Frozen benchmark models (version <code>{{ external.benchmark.model_version }}</code>, {{ external.benchmark.training_examples }} PhiUSIIL training examples) evaluated unchanged on a second public dataset: no retraining, recalibration, or threshold change.</div>
+      <div class="muted">Dataset: {{ external.dataset.title }}, file <code>{{ external.dataset.file }}</code>, DOI <code>{{ external.dataset.doi }}</code>, license {{ external.dataset.license }}. Generated {{ external.generated_at_utc }} under the protocol frozen at {{ external.protocol.frozen_at_utc }}.</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Preparation step</th><th>Rows</th></tr></thead>
+        <tbody>
+          <tr><td>Published rows</td><td>{{ prep.input_rows }}</td></tr>
+          {% for entry in prep.exclusions %}
+          <tr><td>Excluded: {{ external_steps[entry.step] }}</td><td>&minus;{{ entry.rows }}</td></tr>
+          {% endfor %}
+          <tr><td><strong>Evaluated</strong></td><td><strong>{{ prep.primary_rows }}</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Evaluated rows: {{ prep.class_counts.legitimate }} legitimate, {{ prep.class_counts.phishing }} phishing; one row per registrable domain, none of them seen in PhiUSIIL. {{ external.clipped_values.rows_with_any_clipped }} rows have at least one feature outside the training range, clipped by the frozen scaler.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Source</th>{% for m in metrics %}<th>{{ m | replace("_", " ") }}</th>{% endfor %}<th>TN / FP / FN / TP</th></tr>
+        </thead>
+        <tbody>
+        {% for model in external.models %}
+          <tr>
+            <td>{{ model.name }}</td>
+            <td><span class="tag">{{ external_sources[model.kernel_source] }}</span></td>
+            {% for m in metrics %}{% set ci = model.confidence_intervals[m] %}
+            <td>{% if model.metrics[m] is none %}n/a{% else %}{{ "%.3f" | format(model.metrics[m]) }}<br><span class="muted ci">{{ "%.3f" | format(ci[0]) }}&ndash;{{ "%.3f" | format(ci[1]) }}</span>{% endif %}</td>
+            {% endfor %}
+            <td>{{ model.confusion_matrix[0][0] }} / {{ model.confusion_matrix[0][1] }} / {{ model.confusion_matrix[1][0] }} / {{ model.confusion_matrix[1][1] }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Below each value: {{ "%.0f" | format(external.bootstrap.level * 100) }}% percentile bootstrap interval ({{ external.bootstrap.resamples_used }} of {{ external.bootstrap.resamples }} resamples, seed {{ external.bootstrap.seed }}). The quantum-kernel SVM row uses an exact simulation of the kernel, not IBM Quantum hardware.</p>
+
+    <div class="panel">
+      <strong>Limitations</strong>
+      <ul>{% for item in external.limitations %}<li>{{ item }}</li>{% endfor %}</ul>
+    </div>
+  {% elif external_error == "results_invalid" %}
+    <div class="panel notice"><strong>External validation unavailable.</strong> The published report failed validation: {{ external_detail }}</div>
+  {% else %}
+    <div class="panel notice"><strong>External validation pending.</strong> {{ external_detail }} No placeholder values are shown in its place.</div>
+  {% endif %}
+
   <h2>Replay: recorded quantum-kernel SVM test predictions</h2>
   {% if replay %}
     <p class="muted">Replay of recorded predictions, not live inference. Simulation run <code>{{ replay.source_runs.simulation }}</code>{% if replay.source_runs.qpu %}; hardware run <code>{{ replay.source_runs.qpu }}</code> on {{ replay.source_runs.backend }}{% endif %}. Samples are identified by dataset row and hashed domain group; hosts are not shown.</p>
@@ -149,7 +203,7 @@
     <div class="panel notice"><strong>Replay pending.</strong> No recorded predictions have been published.</div>
   {% endif %}
 
-  <p class="muted">This service does not train models, submit quantum jobs, fetch URLs, or claim quantum advantage. JSON: <code>/v1/benchmarks</code>, <code>/v1/benchmarks/replay</code>, <code>POST /v1/phishing/predict</code>.</p>
+  <p class="muted">This service does not train models, submit quantum jobs, fetch URLs, or claim quantum advantage. JSON: <code>/v1/benchmarks</code>, <code>/v1/benchmarks/replay</code>, <code>/v1/external-validation</code>, <code>POST /v1/phishing/predict</code>.</p>
 </main>
 </body>
 </html>

@@ -1,6 +1,26 @@
 # Phishing Benchmark Protocol
 
-**Status: planned, not executed.** This is the initial exploratory benchmark specification. It uses a hybrid design: classical training on a simulated kernel and quantum classification on IBM Quantum hardware. Completion requires the hardware classification results; simulator results are a separate reference.
+**Status: executed.** This is the initial exploratory benchmark specification, frozen before any test evaluation, and its [recorded results](#recorded-results) from the full run `full-ibm_fez-20261025T094010Z`. It uses a hybrid design: classical training on a simulated kernel and quantum classification on IBM Quantum hardware. Completion requires the hardware classification results; simulator results are a separate reference. The frozen models were later applied, unchanged, to a second public dataset; see [External validation](external-validation.md).
+
+## Benchmark strategy
+
+| Model | Role |
+| --- | --- |
+| Majority-class classifier | Minimum reference |
+| Logistic regression | Linear baseline |
+| RBF-kernel SVM | Primary nonlinear baseline |
+| Quantum-kernel SVM / QSVC | Experimental classifier |
+
+Start with **four features, four qubits, 24 training examples, 12 test examples, seed 42, and 1,024 shots per circuit**. Seek balanced classes while preserving domain isolation. Use identical examples and transformations for all models.
+
+1. Reserve a domain-disjoint final test set before model selection.
+2. Freeze the small split and report its groups and class distribution.
+3. Fit preprocessing on training rows only; clip test/inference values using that saved transformation.
+4. Use the fixed model settings in this protocol, with no tuning or test-based threshold selection.
+5. Compute the training kernel by exact simulation, then collect the QPU test and calibration kernels before final evaluation, retaining raw measurements and calibration parameters.
+6. Report all models and disclose that this first run has one seed and no fold/seed variability estimate.
+
+The training kernel requires pairwise comparisons, so its matrix grows quadratically with the training sample count. This is why the benchmark uses a [hybrid design](#hybrid-execution-design). Cache only configuration-compatible kernels and record sample counts, circuit depth, qubits, backend, shots when applicable, and execution time. Insufficient quota or unfinished jobs leave the benchmark pending; simulator results cannot replace hardware classification.
 
 ## Dataset and split
 
@@ -153,6 +173,18 @@ Batch circuit publications within the selected backend's current job limits; rec
 
 Save dataset/split/feature fingerprints, package and Python versions, model settings, circuit definition, backend name, job IDs, requested and actual shots, counts, kernel matrices, calibration parameters, and artifact checksums. Keep tokens and account credentials out of reports. Record timestamps and distinguish client wall time, queue time, and provider-reported execution usage; unavailable timing fields are reported as unavailable.
 
+| Metric | Purpose |
+| --- | --- |
+| PR-AUC / average precision | Ranking quality for the phishing class, computed from continuous decision scores |
+| Precision and recall | False-alert burden and phishing detection coverage |
+| Accuracy | Share of correct test classifications; reported with balanced accuracy because 12 test examples make it coarse |
+| F1 and balanced accuracy | Threshold-dependent classification comparison |
+| Confusion matrix | Explicit false positives and false negatives |
+| Training and inference runtime | Computational cost and serving feasibility |
+| Fold and seed variability | Later extension; unavailable in the initial single-seed run |
+
+Reports must include class prevalence, split definitions, thresholds, feature choices, and runtime conditions. Scores are not described as probabilities without appropriate calibration and evaluation.
+
 Report average precision (the chosen PR summary), accuracy, precision, recall, F1, balanced accuracy, confusion matrix, class counts, and training/inference runtime. Record zero-denominator metrics using `zero_division=0` with a note when applicable. This first run has one split and one seed; no fold/seed variability estimate is available. Twelve test examples yield coarse and uncertain estimates; each test example changes accuracy by about 8.3 percentage points. Publish all four models and all three quantum SVM variants regardless of which performs best.
 
 ## Recorded results
@@ -241,4 +273,4 @@ At this size every local step takes milliseconds. Measuring the test kernel on `
 - Raw, calibrated, and simulated matrices are distinguishable; model settings and scores are reproducible from saved artifacts.
 - The report identifies simulation, QPU execution, and replay separately and makes no quantum-advantage claim from this small experiment.
 
-See [MVP completion criteria](../README.md#mvp-completion-criteria), [architecture](../Architecture.md), and the [documentation checklist](documentation-checklist.md).
+See [MVP completion criteria](../README.md#mvp-completion-criteria), [External validation](external-validation.md), [hardware runs](hardware-runs.md), [architecture](../Architecture.md), and the [documentation checklist](documentation-checklist.md).

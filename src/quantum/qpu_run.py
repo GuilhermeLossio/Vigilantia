@@ -8,6 +8,8 @@
 
 Each run lives in artifacts/benchmark/qpu-runs/<run_id>/ (Git-ignored): run.json holds the
 plan, backend, transpilation statistics, and jobs; counts-<job_id>.json holds raw counts.
+Runs of the external subset (scripts/run_qpu_external.py) are named external-*; they share
+submit and retrieve and are evaluated with measure_kernel, never by evaluate_run.
 """
 
 from __future__ import annotations
@@ -46,15 +48,21 @@ def status_name(status) -> str:
     return str(getattr(status, "name", status)).upper()
 
 
-def full_plan(data: BenchmarkInputs) -> list[hardware.PairSpec]:
-    n_train, n_test = len(data.train_angles), len(data.test_angles)
+def full_plan(
+    data: BenchmarkInputs, test_angles: np.ndarray | None = None
+) -> list[hardware.PairSpec]:
+    """The plan for the benchmark test set, or for `test_angles` when given."""
+    test = data.test_angles if test_angles is None else test_angles
+    n_train, n_test = len(data.train_angles), len(test)
     calibration = min(hardware.CALIBRATION_PAIRS, n_train * (n_train - 1) // 2)
     return hardware.plan_pairs(n_train, n_test, n_calibration=calibration)
 
 
-def plan_for(data: BenchmarkInputs, pilot: int | None) -> list[hardware.PairSpec]:
+def plan_for(
+    data: BenchmarkInputs, pilot: int | None, test_angles: np.ndarray | None = None
+) -> list[hardware.PairSpec]:
     """The full plan, or its first `pilot` circuits (test pairs) for a quota probe."""
-    plan = full_plan(data)
+    plan = full_plan(data, test_angles)
     if pilot is None:
         return plan
     if not 0 < pilot < len(plan):
@@ -83,10 +91,15 @@ def new_record(
     pilot: bool,
     transpilation: dict,
     full_size: int,
+    inputs: dict | None = None,
+    prefix: str | None = None,
+    extra: dict | None = None,
 ) -> tuple[str, dict]:
+    """A run record. `inputs` defaults to the benchmark input hashes and `prefix` to pilot
+    or full; `extra` adds further fields to the record."""
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    run_id = f"{'pilot' if pilot else 'full'}-{backend_name}-{stamp}"
-    return run_id, {
+    run_id = f"{prefix or ('pilot' if pilot else 'full')}-{backend_name}-{stamp}"
+    record = {
         "schema_version": 1,
         "run_id": run_id,
         "created_at_utc": now(),
@@ -95,12 +108,13 @@ def new_record(
         "backend": backend_name,
         "sampler": SAMPLER,
         "shots": hardware.SHOTS,
-        "inputs": data.input_hashes,
+        "inputs": data.input_hashes if inputs is None else inputs,
         "plan": [asdict(spec) for spec in plan],
         "transpilation": transpilation,
         "status": "created",
         "jobs": [],
     }
+    return run_id, {**record, **(extra or {})}
 
 
 def submit_run(
@@ -198,6 +212,95 @@ def usage_totals(record: dict) -> dict:
     return totals
 
 
+def _require_retrieved(record: dict) -> None:
+    if record["status"] != "retrieved":
+        raise RunError(f"Run status is {record['status']}; retrieve all jobs first.")
+
+
+def _ideal_kernels(train_angles: np.ndarray, test_angles: np.ndarray) -> tuple:
+    return (
+        qkernel.statevector_kernel(train_angles),
+        qkernel.statevector_kernel(test_angles, train_angles),
+    )
+
+
+def _mean_circuit_error(
+    plan: list[hardware.PairSpec], counts: list[dict], ideal_train, ideal_test
+) -> float:
+    """Mean |measured - ideal| over every circuit; a diagonal control is ideally 1."""
+
+    def ideal(spec: hardware.PairSpec) -> float:
+        if spec.kind == "test":
+            return float(ideal_test[spec.left, spec.right])
+        return 1.0 if spec.kind == "diagonal" else float(ideal_train[spec.left, spec.right])
+
+    measured = [qkernel.kernel_from_counts(c) for c in counts]
+    return float(np.mean([abs(m - ideal(spec)) for spec, m in zip(plan, measured, strict=True)]))
+
+
+def measure_kernel(
+    run_dir: Path,
+    record: dict,
+    train_angles: np.ndarray,
+    test_angles: np.ndarray,
+    labels: np.ndarray,
+    model,
+) -> dict:
+    """Build a full run's hardware test kernel, calibrate it on the run's own training
+    pairs, and classify `labels` with `model`. Saves the kernels next to the run record.
+
+    Returns the circuit count, shots returned, mean error over all circuits, calibration,
+    diagonal-control mean, test-kernel errors, evaluations and kernels per source ("qpu",
+    and "qpu_calibrated" when the calibration is valid), the ideal test kernel, and
+    limitations.
+    """
+    _require_retrieved(record)
+    if record.get("pilot"):
+        raise RunError("A pilot run has no complete test kernel.")
+    plan = [hardware.PairSpec(**spec) for spec in record["plan"]]
+    counts = collected_counts(run_dir, record)
+    ideal_train, ideal_test = _ideal_kernels(train_angles, test_angles)
+
+    assembled = hardware.assemble(plan, counts, len(train_angles), len(test_angles))
+    pairs = assembled["calibration"]
+    calibration = hardware.fit_calibration(
+        np.array([ideal_train[i, j] for i, j, _ in pairs]), np.array([v for _, _, v in pairs])
+    )
+    raw = assembled["test_kernel"]
+    evaluations = {"qpu": evaluate(model, raw, labels)}
+    kernels_error = {"qpu": float(np.abs(raw - ideal_test).mean())}
+    kernels = {"qpu": raw}
+    limitations = []
+    if calibration["valid"]:
+        calibrated, clipped = hardware.apply_calibration(raw, calibration)
+        evaluations["qpu_calibrated"] = evaluate(model, calibrated, labels)
+        kernels_error["qpu_calibrated"] = float(np.abs(calibrated - ideal_test).mean())
+        kernels["qpu_calibrated"] = calibrated
+        calibration["clipped_test_values"] = clipped
+        np.save(run_dir / "test-kernel-calibrated.npy", calibrated)
+    else:
+        limitations.append(
+            f"Kernel calibration failed ({calibration['reason']}); only uncorrected hardware "
+            "results are reported."
+        )
+    np.save(run_dir / "test-kernel-raw.npy", raw)
+    diagonal = [value for _, value in assembled["diagonal"]]
+    return {
+        "circuits": len(plan),
+        "shots_returned": sorted({sum(c.values()) for c in counts}),
+        "mean_abs_kernel_error_vs_ideal": _mean_circuit_error(
+            plan, counts, ideal_train, ideal_test
+        ),
+        "calibration": calibration,
+        "diagonal_controls_mean": float(np.mean(diagonal)),
+        "test_kernel_error_vs_ideal": kernels_error,
+        "evaluations": evaluations,
+        "kernels": kernels,
+        "ideal_test_kernel": ideal_test,
+        "limitations": limitations,
+    }
+
+
 def evaluate_run(
     run_dir: Path,
     data: BenchmarkInputs,
@@ -206,23 +309,12 @@ def evaluate_run(
 ) -> dict:
     """Evaluate a retrieved run. Full runs are published to `results_path` when given."""
     record = load(run_dir)
-    if record["status"] != "retrieved":
-        raise RunError(f"Run status is {record['status']}; retrieve all jobs first.")
+    _require_retrieved(record)
     if record["inputs"] != data.input_hashes:
         raise RunError("The run used other inputs than the current benchmark artifacts.")
 
     plan = [hardware.PairSpec(**spec) for spec in record["plan"]]
     counts = collected_counts(run_dir, record)
-    ideal_train = qkernel.statevector_kernel(data.train_angles)
-    ideal_test = qkernel.statevector_kernel(data.test_angles, data.train_angles)
-
-    def ideal(spec: hardware.PairSpec) -> float:
-        if spec.kind == "test":
-            return float(ideal_test[spec.left, spec.right])
-        return 1.0 if spec.kind == "diagonal" else float(ideal_train[spec.left, spec.right])
-
-    measured = [qkernel.kernel_from_counts(c) for c in counts]
-    errors = [abs(m - ideal(spec)) for spec, m in zip(plan, measured, strict=True)]
     usage = usage_totals(record)
     summary = {
         "run_id": record["run_id"],
@@ -231,7 +323,9 @@ def evaluate_run(
         "circuits": len(plan),
         "shots_returned": sorted({sum(c.values()) for c in counts}),
         "usage": usage,
-        "mean_abs_kernel_error_vs_ideal": float(np.mean(errors)),
+        "mean_abs_kernel_error_vs_ideal": _mean_circuit_error(
+            plan, counts, *_ideal_kernels(data.train_angles, data.test_angles)
+        ),
     }
     if record["pilot"]:
         # Linear per-circuit projection. Billed seconds are rounded per job, so the
@@ -244,35 +338,24 @@ def evaluate_run(
         return summary
 
     n_train, n_test = len(data.train_angles), len(data.test_angles)
-    assembled = hardware.assemble(plan, counts, n_train, n_test)
-    pairs = assembled["calibration"]
-    calibration = hardware.fit_calibration(
-        np.array([ideal_train[i, j] for i, j, _ in pairs]), np.array([v for _, _, v in pairs])
+    measured = measure_kernel(
+        run_dir,
+        record,
+        data.train_angles,
+        data.test_angles,
+        data.test_labels,
+        data.models["quantum_kernel_svm"],
     )
-    raw = assembled["test_kernel"]
-    model = data.models["quantum_kernel_svm"]
-    evaluations = {"qpu": evaluate(model, raw, data.test_labels)}
-    kernels_error = {"qpu": float(np.abs(raw - ideal_test).mean())}
-    limitations = []
-    if calibration["valid"]:
-        calibrated, clipped = hardware.apply_calibration(raw, calibration)
-        evaluations["qpu_calibrated"] = evaluate(model, calibrated, data.test_labels)
-        kernels_error["qpu_calibrated"] = float(np.abs(calibrated - ideal_test).mean())
-        calibration["clipped_test_values"] = clipped
-        np.save(run_dir / "test-kernel-calibrated.npy", calibrated)
-    else:
-        limitations.append(
-            f"Kernel calibration failed ({calibration['reason']}); only uncorrected hardware "
-            "results are reported."
-        )
-    np.save(run_dir / "test-kernel-raw.npy", raw)
-    diagonal = [value for _, value in assembled["diagonal"]]
+    evaluations, limitations = measured["evaluations"], measured["limitations"]
     summary.update(
         {
-            "calibration": calibration,
-            "diagonal_controls_mean": float(np.mean(diagonal)),
-            "test_kernel_error_vs_ideal": kernels_error,
-            "evaluations": evaluations,
+            key: measured[key]
+            for key in (
+                "calibration",
+                "diagonal_controls_mean",
+                "test_kernel_error_vs_ideal",
+                "evaluations",
+            )
         }
     )
     _write_summary(run_dir, summary)
