@@ -61,7 +61,7 @@ The project measures predictive quality and computational cost. Classical models
 
 ## About
 
-**Current status: design stage.** Documentation, an unpinned dependency proposal, and a commented configuration example exist. Dataset processing, models, API endpoints, hardware jobs, and cloud resources are not implemented. No benchmark results or working deployment are available yet.
+**Current status: acquisition tooling implemented; modeling and serving remain in design.** The standard-library downloader and its unit tests are implemented, and the original PhiUSIIL snapshot has been downloaded and structurally validated locally. Documentation, CI tooling, an unpinned runtime dependency proposal, and a commented configuration example exist. Feature processing, models, API endpoints, hardware jobs, and cloud resources are not implemented. No benchmark results or working deployment are available yet.
 
 | Item | Decision |
 | --- | --- |
@@ -115,7 +115,7 @@ PhiUSIIL is the only selected training dataset. It does not provide labels for b
 
 ## Dataset
 
-Dataset metadata below describes the published source. The dataset has not yet been downloaded or inspected in this repository. See the [data guide](data/README.md) for attribution, acquisition, storage, and pending checks.
+The original dataset has been acquired and structurally validated locally: 235,795 rows, 56 CSV columns, and class counts matching the published source. The 54-feature count below is the source's feature count, not the total number of CSV columns. Downloaded data is ignored by Git. See the [data guide](data/README.md) for checksums, acquisition, validation limits, and pending feature/split work.
 
 **Selected source:** [PhiUSIIL Phishing URL (Website), UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset).
 
@@ -275,9 +275,12 @@ Vigilantia/
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
 ├── scripts/
-│   └── check_repository.py
+│   ├── check_repository.py
+│   └── download_dataset.py
 ├── tests/
 │   ├── unit/
+│   │   ├── test_download_dataset.py
+│   │   ├── test_download_dataset_cli.py
 │   │   └── test_repository_checks.py
 │   └── README.md
 ├── .env.example
@@ -308,6 +311,16 @@ Vigilantia/
 | `Dockerfile` | Application image |
 
 ## Getting Started
+
+### Download the dataset
+
+```powershell
+python scripts/download_dataset.py
+```
+
+This command uses only the standard library and writes the original ZIP, CSV, and `acquisition.json` to `data/raw/`. It can run before installing runtime dependencies. Repeating it verifies and reuses an intact snapshot without a new download. Partial or modified snapshots fail with an explanation and are preserved. The [data guide](data/README.md) explains recovery and validation boundaries.
+
+### Prepare the future application environment
 
 The application scaffold and dependency lockfile are pending. There is no verified local startup command yet.
 
@@ -396,7 +409,8 @@ Tests should cover target mapping, domain isolation, training-only preprocessing
 - [x] Select PhiUSIIL and identify its published CC BY 4.0 license.
 - [x] Select Python, FastAPI, Qiskit, and IBM Quantum Open Plan; retain AWS as a later target.
 - [x] Document the initial four-qubit circuit and 24/12 hardware benchmark protocol.
-- [ ] Acquire and inspect data; record attribution and checksums.
+- [x] Acquire the original data; record attribution, checksums, structural checks, and class counts.
+- [ ] Inspect feature types/provenance, duplicates, and domain quality before modeling.
 - [ ] Freeze the split protocol and initial feature contract.
 - [ ] Implement classical baselines, simulator checks, and hardware kernel acquisition.
 - [ ] Collect complete QPU kernels and preserve job/result evidence within the verified Open Plan quota.

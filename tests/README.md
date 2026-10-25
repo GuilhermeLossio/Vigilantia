@@ -1,6 +1,6 @@
 # Tests
 
-Run `python -m pytest` after installing `requirements-dev.txt`. Tests in `unit/` cover the offline repository validation helpers, including negative cases. They are infrastructure tests, not evidence of application or model correctness.
+Run `python -m pytest` after installing `requirements-dev.txt`. Tests in `unit/` cover the offline repository validation helpers and the dataset acquisition script, including negative cases. Downloader tests use small synthetic ZIPs and mocked HTTP responses; they never contact UCI. These checks do not establish model or API correctness.
 
 Add tests of Python behavior under `tests/unit/test_<component>.py` with each implementation change. Keep unit tests deterministic and independent of network, AWS, IBM credentials, and QPU execution. Use small fixtures and mock external service boundaries. Register new markers in `pyproject.toml` before using them.
 

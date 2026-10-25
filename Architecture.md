@@ -4,7 +4,7 @@ Vigilantia is a planned phishing-classification research prototype using IBM Qua
 
 ## Implementation status
 
-This repository currently contains documentation, Git configuration, the MIT license, an initial unpinned `requirements.txt`, and a proposed `.env.example`. No application, dataset, model, dependency lockfile, infrastructure, or benchmark results exist yet. Dependency compatibility has not been validated, and no code consumes the example settings. All components below describe the agreed design, not an existing implementation.
+This repository contains documentation, CI/test tooling, the MIT license, an initial unpinned `requirements.txt`, a proposed `.env.example`, and a standard-library dataset downloader. The original ZIP, CSV, and acquisition manifest have been verified locally under the ignored `data/raw/` directory. No application, trained model, runtime dependency lockfile, infrastructure, or benchmark results exist yet. Runtime compatibility has not been validated, and no code consumes the example environment settings. The application components below remain proposed.
 
 ## Overview
 
@@ -15,6 +15,8 @@ The offline path prepares a PhiUSIIL snapshot, creates a domain-disjoint 24-trai
 The [MVP criteria](README.md#mvp-completion-criteria) require complete hardware results, measured comparisons, validated local inference, and reproducible instructions. The [open decisions](README.md#open-decisions) include package versions, feature names, backend, and available quota. Documentation exists; these runtime components do not.
 
 ## Planned components
+
+The acquisition entry point `scripts/download_dataset.py` is implemented: it stages and validates the UCI archive, publishes a complete snapshot, and verifies an existing snapshot before reuse. See the [data guide](data/README.md) for observed counts, checksums, and validation limits. This does not implement the broader data pipeline below.
 
 - **Data preparation (`src/data/`)**: acquisition metadata, checksums, deduplication, target mapping, and domain-group splits.
 - **Features (`src/features/`)**: training-only fitting, feature ordering, transformations, and inference schema. Begin with four numerical features; the actual names remain undecided.
@@ -77,9 +79,12 @@ Vigilantia/
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
 ├── scripts/
-│   └── check_repository.py
+│   ├── check_repository.py
+│   └── download_dataset.py
 ├── tests/
 │   ├── unit/
+│   │   ├── test_download_dataset.py
+│   │   ├── test_download_dataset_cli.py
 │   │   └── test_repository_checks.py
 │   └── README.md
 ├── .env.example
@@ -96,7 +101,7 @@ Vigilantia/
 
 ## Limitations and next steps
 
-The README provides environment preparation commands, but installation compatibility and application startup remain unverified. Acquire and inspect the dataset, finalize the feature contract, implement baselines and grouped evaluation, then implement and validate inference. Pin compatible dependencies and document reproducible commands once they exist. No measured performance, quantum advantage, production readiness, or live incident monitoring is claimed.
+The dataset acquisition command is locally verified; runtime installation compatibility and application startup remain unverified. Inspect feature provenance and domain quality, finalize the feature contract, implement baselines and the documented domain-disjoint evaluation, then implement and validate inference. Pin compatible runtime dependencies and document reproducible commands once they exist. No measured performance, quantum advantage, production readiness, or live incident monitoring is claimed.
 
 Repository tooling now includes unit-tested offline documentation/configuration checks and a Python CI workflow. These do not implement or validate the proposed application. See [CI and branch protection](docs/ci-and-branch-protection.md) for the workflow and remote activation requirements.
 
