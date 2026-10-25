@@ -50,7 +50,7 @@ def test_published_report_is_served_unchanged() -> None:
 
 def test_page_shows_dataset_funnel_metrics_and_simulation_label() -> None:
     page = create_app().test_client().get("/").get_data(as_text=True)
-    section = page.split("<h2>External validation</h2>", 1)[1].split("<h2>Replay", 1)[0]
+    section = page.split(">External validation</h2>", 1)[1].split(">Replay:", 1)[0]
     assert REPORT["dataset"]["doi"] in section
     assert REPORT["dataset"]["license"] in section
     assert str(REPORT["preparation"]["primary_rows"]) in section
@@ -68,9 +68,9 @@ def test_page_shows_dataset_funnel_metrics_and_simulation_label() -> None:
 def test_section_follows_the_recorded_benchmark(tmp_path: Path) -> None:
     page = client_for(tmp_path, PUBLISHED).get("/").get_data(as_text=True)
     assert (
-        page.index("Recorded benchmark")
-        < page.index("External validation")
-        < page.index("Replay: recorded")
+        page.index(">Recorded benchmark</h2>")
+        < page.index(">External validation</h2>")
+        < page.index(">Replay: recorded")
     )
 
 
