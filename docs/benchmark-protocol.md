@@ -194,6 +194,28 @@ These results describe one small split with coarse features. They are not eviden
 
 The rehearsal confirms that the hardware code path works end to end. The fake backend's noise did not change any prediction; real hardware noise can be larger.
 
+### IBM Quantum hardware: full run
+
+Run `full-ibm_fez-20261025T094010Z` sent all 336 circuits to `ibm_fez` in one SamplerV2 job, `dbessv7pc3tc739mbc6g`, with 1,024 shots each; every circuit returned all its shots. The same trained quantum-kernel SVM then classified the 12 test examples from the measured kernels.
+
+| Model and test kernel | Accuracy | Balanced accuracy | Average precision | TN / FP / FN / TP |
+| --- | --- | --- | --- | --- |
+| Quantum-kernel SVM, exact simulation | 0.500 | 0.500 | 0.526 | 2 / 4 / 2 / 4 |
+| Quantum-kernel SVM, `ibm_fez` uncorrected | 0.500 | 0.500 | 0.538 | 2 / 4 / 2 / 4 |
+| Quantum-kernel SVM, `ibm_fez` calibrated | 0.500 | 0.500 | 0.509 | 2 / 4 / 2 / 4 |
+
+| Hardware measure | Value |
+| --- | --- |
+| Billed QPU time | 92 s; the pilot projected 89 s of execution time, and 89.2 s were measured |
+| Resource units | 1.53 of 10 |
+| Diagonal controls | mean 0.924, ideal 1 |
+| Calibration fit on 24 training pairs | slope 0.820, intercept 0.018, RMSE 0.026 |
+| Test kernel error vs exact simulation | 0.037 uncorrected, 0.029 calibrated |
+| Calibrated test values clipped to [0, 1] | 79 of 288 |
+| Correlation of SVM decision scores with the simulation | 0.992 uncorrected, 0.985 calibrated |
+
+Hardware noise shrank the kernel values, as the calibration slope shows, and calibration reduced the kernel error by about a fifth. Many ideal test values are near zero (37% are below 0.02), so mapping noisy values back below the measured intercept clips them to 0; that explains most of the 79 clipped values. The noise did not change any prediction, and the decision scores stayed almost perfectly correlated with the simulation. The quantum-kernel SVM's chance-level result therefore comes from the kernel and features on this split, not from the hardware. No quantum advantage is claimed.
+
 ## Acceptance checks
 
 - Snapshot attribution and checksum exist; target mapping and feature order are verified.

@@ -81,9 +81,9 @@ The project measures predictive quality and computational cost. Classical models
 
 - [ ] Acquire and attribute the dataset; record checksums, inspection results, and domain-disjoint splits.
 - [ ] Freeze four ordered features, training-fitted preprocessing, and fixed model settings.
-- [ ] Compute the training kernel by exact simulation, and obtain the complete test kernel and calibration pairs from IBM Quantum hardware, with job IDs and raw counts.
-- [ ] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime.
-- [ ] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts.
+- [x] Compute the training kernel by exact simulation, and obtain the complete test kernel and calibration pairs from IBM Quantum hardware, with job IDs and raw counts.
+- [ ] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime. *Quality and QPU time are published; classical runtimes are recorded locally but not yet published.*
+- [ ] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts. *Inference core and command line implemented and tested; the Flask route is pending.*
 - [ ] Identify any saved QPU predictions exposed in the demo as replay, with sample and source-run metadata.
 - [ ] Document tested environment setup and reproducible acquisition, experiment, and API commands.
 
@@ -236,11 +236,11 @@ Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four s
 | Training and inference runtime | Computational cost and serving feasibility |
 | Fold and seed variability | Later extension; unavailable in the initial single-seed run |
 
-**Results: partial.** Test results with the exact simulated kernel are recorded in the [benchmark protocol](docs/benchmark-protocol.md#recorded-results) and published in `reports/benchmark-results.json`. The quantum-kernel SVM performed at chance level on this split, while the RBF SVM scored highest; with 12 test examples, both estimates are unstable. IBM Quantum hardware results are pending. No advantage claim is made. Reports must include class prevalence, split definitions, thresholds, feature choices, and runtime conditions. Scores will not be described as probabilities without appropriate calibration and evaluation.
+**Results: complete for the first run.** All results are recorded in the [benchmark protocol](docs/benchmark-protocol.md#recorded-results) and published in `reports/benchmark-results.json`. The RBF SVM scored highest, at 11 of 12. The quantum-kernel SVM scored 6 of 12, chance level, with the simulated kernel and with the kernels measured on `ibm_fez`, uncorrected and calibrated; hardware noise changed no prediction. With 12 test examples, every estimate here is unstable. No advantage claim is made. Reports must include class prevalence, split definitions, thresholds, feature choices, and runtime conditions. Scores will not be described as probabilities without appropriate calibration and evaluation.
 
 ![Benchmark results](docs/benchmark-results.svg)
 
-The chart shows test accuracy per model with the source of each result, the measured kernel error against the exact simulation, and IBM Quantum time used and projected. A 12-circuit pilot on `ibm_fez` measured a kernel error of 0.034, about 2.6 times the fake-backend rehearsal, and projects about 89 s of execution time for the full 336-circuit run, within the Open Plan's 600 s. The full QPU run is pending. `scripts/render_results_svg.py` regenerates the chart from the recorded results.
+The chart shows test accuracy per model with the source of each result, the measured kernel error against the exact simulation, and the IBM Quantum time used. The full 336-circuit run on `ibm_fez` billed 92 s of the Open Plan's 600 s, matching the pilot's projection of 89 s of execution time. Its test kernel error was 0.037 uncorrected and 0.029 calibrated, about three times the fake-backend rehearsal. `scripts/render_results_svg.py` regenerates the chart from the recorded results.
 
 ---
 
@@ -297,6 +297,7 @@ Vigilantia/
 │   ├── check_repository.py
 │   ├── download_dataset.py
 │   ├── evaluate_benchmark.py
+│   ├── predict_host.py
 │   ├── prepare_benchmark.py
 │   ├── rehearse_hardware.py
 │   ├── render_results_svg.py
@@ -316,6 +317,8 @@ Vigilantia/
 │   ├── features/
 │   │   ├── host_features.py
 │   │   └── scaling.py
+│   ├── inference/
+│   │   └── predictor.py
 │   ├── models/
 │   │   └── benchmark_models.py
 │   └── quantum/
@@ -329,6 +332,7 @@ Vigilantia/
 │   │   ├── test_download_dataset.py
 │   │   ├── test_download_dataset_cli.py
 │   │   ├── test_hardware_and_metrics.py
+│   │   ├── test_predictor.py
 │   │   ├── test_qpu_run.py
 │   │   ├── test_quantum_kernel.py
 │   │   ├── test_render_results_svg.py
@@ -459,6 +463,16 @@ The `.env.example` entries are commented out deliberately. `scripts/check_ibm_ac
 
 The second form dry-runs all 336 benchmark circuits and prints IBM's estimate of the QPU time they would use. Dry runs depend on IBM making a mock backend available; for the current Open Plan account they are not, which says nothing about real jobs.
 
+### Classify new hosts
+
+Classify hosts or URLs with the served classical model. Only the host is used, and nothing is fetched or visited:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/predict_host.py example.com https://login-check.web.app/
+```
+
+Each result includes the prediction, the SVM decision margin, the four features, any feature outside the training range, and a model version derived from the artifacts. The served model is the RBF SVM, named the primary nonlinear baseline before any test result existed; `--model logistic_regression` is also available. The margin is not a probability. The quantum-kernel SVM is not served live, because each prediction would need QPU kernel evaluations.
+
 ### Run the benchmark on IBM Quantum hardware
 
 These commands use real QPU quota. Set `IBM_QUANTUM_BACKEND` in `.env` first, for example `ibm_fez`, so every circuit runs on the same device. `submit` checks the instance quota, transpiles for that backend, and asks you to type `SUBMIT` before sending anything:
@@ -547,9 +561,10 @@ Tests should cover target mapping, domain isolation, training-only preprocessing
 - [x] Implement the simulated training kernel and fit the four fixed models.
 - [x] Classify the test set with the simulated kernel and publish partial results.
 - [x] Implement hardware kernel acquisition and rehearse it on a fake backend.
-- [ ] Collect the complete QPU test and calibration kernels and preserve job/result evidence within the verified Open Plan quota.
+- [x] Collect the complete QPU test and calibration kernels and preserve job/result evidence within the verified Open Plan quota.
 - [ ] Produce reproducible metrics, plots, and runtime comparisons.
 - [x] Implement the Flask results service, its container image, and its unit tests.
+- [x] Implement live classical inference for new hosts, with a command-line entry point.
 - [ ] Implement and validate the Flask inference route.
 - [ ] Show the benchmark chart in the Flask results page.
 - [ ] Validate classical live inference and clearly labeled saved quantum predictions.

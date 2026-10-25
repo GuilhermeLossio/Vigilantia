@@ -247,8 +247,8 @@ def panel_budget(pilot: dict | None, full: dict | None, y: float) -> tuple[list[
         text(
             40,
             y + 20,
-            f"Open Plan limit: {QPU_LIMIT_SECONDS} s of QPU time per rolling 28 days. "
-            "Hatched bars are projections from the pilot.",
+            f"Open Plan limit: {QPU_LIMIT_SECONDS} s of QPU time per rolling 28 days."
+            + (" Hatched bars are projections from the pilot." if pilot and not full else ""),
             "ink2",
             12,
         ),
@@ -316,13 +316,14 @@ def panel_budget(pilot: dict | None, full: dict | None, y: float) -> tuple[list[
     return parts, bottom + 40
 
 
-def legend(y: float) -> list[str]:
+def legend(y: float, projected: bool) -> list[str]:
     items = [
         ("classical", "Classical model"),
         ("simulation", "Simulation"),
         ("hardware", "IBM Quantum hardware"),
-        ("projected", "Projected"),
     ]
+    if projected:
+        items.append(("projected", "Projected"))
     parts, x = [], 40
     for css, label in items:
         parts.append(f'<rect class="{css}" x="{x}" y="{y - 10}" width="14" height="12" rx="2"/>')
@@ -347,7 +348,7 @@ def render() -> str:
             12,
         ),
     ]
-    body += legend(92)
+    body += legend(92, projected=bool(pilot) and not full)
     y = 132
     for build in (
         lambda y: panel_accuracy(results, y),

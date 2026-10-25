@@ -23,7 +23,7 @@ The acquisition entry point `scripts/download_dataset.py` is implemented: it sta
 - **Models (`src/models/`)**: majority baseline, logistic regression, RBF SVM, and SVM with a precomputed quantum kernel. The four models and the exact training kernel in `src/quantum/` are implemented and fitted. The training kernel comes from exact simulation; the test kernel comes from the QPU. Validate four-qubit circuit logic in simulation before hardware acquisition.
 - **Hardware acquisition (`src/quantum/hardware.py`, `src/quantum/qpu_run.py`)**: implemented and rehearsed on a fake backend. `scripts/run_qpu.py` submits a pilot or the full run with confirmation, saves job IDs immediately, retrieves without resubmitting, and publishes evaluated results. Qiskit Runtime sampler jobs (SamplerV2 or its client-side replacement), ISA transpilation, job/result mapping, raw counts, and resumable retrieval on the intended Open Plan instance.
 - **Evaluation (`reports/`, `configs/`, `notebooks/`)**: frozen configurations, one domain-disjoint held-out evaluation, predictive metrics, and runtime reporting. No tuning or fold/seed variability estimate in the initial run.
-- **Serving (`app/`)**: the Flask results service is implemented. It validates and publishes recorded benchmark results, labeling each result's source, and runs in a Docker image with Gunicorn. Structured feature validation, classical live inference, and model-version reporting remain planned. Proposed routes are documented in the [README](README.md#api).
+- **Serving (`app/`)**: the Flask results service is implemented. It validates and publishes recorded benchmark results, labeling each result's source, and runs in a Docker image with Gunicorn. Live classical inference is implemented in `src/inference/predictor.py` with host validation, feature range reporting, and a model version derived from the artifacts; `scripts/predict_host.py` exposes it on the command line. The Flask prediction route remains planned. Proposed routes are documented in the [README](README.md#api).
 - **Later evidence checks (`src/exposure/`)**: consistency checks and reference-record matches on fictitious samples, with incident replay for human review.
 - **Later infrastructure (`infra/`)**: proposed AWS deployment. The results container would run on Amazon ECS Express Mode, which provisions Fargate tasks and an HTTPS load balancer; ECR, S3, CloudWatch, and IAM support it, and DynamoDB is optional. Nothing has been deployed.
 
@@ -95,6 +95,7 @@ Vigilantia/
 │   ├── check_repository.py
 │   ├── download_dataset.py
 │   ├── evaluate_benchmark.py
+│   ├── predict_host.py
 │   ├── prepare_benchmark.py
 │   ├── rehearse_hardware.py
 │   ├── render_results_svg.py
@@ -114,6 +115,8 @@ Vigilantia/
 │   ├── features/
 │   │   ├── host_features.py
 │   │   └── scaling.py
+│   ├── inference/
+│   │   └── predictor.py
 │   ├── models/
 │   │   └── benchmark_models.py
 │   └── quantum/
@@ -127,6 +130,7 @@ Vigilantia/
 │   │   ├── test_download_dataset.py
 │   │   ├── test_download_dataset_cli.py
 │   │   ├── test_hardware_and_metrics.py
+│   │   ├── test_predictor.py
 │   │   ├── test_qpu_run.py
 │   │   ├── test_quantum_kernel.py
 │   │   ├── test_render_results_svg.py
