@@ -34,11 +34,11 @@ Use `QiskitRuntimeService` and `SamplerV2` from `qiskit_ibm_runtime`, authentica
 
 The example environment names are a proposed application contract. Future code must explicitly read and pass the token, instance, and backend to the service and sampler; copying `.env.example` does not authenticate or execute anything. Never publish credentials or saved-account files.
 
-Local statevector/Aer checks precede hardware submission. Check normalization, ideal diagonal values near 1, symmetry, and agreement between direct state overlap and the compute-uncompute circuit for fixed inputs. Validate actual parameter binding and register parsing with the pinned package versions. These checks do not satisfy the hardware benchmark requirement.
+Local statevector/Aer checks precede hardware submission. Check normalization, ideal diagonal values near 1, symmetry, and agreement between direct state overlap and the compute-uncompute circuit for fixed inputs. Validate actual parameter binding and register parsing with the pinned package versions. The same exact statevector computation produces the training kernel and the ideal test kernel. These simulations do not satisfy the hardware classification requirement.
 
 ## Integration and limitations
 
-The [benchmark protocol](benchmark-protocol.md) defines the 588 evaluations, shots, matrix processing, baselines, and evidence retention. The classifier is a classical SVM trained on QPU-derived similarities. One shallow linear layer keeps the initial experiment small but is not evidence of improved classification or quantum advantage.
+The [benchmark protocol](benchmark-protocol.md) defines the hybrid design, the 336 hardware evaluations, shots, calibration, baselines, and evidence retention. The classifier is a classical SVM fitted to simulated similarities; the hardware measures the similarities used to classify the test set. One shallow linear layer keeps the initial experiment small but is not evidence of improved classification or quantum advantage.
 
 Training and benchmark jobs run outside HTTP requests. New live quantum predictions require kernels against reference training examples and can incur queue delays. The local API will serve the classical model for live inputs and may expose saved QPU test predictions as explicitly labeled replay until a separate asynchronous inference design is implemented. A replay must identify its sample, model, and source run; it is not live QPU inference.
 

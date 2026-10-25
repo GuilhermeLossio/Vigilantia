@@ -136,6 +136,7 @@ celerybeat.pid
 .aws/
 qiskit-ibm.json
 data/raw/
+data/.phiusiil-*/
 data/processed/
 artifacts/
 reports/runs/
@@ -189,3 +190,4 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+Things to remember.md

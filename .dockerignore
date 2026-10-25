@@ -1,0 +1,9 @@
+# Only app/, reports/ and requirements-app.txt are copied into the image.
+# Everything else is excluded from the build context to keep data and secrets out.
+*
+!app/
+!reports/
+!requirements-app.txt
+**/__pycache__/
+**/*.pyc
+reports/runs/

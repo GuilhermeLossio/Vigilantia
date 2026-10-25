@@ -1,10 +1,10 @@
 <div align="center">
 
 # Vigilantia
-### Financial Security · IBM Quantum + Qiskit · Python + FastAPI
+### Financial Security · IBM Quantum + Qiskit · Python + Flask
 
 [![Python](https://img.shields.io/badge/Language-Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Flask](https://img.shields.io/badge/API-Flask-000000?style=flat-square&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Qiskit](https://img.shields.io/badge/QML-Qiskit-6929C4?style=flat-square)](https://github.com/Qiskit/qiskit)
 [![IBM Quantum](https://img.shields.io/badge/Quantum%20hardware-IBM%20Quantum-6929C4?style=flat-square)](https://quantum.cloud.ibm.com/)
 ![Status](https://img.shields.io/badge/Status-Design%20Stage-EAB308?style=flat-square)
@@ -44,7 +44,7 @@ The project measures predictive quality and computational cost. Classical models
 | [Quantum Benchmark Strategy](#quantum-benchmark-strategy) | Fair comparisons and resource controls |
 | [Quantum Circuit](#quantum-circuit) | Four-qubit encoding and hardware measurement |
 | [Evaluation Metrics](#evaluation-metrics) | Quality, cost, and reporting |
-| [API](#api) | Proposed FastAPI contract |
+| [API](#api) | Flask results service and proposed routes |
 | [Repository Structure](#repository-structure) | Planned modules and responsibilities |
 | [Getting Started](#getting-started) | Setup readiness and prerequisites |
 | [Development and CI](#development-and-ci) | Python checks, tests, and branch protection |
@@ -61,7 +61,7 @@ The project measures predictive quality and computational cost. Classical models
 
 ## About
 
-**Current status: design stage.** Documentation, an unpinned dependency proposal, and a commented configuration example exist. Dataset processing, models, API endpoints, hardware jobs, and cloud resources are not implemented. No benchmark results or working deployment are available yet.
+**Current status: acquisition tooling and the results service implemented; modeling remains in design.** The standard-library downloader, the Flask results service with its Docker image, and their unit tests are implemented, and the original PhiUSIIL snapshot has been downloaded and structurally validated locally. Documentation, CI tooling, an unpinned runtime dependency proposal, and a commented configuration example exist. Feature processing, models, the prediction route, hardware jobs, and cloud resources are not implemented. No benchmark results or working deployment are available yet.
 
 | Item | Decision |
 | --- | --- |
@@ -72,7 +72,7 @@ The project measures predictive quality and computational cost. Classical models
 | Quantum approach | Quantum-kernel SVM / QSVC |
 | Initial experiment | Four features, four qubits, 24 training and 12 test examples, seed 42 |
 | Quantum hardware | IBM Quantum Open Plan, Qiskit Runtime SamplerV2, job mode |
-| API | Python and FastAPI |
+| API | Python and Flask |
 | MVP environment | Local API; IBM Quantum hardware for the benchmark |
 | Later deployment target | AWS |
 | Later complementary scope | Controlled data-exposure evidence demonstration |
@@ -81,7 +81,7 @@ The project measures predictive quality and computational cost. Classical models
 
 - [ ] Acquire and attribute the dataset; record checksums, inspection results, and domain-disjoint splits.
 - [ ] Freeze four ordered features, training-fitted preprocessing, and fixed model settings.
-- [ ] Obtain complete training and test kernels from IBM Quantum hardware, with job IDs and raw counts.
+- [ ] Compute the training kernel by exact simulation, and obtain the complete test kernel and calibration pairs from IBM Quantum hardware, with job IDs and raw counts.
 - [ ] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime.
 - [ ] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts.
 - [ ] Identify any saved QPU predictions exposed in the demo as replay, with sample and source-run metadata.
@@ -115,7 +115,7 @@ PhiUSIIL is the only selected training dataset. It does not provide labels for b
 
 ## Dataset
 
-Dataset metadata below describes the published source. The dataset has not yet been downloaded or inspected in this repository. See the [data guide](data/README.md) for attribution, acquisition, storage, and pending checks.
+The original dataset has been acquired and structurally validated locally: 235,795 rows, 56 CSV columns, and class counts matching the published source. The 54-feature count below is the source's feature count, not the total number of CSV columns. Downloaded data is ignored by Git. See the [data guide](data/README.md) for checksums, acquisition, validation limits, and pending feature/split work.
 
 **Selected source:** [PhiUSIIL Phishing URL (Website), UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset).
 
@@ -164,21 +164,22 @@ Training and benchmark jobs run separately from HTTP requests. The local MVP API
 | Structured feature inputs | Reproducible inference without arbitrary URL fetching | Not yet a general-purpose URL scanner |
 | Deferred exposure demonstration | Keeps the first release focused on the phishing experiment | Evidence workflows are unavailable in the MVP |
 | Simulator checks, hardware benchmark | Validate circuit logic locally before collecting QPU measurements | Hardware completion depends on access, quota, and queues |
+| Classical training, quantum classification | Halves QPU usage and keeps hardware noise out of the training matrix | The model is fitted to ideal similarities and applied to noisy ones, which requires calibration and a simulated reference |
 
 ## Technology Stack
 
 | Layer | Technology | Status |
 | --- | --- | --- |
 | Language | Python | Selected |
-| API | FastAPI; Pydantic for schemas | FastAPI selected; schema design planned |
+| API | Flask with Jinja templates; Gunicorn in the container | Results service implemented locally; prediction route planned |
 | Quantum ML | Qiskit, Qiskit Machine Learning, Qiskit Aer | Selected; implementation pending |
 | Quantum hardware | IBM Quantum; qiskit-ibm-runtime SamplerV2 | Open Plan selected; jobs pending |
 | Classical ML | scikit-learn | Planned |
 | Data processing | pandas, NumPy | Planned |
 | Experiments | Jupyter notebooks | Planned |
-| Packaging | Docker | Planned |
+| Packaging | Docker | Results-service image builds and runs locally |
 | Cloud | AWS | Later deployment target; services proposed below |
-| Demo interface | FastAPI OpenAPI interface; optional dashboard | Planned |
+| Demo interface | Server-rendered results page and JSON route | Implemented locally; shows results as pending until published |
 
 Dependency versions will be pinned after compatibility checks. Technology badges identify the intended stack, not a validated build.
 
@@ -191,8 +192,8 @@ Dependency versions will be pinned after compatibility checks. Technology badges
 | Acquire | Immutable PhiUSIIL snapshot and source metadata | Checksum, license, schema, label counts |
 | Prepare | Deduplicated rows and domain-group split manifest | No domain overlap across partitions |
 | Transform | Versioned feature pipeline | Training-only fitting and target exclusion |
-| Train | Classical models and SVM fitted to QPU-derived kernels | Identical examples and feature inputs |
-| Evaluate | Metrics, plots, configuration, and runtime report | Untouched final test set |
+| Train | Classical models and SVM fitted to an exactly simulated quantum kernel | Identical examples and feature inputs |
+| Evaluate | Metrics on the test set; quantum SVM classified from QPU-measured kernels | Untouched final test set |
 | Package | Model, preprocessing, reference data, and metadata | Artifact compatibility and inference smoke check |
 | Serve | Local classical inference and labeled saved QPU predictions | Input contract, model availability, and replay identification |
 
@@ -211,18 +212,18 @@ Start with **four features, four qubits, 24 training examples, 12 test examples,
 2. Freeze the small split and report its groups and class distribution.
 3. Fit preprocessing on training rows only; clip test/inference values using that saved transformation.
 4. Use the fixed model settings in the protocol, with no tuning or test-based threshold selection.
-5. Collect QPU training and test kernels before final evaluation, retaining raw measurements and all matrix corrections.
+5. Compute the training kernel by exact simulation, then collect the QPU test and calibration kernels before final evaluation, retaining raw measurements and calibration parameters.
 6. Report all models and disclose that this first run has one seed and no fold/seed variability estimate.
 
-The training kernel requires pairwise comparisons, so its matrix grows quadratically with the training sample count. Cache only configuration-compatible kernels and record sample counts, circuit depth, qubits, backend, shots when applicable, and execution time.
+The training kernel requires pairwise comparisons, so its matrix grows quadratically with the training sample count. This is why the benchmark uses a hybrid design: training is classical, on an exactly simulated kernel, and the QPU is used for classification. Cache only configuration-compatible kernels and record sample counts, circuit depth, qubits, backend, shots when applicable, and execution time.
 
-The initial hardware workload is **276 training pairs + 288 test-to-training pairs + 24 diagonal controls = 588 evaluations**, totaling **602,112 requested shots**. Check quota and estimated execution usage before submission. Use Open Plan job mode; insufficient quota or unfinished jobs leave the benchmark pending. Hardware execution is required, and simulator results cannot replace it. See the [complete protocol](docs/benchmark-protocol.md) for matrix processing, runtime evidence, and failure handling.
+The initial hardware workload is **288 test-to-training pairs + 24 calibration pairs + 24 diagonal controls = 336 evaluations**, totaling **344,064 requested shots**. The same quantum SVM is reported on the ideal, raw hardware, and calibrated hardware test kernels. Check quota and estimated execution usage before submission. Use Open Plan job mode; insufficient quota or unfinished jobs leave the benchmark pending. Hardware classification is required, and simulator results cannot replace it. See the [complete protocol](docs/benchmark-protocol.md) for matrix processing, runtime evidence, and failure handling.
 
 ## Quantum Circuit
 
 ![Planned four-qubit quantum kernel](docs/quantum-circuit.svg)
 
-Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four scaled values, apply the inverse map for a second example, and measure the probability of `0000` to estimate their fidelity kernel. Linear connections are 0–1, 1–2, and 2–3. The circuit contains no trainable ansatz; the SVM is fitted classically to the hardware-derived kernel. See the [circuit specification](docs/quantum-circuit.md).
+Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four scaled values, apply the inverse map for a second example, and measure the probability of `0000` to estimate their fidelity kernel. Linear connections are 0–1, 1–2, and 2–3. The circuit contains no trainable ansatz; the SVM is fitted classically to the simulated kernel and classifies the test set from the hardware-measured kernel. See the [circuit specification](docs/quantum-circuit.md).
 
 ## Evaluation Metrics
 
@@ -230,6 +231,7 @@ Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four s
 | --- | --- |
 | PR-AUC / average precision | Ranking quality for the phishing class; specify the exact definition used |
 | Precision and recall | False-alert burden and phishing detection coverage |
+| Accuracy | Share of correct test classifications; reported with balanced accuracy because 12 test examples make it coarse |
 | F1 and balanced accuracy | Threshold-dependent classification comparison |
 | Confusion matrix | Explicit false positives and false negatives |
 | Training and inference runtime | Computational cost and serving feasibility |
@@ -241,7 +243,7 @@ Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four s
 
 ## API
 
-**Proposed contract — not implemented.**
+**Partially implemented.** The Flask results service in `app/` serves `GET /health`, `GET /v1/benchmarks`, and a results page at `/`. It reads the [published results file](reports/README.md), validates it, and reports results as pending until the benchmark writes it. The other routes remain proposed.
 
 | Method | Route | Planned behavior |
 | --- | --- | --- |
@@ -249,13 +251,14 @@ Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four s
 | `POST` | `/v1/phishing/predict` | MVP: validate structured features and return classical live inference with model version and score semantics |
 | `POST` | `/v1/exposure/analyze` | Later phase: consistency and reference-match checks on controlled samples |
 | `GET` | `/v1/incidents` | Later phase: demonstration incidents and review states |
-| `GET` | `/v1/benchmarks` | Return recorded benchmark results and configuration |
+| `GET` | `/v1/benchmarks` | Implemented: return validated recorded results, `503` while pending, `500` for an invalid file |
+| `GET` | `/` | Implemented: results page labeling the source of every result |
 
 The feature schema will be finalized after inspecting PhiUSIIL. Invalid input and unavailable artifacts must be distinguishable from a classification result. Saved quantum benchmark predictions belong to recorded benchmark results and must identify their sample and run as replay. Training and hardware benchmark jobs will not run inside prediction requests. The later exposure module will return evidence observations, not authentication verdicts.
 
 ## Repository Structure
 
-Current checkout (application code has not been created):
+Current checkout:
 
 ```text
 Vigilantia/
@@ -265,6 +268,11 @@ Vigilantia/
 │   ├── workflows/
 │   │   └── ci.yml
 │   └── dependabot.yml
+├── app/
+│   ├── templates/
+│   │   └── index.html
+│   ├── __init__.py
+│   └── results.py
 ├── data/
 │   └── README.md
 ├── docs/
@@ -274,29 +282,38 @@ Vigilantia/
 │   ├── documentation-checklist.md
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
+├── reports/
+│   └── README.md
 ├── scripts/
-│   └── check_repository.py
+│   ├── check_repository.py
+│   └── download_dataset.py
 ├── tests/
 │   ├── unit/
-│   │   └── test_repository_checks.py
+│   │   ├── test_download_dataset.py
+│   │   ├── test_download_dataset_cli.py
+│   │   ├── test_repository_checks.py
+│   │   └── test_results_app.py
 │   └── README.md
+├── .dockerignore
 ├── .env.example
 ├── .gitattributes
 ├── .gitignore
 ├── Architecture.md
 ├── CONTRIBUTING.md
+├── Dockerfile
 ├── LICENSE
 ├── pyproject.toml
 ├── README.md
+├── requirements-app.txt
 ├── requirements-dev.txt
 └── requirements.txt
 ```
 
-**Planned layout; the implementation files have not been created yet.**
+**Planned layout.** Only `app/`, `reports/`, and the `Dockerfile` exist so far; the other paths have not been created.
 
 | Path | Responsibility |
 | --- | --- |
-| `app/` | FastAPI application, routes, schemas, and dependency wiring |
+| `app/` | Flask application, routes, and templates; the results service exists, prediction is planned |
 | `src/data/` | Acquisition, validation, deduplication, and splits |
 | `src/features/` | Transformations and feature selection |
 | `src/models/` | Classical and quantum model adapters |
@@ -308,6 +325,34 @@ Vigilantia/
 | `Dockerfile` | Application image |
 
 ## Getting Started
+
+### Download the dataset
+
+```powershell
+python scripts/download_dataset.py
+```
+
+This command uses only the standard library and writes the original ZIP, CSV, and `acquisition.json` to `data/raw/`. It can run before installing runtime dependencies. Repeating it verifies and reuses an intact snapshot without a new download. Partial or modified snapshots fail with an explanation and are preserved. The [data guide](data/README.md) explains recovery and validation boundaries.
+
+### Run the results service
+
+The Flask results service needs only the pinned dependencies in `requirements-app.txt`. Until `reports/benchmark-results.json` exists, the page and `/v1/benchmarks` report the results as pending.
+
+```powershell
+python -m pip install -r requirements-app.txt
+python -m flask --app "app:create_app()" run --port 8000
+```
+
+Or build and run the container, which serves on port 8000 with Gunicorn as a non-root user:
+
+```powershell
+docker build -t vigilantia-results .
+docker run --rm -p 8000:8000 vigilantia-results
+```
+
+Open `http://127.0.0.1:8000/`. Set `VIGILANTIA_RESULTS_PATH` to read results from another file.
+
+### Prepare the future application environment
 
 The application scaffold and dependency lockfile are pending. There is no verified local startup command yet.
 
@@ -325,7 +370,7 @@ Copy-Item .env.example .env
 
 On macOS/Linux, use `.venv/bin/python` in place of `.\.venv\Scripts\python.exe` and `cp .env.example .env` to copy the example.
 
-The dependency list covers API serving, data preparation, classical baselines, local quantum simulation, IBM Quantum Runtime, notebooks, and plots. Installation guidance: [FastAPI](https://fastapi.tiangolo.com/) and [Qiskit Machine Learning](https://github.com/qiskit-community/qiskit-machine-learning/blob/main/docs/getting_started.rst). Dependencies are proposals; no hardware integration is implemented yet.
+The dependency list covers API serving, data preparation, classical baselines, local quantum simulation, IBM Quantum Runtime, notebooks, and plots. Installation guidance: [Flask](https://flask.palletsprojects.com/) and [Qiskit Machine Learning](https://github.com/qiskit-community/qiskit-machine-learning/blob/main/docs/getting_started.rst). Dependencies are proposals; no hardware integration is implemented yet.
 
 The `.env.example` entries are commented out deliberately. No environment-file loader exists. Future code must explicitly read the proposed IBM token, Open Plan instance, and backend settings and pass them to the SDK; these are not automatic SDK environment variables. Confirm names against that implementation before enabling them. Local `.env` variants and project-local provider credential files are ignored by Git; the example remains versionable. Keep real secrets out of the example.
 
@@ -343,13 +388,13 @@ Use feature branches targeting `develop`, then a PR from `develop` to `main`. Th
 
 ## Deployment Strategy
 
-**Later target environment: AWS. Infrastructure has not been provisioned and is outside the local MVP.**
+**Later target environment: AWS. Infrastructure has not been provisioned, and no deployment has been run.** The results service is containerized and ready to deploy. The planned path is Amazon ECS Express Mode, which runs the container on Fargate behind a managed HTTPS load balancer with a URL of the form `https://<service>.ecs.<region>.on.aws`. AWS App Runner is not used because it closed to new customers on April 30, 2026; AWS recommends Express Mode as its replacement.
 
 | Service | Proposed responsibility |
 | --- | --- |
 | Amazon ECR | Docker image registry |
-| Amazon ECS with AWS Fargate | API service and separate benchmark tasks |
-| Application Load Balancer | HTTPS entry point |
+| Amazon ECS Express Mode on AWS Fargate | Results service container; separate benchmark tasks later |
+| Application Load Balancer | HTTPS entry point, provisioned and managed by Express Mode |
 | Amazon S3 | Private datasets, model artifacts, and reports |
 | Amazon DynamoDB | Optional persistent incident metadata and review state |
 | Amazon CloudWatch | Operational logs and metrics |
@@ -394,14 +439,17 @@ Tests should cover target mapping, domain isolation, training-only preprocessing
 
 - [x] Define the financial-security use case and QML track.
 - [x] Select PhiUSIIL and identify its published CC BY 4.0 license.
-- [x] Select Python, FastAPI, Qiskit, and IBM Quantum Open Plan; retain AWS as a later target.
+- [x] Select Python, Flask, Qiskit, and IBM Quantum Open Plan; retain AWS as a later target.
 - [x] Document the initial four-qubit circuit and 24/12 hardware benchmark protocol.
-- [ ] Acquire and inspect data; record attribution and checksums.
+- [x] Acquire the original data; record attribution, checksums, structural checks, and class counts.
+- [ ] Inspect feature types/provenance, duplicates, and domain quality before modeling.
 - [ ] Freeze the split protocol and initial feature contract.
+- [x] Adopt the hybrid design: classical training on a simulated kernel, quantum classification on hardware.
 - [ ] Implement classical baselines, simulator checks, and hardware kernel acquisition.
-- [ ] Collect complete QPU kernels and preserve job/result evidence within the verified Open Plan quota.
+- [ ] Collect the complete QPU test and calibration kernels and preserve job/result evidence within the verified Open Plan quota.
 - [ ] Produce reproducible metrics, plots, and runtime comparisons.
-- [ ] Implement and validate the FastAPI inference service.
+- [x] Implement the Flask results service, its container image, and its unit tests.
+- [ ] Implement and validate the Flask inference route.
 - [ ] Validate classical live inference and clearly labeled saved quantum predictions.
 - [ ] Complete notebooks and verified environment instructions.
 - [x] Include the MIT code license.
@@ -415,6 +463,7 @@ Delivery priority: data inspection, frozen protocol, local circuit checks, QPU a
 
 - Historical phishing data does not establish performance against current attacks or banking-specific campaigns.
 - Small samples increase uncertainty; feature reduction may remove useful signals.
+- The quantum SVM is trained on ideal similarities and classifies with noisy hardware ones. Calibration is a linear approximation, and no model trained on hardware measurements is evaluated.
 - Derived dataset attributes may introduce shortcuts or leakage unless their provenance is audited.
 - Simulator results do not establish quantum speedup or production readiness.
 - PhiUSIIL cannot validate breach authenticity. Controlled exposure scenarios only test the stated laboratory checks.

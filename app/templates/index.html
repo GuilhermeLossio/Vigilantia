@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vigilantia Benchmark</title>
+  <style>
+    :root { --fg: #1f2328; --muted: #57606a; --line: #d0d7de; --bg: #ffffff; --panel: #f6f8fa; --accent: #2563eb; --warn: #9a6700; }
+    @media (prefers-color-scheme: dark) {
+      :root { --fg: #e6edf3; --muted: #9da7b3; --line: #30363d; --bg: #0d1117; --panel: #161b22; --accent: #58a6ff; --warn: #d29922; }
+    }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 "Segoe UI", Helvetica, Arial, sans-serif; }
+    main { max-width: 1080px; margin: 0 auto; padding: 32px 16px; }
+    h1 { margin: 0 0 4px; font-size: 26px; }
+    .muted { color: var(--muted); }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 20px 0; }
+    .notice { border-left: 4px solid var(--warn); }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+    th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: right; white-space: nowrap; }
+    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+    .tag { font-size: 12px; color: var(--accent); }
+    code { font-size: 13px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Vigilantia benchmark results</h1>
+  <p class="muted">Phishing URL classification: classical baselines and a hybrid quantum-kernel SVM, trained classically and classifying with kernels measured on IBM Quantum hardware.</p>
+
+  {% if error == "results_unavailable" %}
+    <div class="panel notice"><strong>Results pending.</strong> {{ detail }} No simulated or placeholder values are shown in their place.</div>
+  {% elif error == "results_invalid" %}
+    <div class="panel notice"><strong>Results unavailable.</strong> The published results file failed validation: {{ detail }}</div>
+  {% else %}
+    <div class="panel">
+      <div>Run <code>{{ results.run_id }}</code> &middot; generated {{ results.generated_at_utc }} &middot; status <strong>{{ results.status }}</strong></div>
+      <div class="muted">Split: {{ results.split.train }} training / {{ results.split.test }} test examples, seed {{ results.split.seed }}.
+        {% if results.hardware.backend %}Backend {{ results.hardware.backend }}, {{ results.hardware.shots }} shots per circuit, {{ results.hardware.job_ids | length }} job(s).{% endif %}</div>
+      {% if results.status == "partial" %}<div><strong>Partial run:</strong> some results are missing; see the limitations below.</div>{% endif %}
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Source</th>{% for m in metrics %}<th>{{ m | replace("_", " ") }}</th>{% endfor %}<th>TN / FP / FN / TP</th></tr>
+        </thead>
+        <tbody>
+        {% for model in results.models %}
+          <tr>
+            <td>{{ model.name }}</td>
+            <td><span class="tag">{{ sources[model.kernel_source] }}</span></td>
+            {% for m in metrics %}<td>{% if model.metrics[m] is none %}n/a{% else %}{{ "%.3f" | format(model.metrics[m]) }}{% endif %}</td>{% endfor %}
+            <td>{{ model.confusion_matrix[0][0] }} / {{ model.confusion_matrix[0][1] }} / {{ model.confusion_matrix[1][0] }} / {{ model.confusion_matrix[1][1] }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">With {{ results.split.test }} test examples, each example changes accuracy by about {{ "%.1f" | format(100 / results.split.test) }} percentage points.</p>
+
+    {% if results.limitations %}
+    <div class="panel">
+      <strong>Limitations</strong>
+      <ul>{% for item in results.limitations %}<li>{{ item }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  <p class="muted">These are recorded results. This service does not run models, submit quantum jobs, or claim quantum advantage. JSON: <code>/v1/benchmarks</code>.</p>
+</main>
+</body>
+</html>

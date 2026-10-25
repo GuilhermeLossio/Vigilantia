@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 980" role="img" aria-labelledby="title desc">
-<title id="title">Vigilantia planned architecture</title><desc id="desc">Offline data preparation and classical comparison with IBM Quantum hardware kernels. Local API serves classical inference and labeled saved QPU predictions. All components are planned; AWS and exposure are later phases.</desc>
+<title id="title">Vigilantia planned architecture</title><desc id="desc">Offline data preparation and classical comparison. The quantum SVM is trained on a simulated kernel and classifies the test set with kernels measured on IBM Quantum hardware. Local API serves classical inference and labeled saved QPU predictions. All components are planned; AWS and exposure are later phases.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#57606a"/></marker></defs>
 <rect width="1120" height="980" fill="#ffffff"/>
 <g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="#1f2328">
@@ -20,18 +20,18 @@
 <text x="379" y="393" font-size="12" font-weight="normal" text-anchor="start">ordered examples</text>
 <rect x="40" y="420" width="600" height="80" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="60" y="451" font-size="16" font-weight="bold" text-anchor="start">Offline experiment runner</text>
-<text x="60" y="476" font-size="12" font-weight="normal" text-anchor="start">Fixed classical baselines and QPU kernel acquisition</text>
+<text x="60" y="476" font-size="12" font-weight="normal" text-anchor="start">Classical training; QPU test and calibration kernels</text>
 <line x1="340" y1="500" x2="340" y2="560" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="365" y="514" width="240" height="28" rx="12" fill="#ffffff" stroke="#d0d7de"/>
 <text x="379" y="533" font-size="12" font-weight="normal" text-anchor="start">results and metadata</text>
 <rect x="40" y="560" width="600" height="80" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="60" y="591" font-size="16" font-weight="bold" text-anchor="start">Evaluation and local artifacts</text>
-<text x="60" y="616" font-size="12" font-weight="normal" text-anchor="start">Raw counts, corrected kernels, metrics, model and preprocessing</text>
+<text x="60" y="616" font-size="12" font-weight="normal" text-anchor="start">Raw counts, calibrated kernels, metrics, model and preprocessing</text>
 <line x1="340" y1="640" x2="340" y2="700" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="365" y="654" width="240" height="28" rx="12" fill="#ffffff" stroke="#d0d7de"/>
 <text x="379" y="673" font-size="12" font-weight="normal" text-anchor="start">load reviewed artifacts</text>
 <rect x="40" y="700" width="600" height="80" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
-<text x="60" y="731" font-size="16" font-weight="bold" text-anchor="start">Local FastAPI service</text>
+<text x="60" y="731" font-size="16" font-weight="bold" text-anchor="start">Flask results service</text>
 <text x="60" y="756" font-size="12" font-weight="normal" text-anchor="start">Live classical inference; saved QPU predictions labeled replay</text>
 <rect x="760" y="420" width="320" height="100" rx="12" fill="#dbeafe" stroke="#2563eb"/>
 <text x="780" y="448" font-size="16" font-weight="bold" text-anchor="start">IBM Quantum / SamplerV2</text>
@@ -44,11 +44,11 @@
 <rect x="653" y="503" width="94" height="26" rx="12" fill="#ffffff" stroke="#d0d7de"/>
 <text x="700" y="521" font-size="12" font-weight="normal" text-anchor="middle">counts</text>
 <rect x="760" y="140" width="320" height="190" rx="12" fill="#eff6ff" stroke="#d0d7de"/>
-<text x="780" y="171" font-size="16" font-weight="bold" text-anchor="start">Hardware workload</text>
-<text x="780" y="201" font-size="12" font-weight="normal" text-anchor="start">276 training pairs</text>
-<text x="780" y="229" font-size="12" font-weight="normal" text-anchor="start">288 test-to-training pairs</text>
-<text x="780" y="257" font-size="12" font-weight="normal" text-anchor="start">24 diagonal controls</text>
-<text x="780" y="285" font-size="12" font-weight="normal" text-anchor="start">588 evaluations / 602,112 shots</text>
+<text x="780" y="171" font-size="16" font-weight="bold" text-anchor="start">Kernel workload</text>
+<text x="780" y="201" font-size="12" font-weight="normal" text-anchor="start">Training kernel: exact simulation</text>
+<text x="780" y="229" font-size="12" font-weight="normal" text-anchor="start">288 test-to-training pairs on QPU</text>
+<text x="780" y="257" font-size="12" font-weight="normal" text-anchor="start">24 calibration + 24 diagonal controls</text>
+<text x="780" y="285" font-size="12" font-weight="normal" text-anchor="start">336 evaluations / 344,064 shots</text>
 <rect x="760" y="650" width="320" height="130" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="780" y="681" font-size="16" font-weight="bold" text-anchor="start">Execution boundaries</text>
 <text x="780" y="708" font-size="12" font-weight="normal" text-anchor="start">Training stays outside HTTP requests.</text>

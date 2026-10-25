@@ -5,7 +5,7 @@ Use before the initial documentation commit and whenever the design changes. Che
 ## Scope and consistency
 
 - [ ] README and architecture distinguish implemented files, selected decisions, and proposed components.
-- [ ] The MVP requires IBM Quantum hardware kernels, classical comparison, and a local API; exposure and AWS deployment are later phases.
+- [ ] The MVP requires a simulated training kernel, IBM Quantum hardware test kernels, classical comparison, and a local API; exposure and AWS deployment are later phases.
 - [ ] Samples, shots, circuit definition, matrix handling, and metrics agree with the benchmark protocol.
 - [ ] Open decisions have explicit resolution criteria and no invented versions, features, backend, or results.
 - [ ] Roadmap and directory trees match the checkout; future paths are labeled as planned.

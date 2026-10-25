@@ -1,29 +1,31 @@
 # Vigilantia Architecture
 
-Vigilantia is a planned phishing-classification research prototype using IBM Quantum hardware, classical baselines, and a local FastAPI service. Controlled exposure evidence and AWS deployment are later phases.
+Vigilantia is a planned phishing-classification research prototype using IBM Quantum hardware, classical baselines, and a Flask service. Controlled exposure evidence and AWS deployment are later phases.
 
 ## Implementation status
 
-This repository currently contains documentation, Git configuration, the MIT license, an initial unpinned `requirements.txt`, and a proposed `.env.example`. No application, dataset, model, dependency lockfile, infrastructure, or benchmark results exist yet. Dependency compatibility has not been validated, and no code consumes the example settings. All components below describe the agreed design, not an existing implementation.
+This repository contains documentation, CI/test tooling, the MIT license, an initial unpinned `requirements.txt`, a proposed `.env.example`, and a standard-library dataset downloader. The original ZIP, CSV, and acquisition manifest have been verified locally under the ignored `data/raw/` directory. No application, trained model, runtime dependency lockfile, infrastructure, or benchmark results exist yet. Runtime compatibility has not been validated, and no code consumes the example environment settings. The application components below remain proposed.
 
 ## Overview
 
 ![Planned architecture](docs/architecture-flow.svg)
 
-The offline path prepares a PhiUSIIL snapshot, creates a domain-disjoint 24-training/12-test split with seed 42, and fits a shared four-feature pipeline using training data only. Classical baselines and a SVM using IBM Quantum hardware kernels are evaluated under the same fixed protocol. The planned local API consumes classical inference artifacts and recorded benchmark results. A later controlled evidence module would expose deterministic observations for analyst review.
+The offline path prepares a PhiUSIIL snapshot, creates a domain-disjoint 24-training/12-test split with seed 42, and fits a shared four-feature pipeline using training data only. Classical baselines and a quantum-kernel SVM are evaluated under the same fixed protocol. The quantum SVM uses a hybrid design: it is trained on an exactly simulated kernel, and IBM Quantum hardware measures the kernel used to classify the test set. The planned local API consumes classical inference artifacts and recorded benchmark results. A later controlled evidence module would expose deterministic observations for analyst review.
 
-The [MVP criteria](README.md#mvp-completion-criteria) require complete hardware results, measured comparisons, validated local inference, and reproducible instructions. The [open decisions](README.md#open-decisions) include package versions, feature names, backend, and available quota. Documentation exists; these runtime components do not.
+The [MVP criteria](README.md#mvp-completion-criteria) require complete hardware classification results, measured comparisons, validated local inference, and reproducible instructions. The [open decisions](README.md#open-decisions) include package versions, feature names, backend, and available quota. Documentation exists; these runtime components do not.
 
 ## Planned components
 
+The acquisition entry point `scripts/download_dataset.py` is implemented: it stages and validates the UCI archive, publishes a complete snapshot, and verifies an existing snapshot before reuse. See the [data guide](data/README.md) for observed counts, checksums, and validation limits. This does not implement the broader data pipeline below.
+
 - **Data preparation (`src/data/`)**: acquisition metadata, checksums, deduplication, target mapping, and domain-group splits.
 - **Features (`src/features/`)**: training-only fitting, feature ordering, transformations, and inference schema. Begin with four numerical features; the actual names remain undecided.
-- **Models (`src/models/`)**: majority baseline, logistic regression, RBF SVM, and SVM with a precomputed QPU-derived kernel. Validate four-qubit circuit logic in simulation before hardware acquisition.
+- **Models (`src/models/`)**: majority baseline, logistic regression, RBF SVM, and SVM with a precomputed quantum kernel. The training kernel comes from exact simulation; the test kernel comes from the QPU. Validate four-qubit circuit logic in simulation before hardware acquisition.
 - **Hardware acquisition (within `src/models/`)**: Qiskit Runtime SamplerV2 jobs, ISA transpilation, job/result mapping, raw counts, and resumable retrieval on the intended Open Plan instance.
 - **Evaluation (`reports/`, `configs/`, `notebooks/`)**: frozen configurations, one domain-disjoint held-out evaluation, predictive metrics, and runtime reporting. No tuning or fold/seed variability estimate in the initial run.
-- **Serving (`app/`)**: structured feature validation, classical live inference, artifact loading, model-version reporting, and recorded benchmark results. Proposed routes are documented in the [README](README.md#api).
+- **Serving (`app/`)**: the Flask results service is implemented. It validates and publishes recorded benchmark results, labeling each result's source, and runs in a Docker image with Gunicorn. Structured feature validation, classical live inference, and model-version reporting remain planned. Proposed routes are documented in the [README](README.md#api).
 - **Later evidence checks (`src/exposure/`)**: consistency checks and reference-record matches on fictitious samples, with incident replay for human review.
-- **Later infrastructure (`infra/`)**: proposed AWS deployment definitions. ECR, ECS/Fargate, S3, ALB, CloudWatch, and IAM are candidates; DynamoDB is optional.
+- **Later infrastructure (`infra/`)**: proposed AWS deployment. The results container would run on Amazon ECS Express Mode, which provisions Fargate tasks and an HTTPS load balancer; ECR, S3, CloudWatch, and IAM support it, and DynamoDB is optional. Nothing has been deployed.
 
 These paths are planned and do not currently exist.
 
@@ -39,7 +41,7 @@ Run training and hardware benchmark jobs outside HTTP requests. The local API us
 
 Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)` and the compute-uncompute fidelity measurement with Qiskit Runtime SamplerV2. The circuit encodes data; it has no trainable ansatz. See the [circuit specification](docs/quantum-circuit.md) for gate structure and logical counts.
 
-The benchmark requests 1,024 shots for each of 276 training pairs, 288 test-to-training pairs, and 24 diagonal controls: 588 evaluations and 602,112 shots. Preserve raw measurements and document imposed symmetry, unit modeling diagonals, and PSD correction separately from hardware results. The [protocol](docs/benchmark-protocol.md) defines the exact matrix treatment and acceptance checks.
+Training is classical: the `24 x 24` training kernel is computed by exact statevector simulation, so it needs no QPU time and no PSD correction. The hardware classifies: the benchmark requests 1,024 shots for each of 288 test-to-training pairs, 24 training calibration pairs, and 24 diagonal controls, for 336 evaluations and 344,064 shots. The calibration pairs measure how hardware noise scales kernel values, and the same SVM is reported on the ideal, raw hardware, and calibrated hardware test kernels. Preserve raw measurements separately from calibrated values. The [protocol](docs/benchmark-protocol.md) defines the exact matrix treatment and acceptance checks.
 
 Use job mode on the confirmed Open Plan instance, check quota and estimated usage before submission, and do not switch to paid execution. Persist job IDs before retrieval and record backend, physical layout, depth, shots, and available queue/execution timings. Missing results, quota exhaustion, or queue delays leave the benchmark incomplete. No jobs are submitted by this documentation.
 
@@ -67,6 +69,11 @@ Vigilantia/
 │   ├── workflows/
 │   │   └── ci.yml
 │   └── dependabot.yml
+├── app/
+│   ├── templates/
+│   │   └── index.html
+│   ├── __init__.py
+│   └── results.py
 ├── data/
 │   └── README.md
 ├── docs/
@@ -76,27 +83,36 @@ Vigilantia/
 │   ├── documentation-checklist.md
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
+├── reports/
+│   └── README.md
 ├── scripts/
-│   └── check_repository.py
+│   ├── check_repository.py
+│   └── download_dataset.py
 ├── tests/
 │   ├── unit/
-│   │   └── test_repository_checks.py
+│   │   ├── test_download_dataset.py
+│   │   ├── test_download_dataset_cli.py
+│   │   ├── test_repository_checks.py
+│   │   └── test_results_app.py
 │   └── README.md
+├── .dockerignore
 ├── .env.example
 ├── .gitattributes
 ├── .gitignore
 ├── Architecture.md
 ├── CONTRIBUTING.md
+├── Dockerfile
 ├── LICENSE
 ├── pyproject.toml
 ├── README.md
+├── requirements-app.txt
 ├── requirements-dev.txt
 └── requirements.txt
 ```
 
 ## Limitations and next steps
 
-The README provides environment preparation commands, but installation compatibility and application startup remain unverified. Acquire and inspect the dataset, finalize the feature contract, implement baselines and grouped evaluation, then implement and validate inference. Pin compatible dependencies and document reproducible commands once they exist. No measured performance, quantum advantage, production readiness, or live incident monitoring is claimed.
+The dataset acquisition command is locally verified; runtime installation compatibility and application startup remain unverified. Inspect feature provenance and domain quality, finalize the feature contract, implement baselines and the documented domain-disjoint evaluation, then implement and validate inference. Pin compatible runtime dependencies and document reproducible commands once they exist. No measured performance, quantum advantage, production readiness, or live incident monitoring is claimed.
 
 Repository tooling now includes unit-tested offline documentation/configuration checks and a Python CI workflow. These do not implement or validate the proposed application. See [CI and branch protection](docs/ci-and-branch-protection.md) for the workflow and remote activation requirements.
 

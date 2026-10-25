@@ -1,0 +1,4 @@
+# Runtime dependencies of the read-only results service (app/) and its container image.
+# Kept separate from requirements.txt, which holds the unpinned research/QML proposal.
+flask==3.1.3
+gunicorn==26.2.0
