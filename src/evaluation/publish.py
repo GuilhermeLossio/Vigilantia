@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -68,6 +69,46 @@ def build(
         "limitations": limitations,
     }
     return contract.validate(results)
+
+
+RUNTIME_METHOD = (
+    "Local wall-clock seconds, median of {repeats} repeats on one machine; fit and predict "
+    "cover the 24 training and 12 test examples. The quantum-kernel SVM's fit includes "
+    "simulating its training kernel. Hardware test-kernel time is IBM's recorded execution "
+    "time for the run's circuits, which also measured calibration pairs and diagonal controls; "
+    "queueing is excluded."
+)
+
+
+def with_runtime(
+    results: dict,
+    measured: dict,
+    repeats: int,
+    environment: str,
+    qpu_usage: dict | None = None,
+) -> dict:
+    """Return a copy of the results with per-row runtimes and the measurement method.
+
+    `measured` comes from src.evaluation.runtime.measure. Hardware rows take their
+    test-kernel time from `qpu_usage["execution_seconds"]`.
+    """
+    names = {display: key for key, (display, _) in DISPLAY.items()}
+    updated = copy.deepcopy(results)
+    for model in updated["models"]:
+        source = model["kernel_source"]
+        key = names[model["name"]] if source == "classical" else source
+        seconds = dict(measured[key])
+        if source in {"qpu", "qpu_calibrated"}:
+            seconds["test_kernel"] = (qpu_usage or {}).get("execution_seconds")
+        model["runtime_seconds"] = seconds
+    runtime = {"method": RUNTIME_METHOD.format(repeats=repeats), "environment": environment}
+    if qpu_usage is not None:
+        runtime["qpu"] = {
+            key: qpu_usage.get(key)
+            for key in ("execution_seconds", "charged_seconds", "resource_units")
+        }
+    updated["runtime"] = runtime
+    return contract.validate(updated)
 
 
 def write(results: dict, path: Path) -> None:

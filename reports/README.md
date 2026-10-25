@@ -1,6 +1,6 @@
 # Published Benchmark Results
 
-**Status: complete results published** for run `full-ibm_fez-20261025T094010Z`. `scripts/evaluate_benchmark.py` writes `reports/benchmark-results.json` with the three classical models and the quantum-kernel SVM on the exact simulated kernel. `scripts/run_qpu.py evaluate` adds the uncorrected and calibrated IBM Quantum hardware rows after a full QPU run and marks the file complete; the simulation script then leaves a complete file untouched. Without the file, the service reports the results as pending and shows no values.
+**Status: complete results published** for run `full-ibm_fez-20261025T094010Z`. `scripts/evaluate_benchmark.py` writes `reports/benchmark-results.json` with the three classical models and the quantum-kernel SVM on the exact simulated kernel. `scripts/run_qpu.py evaluate` adds the uncorrected and calibrated IBM Quantum hardware rows after a full QPU run and marks the file complete; the simulation script then leaves a complete file untouched. `scripts/time_benchmark.py` then adds measured runtimes; a new evaluation removes them until it runs again. Without the file, the service reports the results as pending and shows no values.
 
 Only measured results go in this file. Do not add simulated values labeled as hardware, placeholder numbers, or hand-edited metrics. Raw counts, kernels, and job evidence stay under the ignored `reports/runs/` directory, or in private storage.
 
@@ -23,6 +23,8 @@ The service validates the file on every request; `app/results.py` is the referen
 | `kernel_source` | `classical`, `simulation`, `qpu`, or `qpu_calibrated`. It labels where each result came from. |
 | `metrics` | Exactly `accuracy`, `balanced_accuracy`, `precision`, `recall`, `f1`, and `average_precision`. Each is a number in `[0, 1]`, or `null` when unavailable. |
 | `confusion_matrix` | `[[TN, FP], [FN, TP]]` with phishing as the positive class. The four cells must sum to `split.test`. |
+| `runtime_seconds` | Optional, per model: exactly `fit`, `test_kernel`, and `predict`, each a non-negative number of seconds or `null` when not applicable. |
+| `runtime` | Required when any model has `runtime_seconds`: non-empty `method` and `environment` strings, and optionally `qpu` with exactly `execution_seconds`, `charged_seconds`, and `resource_units`, each non-negative or `null`. |
 | `limitations` | List of strings shown with the results. |
 
 Structure, with illustrative field values only:

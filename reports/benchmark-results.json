@@ -36,7 +36,12 @@
           6,
           0
         ]
-      ]
+      ],
+      "runtime_seconds": {
+        "fit": 7.520004874095321e-05,
+        "test_kernel": null,
+        "predict": 7.199996616691351e-06
+      }
     },
     {
       "name": "Logistic regression",
@@ -58,7 +63,12 @@
           2,
           4
         ]
-      ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.0013231000048108399,
+        "test_kernel": null,
+        "predict": 0.00011150003410875797
+      }
     },
     {
       "name": "RBF SVM",
@@ -80,7 +90,12 @@
           1,
           5
         ]
-      ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.0004946999833919108,
+        "test_kernel": null,
+        "predict": 0.00018699996871873736
+      }
     },
     {
       "name": "Quantum-kernel SVM",
@@ -102,7 +117,12 @@
           2,
           4
         ]
-      ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.00958600000012666,
+        "test_kernel": 0.011717000044882298,
+        "predict": 0.00014819996431469917
+      }
     },
     {
       "name": "Quantum-kernel SVM",
@@ -124,7 +144,12 @@
           2,
           4
         ]
-      ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.00958600000012666,
+        "test_kernel": 89.187152896,
+        "predict": 0.00014110002666711807
+      }
     },
     {
       "name": "Quantum-kernel SVM",
@@ -146,7 +171,12 @@
           2,
           4
         ]
-      ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.00958600000012666,
+        "test_kernel": 89.187152896,
+        "predict": 0.00013780000153928995
+      }
     }
   ],
   "limitations": [
@@ -155,5 +185,14 @@
     "The majority baseline breaks the 12/12 training tie toward legitimate, so it never predicts phishing. It has no decision scores, so average precision is not available.",
     "The quantum-kernel SVM is trained on an exact simulated kernel; hardware is used only to classify the test set. No model trained on hardware measurements is evaluated.",
     "No claim of quantum advantage is made."
-  ]
+  ],
+  "runtime": {
+    "method": "Local wall-clock seconds, median of 25 repeats on one machine; fit and predict cover the 24 training and 12 test examples. The quantum-kernel SVM's fit includes simulating its training kernel. Hardware test-kernel time is IBM's recorded execution time for the run's circuits, which also measured calibration pairs and diagonal controls; queueing is excluded.",
+    "environment": "Windows 10, AMD64, Python 3.12.10, numpy 2.5.4, scikit-learn 1.9.1, qiskit 2.6.1",
+    "qpu": {
+      "execution_seconds": 89.187152896,
+      "charged_seconds": 92.0,
+      "resource_units": 1.526017
+    }
+  }
 }

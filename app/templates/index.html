@@ -89,6 +89,28 @@
     </div>
     <p class="muted">With {{ results.split.test }} test examples, each example changes accuracy by about {{ "%.1f" | format(100 / results.split.test) }} percentage points.</p>
 
+    {% if results.runtime %}
+    <h2>Runtime</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Source</th><th>Fit</th><th>Test kernel</th><th>Predict</th></tr></thead>
+        <tbody>
+        {% for model in results.models if model.runtime_seconds %}
+          <tr>
+            <td>{{ model.name }}</td>
+            <td><span class="tag">{{ sources[model.kernel_source] }}</span></td>
+            <td>{{ model.runtime_seconds.fit | duration }}</td>
+            <td class="{{ 'hw' if model.kernel_source in ('qpu', 'qpu_calibrated') else '' }}">{{ model.runtime_seconds.test_kernel | duration }}</td>
+            <td>{{ model.runtime_seconds.predict | duration }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">{{ results.runtime.method }} Environment: {{ results.runtime.environment }}.
+      {% if results.runtime.qpu %}IBM Quantum usage for the run: {{ results.runtime.qpu.execution_seconds | duration }} execution, {{ results.runtime.qpu.charged_seconds | duration }} billed{% if results.runtime.qpu.resource_units is not none %}, {{ "%.2f" | format(results.runtime.qpu.resource_units) }} resource units{% endif %}.{% endif %}</p>
+    {% endif %}
+
     {% if results.limitations %}
     <div class="panel">
       <strong>Limitations</strong>

@@ -15,6 +15,8 @@ KERNEL_SOURCES = {
     "qpu_calibrated": "Quantum kernel: IBM Quantum hardware, calibrated",
 }
 METRICS = ("accuracy", "balanced_accuracy", "precision", "recall", "f1", "average_precision")
+RUNTIME_KEYS = ("fit", "test_kernel", "predict")
+QPU_USAGE_KEYS = ("execution_seconds", "charged_seconds", "resource_units")
 
 
 class ResultsUnavailable(Exception):
@@ -36,6 +38,45 @@ def _is_int(value: object) -> bool:
 
 def _is_text(value: object) -> bool:
     return isinstance(value, str) and value.strip() != ""
+
+
+def _is_duration(value: object) -> bool:
+    return (
+        value is None
+        or isinstance(value, int | float)
+        and not isinstance(value, bool)
+        and isfinite(value)
+        and value >= 0
+    )
+
+
+def _validate_runtime(results: dict) -> None:
+    """Runtimes are optional; rows that report them need the top-level method."""
+    timed = [model for model in results["models"] if "runtime_seconds" in model]
+    for model in timed:
+        seconds = model["runtime_seconds"]
+        _require(
+            isinstance(seconds, dict)
+            and set(seconds) == set(RUNTIME_KEYS)
+            and all(_is_duration(value) for value in seconds.values()),
+            f"runtime_seconds of {model['name']} must hold {list(RUNTIME_KEYS)} as null or "
+            "non-negative numbers.",
+        )
+    runtime = results.get("runtime")
+    if runtime is None:
+        _require(not timed, "Models with runtime_seconds require a runtime object.")
+        return
+    _require(isinstance(runtime, dict), "runtime must be an object.")
+    for key in ("method", "environment"):
+        _require(_is_text(runtime.get(key)), f"runtime.{key} must be a non-empty string.")
+    qpu = runtime.get("qpu")
+    _require(
+        qpu is None
+        or isinstance(qpu, dict)
+        and set(qpu) == set(QPU_USAGE_KEYS)
+        and all(_is_duration(value) for value in qpu.values()),
+        f"runtime.qpu must be null or hold {list(QPU_USAGE_KEYS)} as null or non-negative numbers.",
+    )
 
 
 def _validate_model(index: int, model: object, test_size: int) -> None:
@@ -117,6 +158,8 @@ def validate(results: object) -> dict:
         not uses_qpu or (backend and shots and job_ids),
         "QPU results require hardware.backend, hardware.shots, and at least one job ID.",
     )
+
+    _validate_runtime(results)
 
     limitations = results.get("limitations")
     _require(

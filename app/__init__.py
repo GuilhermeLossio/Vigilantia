@@ -46,6 +46,13 @@ def create_app(
     predictor_factory=None,
 ) -> Flask:
     app = Flask(__name__)
+
+    @app.template_filter("duration")
+    def duration(seconds: float | None) -> str:
+        if seconds is None:
+            return "n/a"
+        return f"{seconds * 1000:.2f} ms" if seconds < 1 else f"{seconds:.1f} s"
+
     app.config["MAX_CONTENT_LENGTH"] = MAX_REQUEST_BYTES
     env = os.environ.get
     results_file = Path(results_path or env("VIGILANTIA_RESULTS_PATH") or DEFAULT_RESULTS_PATH)

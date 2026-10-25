@@ -61,7 +61,7 @@ The project measures predictive quality and computational cost. Classical models
 
 ## About
 
-**Current status: acquisition tooling and the results service implemented; modeling remains in design.** The standard-library downloader, the Flask results service with its Docker image, and their unit tests are implemented, and the original PhiUSIIL snapshot has been downloaded and structurally validated locally. Documentation, CI tooling, an unpinned runtime dependency proposal, and a commented configuration example exist. Feature processing, models, the prediction route, hardware jobs, and cloud resources are not implemented. No benchmark results or working deployment are available yet.
+**Current status: first benchmark run complete; local service implemented.** The dataset downloader, the frozen split and features, the four models, the IBM Quantum run tooling, and the Flask service with its Docker image are implemented and unit-tested. The full benchmark ran on `ibm_fez`, and its quality, runtime, and replay are published. Cloud resources are not implemented, and no deployment exists.
 
 | Item | Decision |
 | --- | --- |
@@ -82,7 +82,7 @@ The project measures predictive quality and computational cost. Classical models
 - [ ] Acquire and attribute the dataset; record checksums, inspection results, and domain-disjoint splits.
 - [ ] Freeze four ordered features, training-fitted preprocessing, and fixed model settings.
 - [x] Compute the training kernel by exact simulation, and obtain the complete test kernel and calibration pairs from IBM Quantum hardware, with job IDs and raw counts.
-- [ ] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime. *Quality and QPU time are published; classical runtimes are recorded locally but not yet published.*
+- [x] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime.
 - [x] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts.
 - [x] Identify any saved QPU predictions exposed in the demo as replay, with sample and source-run metadata.
 - [ ] Document tested environment setup and reproducible acquisition, experiment, and API commands.
@@ -236,7 +236,7 @@ Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four s
 | Training and inference runtime | Computational cost and serving feasibility |
 | Fold and seed variability | Later extension; unavailable in the initial single-seed run |
 
-**Results: complete for the first run.** All results are recorded in the [benchmark protocol](docs/benchmark-protocol.md#recorded-results) and published in `reports/benchmark-results.json`. The RBF SVM scored highest, at 11 of 12. The quantum-kernel SVM scored 6 of 12, chance level, with the simulated kernel and with the kernels measured on `ibm_fez`, uncorrected and calibrated; hardware noise changed no prediction. With 12 test examples, every estimate here is unstable. No advantage claim is made. Reports must include class prevalence, split definitions, thresholds, feature choices, and runtime conditions. Scores will not be described as probabilities without appropriate calibration and evaluation.
+**Results: complete for the first run.** All results are recorded in the [benchmark protocol](docs/benchmark-protocol.md#recorded-results) and published in `reports/benchmark-results.json`. The RBF SVM scored highest, at 11 of 12. The quantum-kernel SVM scored 6 of 12, chance level, with the simulated kernel and with the kernels measured on `ibm_fez`, uncorrected and calibrated; hardware noise changed no prediction. With 12 test examples, every estimate here is unstable. Every model fits and predicts in milliseconds locally; measuring the hardware test kernel took 89.2 s of QPU execution. No advantage claim is made. Reports must include class prevalence, split definitions, thresholds, feature choices, and runtime conditions. Scores will not be described as probabilities without appropriate calibration and evaluation.
 
 ![Benchmark results](docs/benchmark-results.svg)
 
@@ -308,6 +308,7 @@ Vigilantia/
 │   ├── render_results_svg.py
 │   ├── run_qpu.py
 │   ├── scale_benchmark.py
+│   ├── time_benchmark.py
 │   └── train_benchmark.py
 ├── src/
 │   ├── config/
@@ -319,7 +320,8 @@ Vigilantia/
 │   │   ├── inputs.py
 │   │   ├── metrics.py
 │   │   ├── publish.py
-│   │   └── replay.py
+│   │   ├── replay.py
+│   │   └── runtime.py
 │   ├── features/
 │   │   ├── host_features.py
 │   │   └── scaling.py
@@ -345,6 +347,7 @@ Vigilantia/
 │   │   ├── test_render_results_svg.py
 │   │   ├── test_repository_checks.py
 │   │   ├── test_results_app.py
+│   │   ├── test_runtime.py
 │   │   └── test_scaling.py
 │   └── README.md
 ├── .dockerignore
@@ -492,6 +495,14 @@ These commands use real QPU quota. Set `IBM_QUANTUM_BACKEND` in `.env` first, fo
 
 The pilot sends 12 circuits and `evaluate` reports their QPU time and a projection for the full run. If the projection fits the remaining quota, submit the full run with `submit` and no `--pilot`, then retrieve and evaluate it. `retrieve` can be repeated while jobs are queued; it never resubmits. `evaluate` of a full run calibrates the hardware kernel, classifies the test set, and publishes `reports/benchmark-results.json` with the QPU rows. `list` shows recorded runs. Run records, job IDs, and raw counts are kept in the ignored `artifacts/benchmark/qpu-runs/` directory.
 
+After `evaluate`, add measured runtimes to the published file. This is local and makes no IBM call; hardware rows reuse the execution time IBM recorded for the run:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/time_benchmark.py
+```
+
+It times fit, test-kernel computation, and prediction for every row, as the median of 25 repeats, and records the machine and package versions. A new `evaluate` rewrites the results file without runtimes, so run it again afterwards.
+
 Local `.env` variants and project-local provider credential files are ignored by Git; the example remains versionable. Keep real secrets out of the example.
 
 Before the first runnable release, validate the supported Python version and package compatibility, pin dependencies, and document dataset retrieval, API startup, and benchmark commands. Local simulator experiments should be reproducible independently of cloud deployment.
@@ -569,7 +580,7 @@ Tests should cover target mapping, domain isolation, training-only preprocessing
 - [x] Classify the test set with the simulated kernel and publish partial results.
 - [x] Implement hardware kernel acquisition and rehearse it on a fake backend.
 - [x] Collect the complete QPU test and calibration kernels and preserve job/result evidence within the verified Open Plan quota.
-- [ ] Produce reproducible metrics, plots, and runtime comparisons.
+- [x] Produce reproducible metrics, plots, and runtime comparisons.
 - [x] Implement the Flask results service, its container image, and its unit tests.
 - [x] Implement live classical inference for new hosts, with a command-line entry point.
 - [x] Implement and validate the Flask inference route.

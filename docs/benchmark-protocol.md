@@ -216,6 +216,21 @@ Run `full-ibm_fez-20261025T094010Z` sent all 336 circuits to `ibm_fez` in one Sa
 
 Hardware noise shrank the kernel values, as the calibration slope shows, and calibration reduced the kernel error by about a fifth. Many ideal test values are near zero (37% are below 0.02), so mapping noisy values back below the measured intercept clips them to 0; that explains most of the 79 clipped values. The noise did not change any prediction, and the decision scores stayed almost perfectly correlated with the simulation. The quantum-kernel SVM's chance-level result therefore comes from the kernel and features on this split, not from the hardware. No quantum advantage is claimed.
 
+### Runtime
+
+`scripts/time_benchmark.py` measured local wall-clock time on one Windows 10 machine with Python 3.12.10, numpy 2.5.4, scikit-learn 1.9.1, and qiskit 2.6.1, as the median of 25 repeats. Fit covers the 24 training examples and prediction the 12 test examples. The quantum-kernel SVM's fit includes simulating its 24 x 24 training kernel. The hardware test-kernel time is IBM's recorded execution time for all 336 circuits of the run, so it also covers the calibration pairs and diagonal controls; queueing is excluded.
+
+| Model | Source | Fit | Test kernel | Predict |
+| --- | --- | --- | --- | --- |
+| Majority baseline | Classical | 0.08 ms | n/a | 0.01 ms |
+| Logistic regression | Classical | 1.32 ms | n/a | 0.11 ms |
+| RBF SVM | Classical | 0.49 ms | n/a | 0.19 ms |
+| Quantum-kernel SVM | Exact simulation | 9.59 ms | 11.72 ms | 0.15 ms |
+| Quantum-kernel SVM | `ibm_fez` uncorrected | 9.59 ms | 89.2 s | 0.14 ms |
+| Quantum-kernel SVM | `ibm_fez` calibrated | 9.59 ms | 89.2 s | 0.14 ms |
+
+At this size every local step takes milliseconds. Measuring the test kernel on `ibm_fez` took 89.2 s of execution and 92 s of billed QPU time, against 12 ms to simulate it exactly. That gap is expected for four qubits, which a laptop simulates trivially; it says nothing about larger problems.
+
 ## Acceptance checks
 
 - Snapshot attribution and checksum exist; target mapping and feature order are verified.
