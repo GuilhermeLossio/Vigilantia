@@ -67,3 +67,18 @@ def test_notebook_outputs_have_no_errors_or_private_paths(path: Path) -> None:
             assert output["output_type"] != "error", text(output.get("traceback", ""))
             rendered = json.dumps(output)
             assert not PRIVATE_PATH.search(rendered), rendered[:200]
+
+
+def test_reproduction_guide_lists_every_notebook_in_order() -> None:
+    guide = (ROOT / "docs" / "reproducing.md").read_text(encoding="utf-8")
+    positions = [guide.index(f"../notebooks/{name}.ipynb") for name in sorted(EXPECTED)]
+    assert positions == sorted(positions)
+    assert "pip install -r requirements.txt" in guide
+
+
+@pytest.mark.parametrize("path", NOTEBOOKS, ids=lambda path: path.stem)
+def test_committed_notebooks_were_executed_in_order(path: Path) -> None:
+    counts = [
+        cell["execution_count"] for cell in load(path)["cells"] if cell["cell_type"] == "code"
+    ]
+    assert counts == list(range(1, len(counts) + 1))

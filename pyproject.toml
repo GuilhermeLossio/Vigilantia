@@ -13,3 +13,7 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Notebooks add the repository root to sys.path in their first cell, before importing src.
+"notebooks/*.ipynb" = ["E402"]

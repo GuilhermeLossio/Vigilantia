@@ -2,7 +2,11 @@
 
 **Status: complete results published** for run `full-ibm_fez-20261025T094010Z`. `scripts/evaluate_benchmark.py` writes `reports/benchmark-results.json` with the three classical models and the quantum-kernel SVM on the exact simulated kernel. `scripts/run_qpu.py evaluate` adds the uncorrected and calibrated IBM Quantum hardware rows after a full QPU run and marks the file complete; the simulation script then leaves a complete file untouched. `scripts/time_benchmark.py` then adds measured runtimes; a new evaluation removes them until it runs again. Without the file, the service reports the results as pending and shows no values.
 
-Only measured results go in this file. Do not add simulated values labeled as hardware, placeholder numbers, or hand-edited metrics. Raw counts, kernels, and job evidence stay under the ignored `reports/runs/` directory, or in private storage.
+Only measured results go in this file. Do not add simulated values labeled as hardware, placeholder numbers, or hand-edited metrics. Measured kernels and other generated files stay under the ignored `artifacts/` directory.
+
+## QPU evidence
+
+`reports/qpu-evidence/<run-id>/` holds the recorded IBM Quantum runs, the 12-circuit pilot and the 336-circuit full run on `ibm_fez`: `run.json` with the plan, transpilation summary, job IDs, timestamps, and IBM's usage metrics, and `counts-<job-id>.json` with the raw counts of every circuit. The files contain no token, instance, or account identifier. They let anyone rebuild the hardware rows offline; [notebook 04](../notebooks/04-ibm-hardware-results-from-recorded-counts.ipynb) does so and compares the result with this file. `tests/unit/test_qpu_evidence.py` checks that the evidence is complete and consistent with the published hardware section and runtimes.
 
 ## Replay file
 

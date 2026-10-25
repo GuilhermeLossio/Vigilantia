@@ -87,8 +87,18 @@ Vigilantia/
 │   ├── ci-and-branch-protection.md
 │   ├── documentation-checklist.md
 │   ├── quantum-circuit.md
-│   └── quantum-circuit.svg
+│   ├── quantum-circuit.svg
+│   └── reproducing.md
+├── notebooks/
+│   ├── 01-data-and-split.ipynb
+│   ├── 02-features-scaling-and-kernel.ipynb
+│   ├── 03-training-and-simulated-evaluation.ipynb
+│   ├── 04-ibm-hardware-results-from-recorded-counts.ipynb
+│   └── 05-live-inference-runtime-and-service.ipynb
 ├── reports/
+│   ├── qpu-evidence/
+│   │   ├── full-ibm_fez-20261025T094010Z/
+│   │   └── pilot-ibm_fez-20261025T092140Z/
 │   ├── benchmark-replay.json
 │   ├── benchmark-results.json
 │   └── README.md
@@ -137,11 +147,14 @@ Vigilantia/
 │   │   ├── test_download_dataset.py
 │   │   ├── test_download_dataset_cli.py
 │   │   ├── test_hardware_and_metrics.py
+│   │   ├── test_notebooks.py
 │   │   ├── test_predictor.py
+│   │   ├── test_qpu_evidence.py
 │   │   ├── test_qpu_run.py
 │   │   ├── test_quantum_kernel.py
 │   │   ├── test_render_results_svg.py
 │   │   ├── test_repository_checks.py
+│   │   ├── test_requirements.py
 │   │   ├── test_results_app.py
 │   │   ├── test_runtime.py
 │   │   └── test_scaling.py
