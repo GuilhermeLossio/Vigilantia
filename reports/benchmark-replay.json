@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "label": "replay of recorded predictions; not live inference",
+  "model": "quantum_kernel_svm",
+  "generated_at_utc": "2026-10-25T10:01:26.492109+00:00",
+  "source_runs": {
+    "simulation": "sim-d36aedc6",
+    "qpu": "full-ibm_fez-20261025T094010Z",
+    "backend": "ibm_fez"
+  },
+  "samples": [
+    {
+      "position": 0,
+      "row_index": 15517,
+      "group_hash": "fd393998db75545c",
+      "is_phishing": 0,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.3006140509607993
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.24508410971177225
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.14899558117808653
+        }
+      }
+    },
+    {
+      "position": 1,
+      "row_index": 174792,
+      "group_hash": "b2d1a9ba5000a09a",
+      "is_phishing": 0,
+      "predictions": {
+        "simulation": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.8756525251516517
+        },
+        "qpu": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.596884329048713
+        },
+        "qpu_calibrated": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.7580893730358539
+        }
+      }
+    },
+    {
+      "position": 2,
+      "row_index": 217648,
+      "group_hash": "84d275114cab3730",
+      "is_phishing": 0,
+      "predictions": {
+        "simulation": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -1.108566792638472
+        },
+        "qpu": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.9790871550795736
+        },
+        "qpu_calibrated": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -1.2482604325715458
+        }
+      }
+    },
+    {
+      "position": 3,
+      "row_index": 161204,
+      "group_hash": "c660c6c6a7b6fffe",
+      "is_phishing": 0,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 1.0002145353129817
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.9414208595260005
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.9298757024713857
+        }
+      }
+    },
+    {
+      "position": 4,
+      "row_index": 94665,
+      "group_hash": "010ccedeafebd986",
+      "is_phishing": 0,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.5786672048374208
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.5992978813897967
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.6794093307219309
+        }
+      }
+    },
+    {
+      "position": 5,
+      "row_index": 18899,
+      "group_hash": "9a021f91155117e4",
+      "is_phishing": 0,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.5446771658845325
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.48547366725398466
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.5534756374878841
+        }
+      }
+    },
+    {
+      "position": 6,
+      "row_index": 219334,
+      "group_hash": "55624b9e9738e434",
+      "is_phishing": 1,
+      "predictions": {
+        "simulation": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.7262076259295017
+        },
+        "qpu": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.5742057526909264
+        },
+        "qpu_calibrated": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.7397226077654365
+        }
+      }
+    },
+    {
+      "position": 7,
+      "row_index": 41538,
+      "group_hash": "e51ce3301401094b",
+      "is_phishing": 1,
+      "predictions": {
+        "simulation": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.21294423911818827
+        },
+        "qpu": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.17569899073823214
+        },
+        "qpu_calibrated": {
+          "prediction": "legitimate",
+          "is_phishing": 0,
+          "decision_score": -0.25052654285984644
+        }
+      }
+    },
+    {
+      "position": 8,
+      "row_index": 121258,
+      "group_hash": "62c0d81c126f3930",
+      "is_phishing": 1,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.34159102325080326
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.24990124661604057
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.09050080903184865
+        }
+      }
+    },
+    {
+      "position": 9,
+      "row_index": 235425,
+      "group_hash": "0efd30f928e7c167",
+      "is_phishing": 1,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.552690913928906
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.5050395114215461
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.5200062726901874
+        }
+      }
+    },
+    {
+      "position": 10,
+      "row_index": 166805,
+      "group_hash": "e845723dda3918d3",
+      "is_phishing": 1,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.275739526860598
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.4470543391082967
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.4552962667412103
+        }
+      }
+    },
+    {
+      "position": 11,
+      "row_index": 88834,
+      "group_hash": "79a39c435af85683",
+      "is_phishing": 1,
+      "predictions": {
+        "simulation": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.8205082446394714
+        },
+        "qpu": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.7374625398269932
+        },
+        "qpu_calibrated": {
+          "prediction": "phishing",
+          "is_phishing": 1,
+          "decision_score": 0.7985906762724292
+        }
+      }
+    }
+  ]
+}

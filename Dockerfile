@@ -1,4 +1,6 @@
-# Read-only results service. Serves reports/benchmark-results.json; runs no models or quantum jobs.
+# Flask service: recorded results, replay, chart, and live classical inference.
+# Trained models are not baked in; mount artifacts/benchmark read-only to enable prediction.
+# The service never trains models, fetches URLs, or submits quantum jobs.
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -13,6 +15,11 @@ RUN python -m pip install -r requirements-app.txt
 
 COPY app/ app/
 COPY reports/ reports/
+COPY src/__init__.py src/__init__.py
+COPY src/features/ src/features/
+COPY src/inference/ src/inference/
+COPY configs/feature-scaler.json configs/feature-scaler.json
+COPY docs/benchmark-results.svg docs/benchmark-results.svg
 
 RUN useradd --system --uid 10001 --no-create-home vigilantia
 USER 10001

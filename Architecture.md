@@ -23,7 +23,7 @@ The acquisition entry point `scripts/download_dataset.py` is implemented: it sta
 - **Models (`src/models/`)**: majority baseline, logistic regression, RBF SVM, and SVM with a precomputed quantum kernel. The four models and the exact training kernel in `src/quantum/` are implemented and fitted. The training kernel comes from exact simulation; the test kernel comes from the QPU. Validate four-qubit circuit logic in simulation before hardware acquisition.
 - **Hardware acquisition (`src/quantum/hardware.py`, `src/quantum/qpu_run.py`)**: implemented and rehearsed on a fake backend. `scripts/run_qpu.py` submits a pilot or the full run with confirmation, saves job IDs immediately, retrieves without resubmitting, and publishes evaluated results. Qiskit Runtime sampler jobs (SamplerV2 or its client-side replacement), ISA transpilation, job/result mapping, raw counts, and resumable retrieval on the intended Open Plan instance.
 - **Evaluation (`reports/`, `configs/`, `notebooks/`)**: frozen configurations, one domain-disjoint held-out evaluation, predictive metrics, and runtime reporting. No tuning or fold/seed variability estimate in the initial run.
-- **Serving (`app/`)**: the Flask results service is implemented. It validates and publishes recorded benchmark results, labeling each result's source, and runs in a Docker image with Gunicorn. Live classical inference is implemented in `src/inference/predictor.py` with host validation, feature range reporting, and a model version derived from the artifacts; `scripts/predict_host.py` exposes it on the command line. The Flask prediction route remains planned. Proposed routes are documented in the [README](README.md#api).
+- **Serving (`app/`)**: implemented. The Flask service publishes the validated results and chart, shows recorded quantum-kernel SVM test predictions as replay with their source runs, and serves live classical inference through `POST /v1/phishing/predict` and a page form. Inference lives in `src/inference/predictor.py`, with host validation, feature range reporting, and a model version derived from the artifacts; `scripts/predict_host.py` exposes it on the command line. The Docker image runs Gunicorn as a non-root user; trained models are mounted read-only rather than baked in. Proposed routes are documented in the [README](README.md#api).
 - **Later evidence checks (`src/exposure/`)**: consistency checks and reference-record matches on fictitious samples, with incident replay for human review.
 - **Later infrastructure (`infra/`)**: proposed AWS deployment. The results container would run on Amazon ECS Express Mode, which provisions Fargate tasks and an HTTPS load balancer; ECR, S3, CloudWatch, and IAM support it, and DynamoDB is optional. Nothing has been deployed.
 
@@ -73,6 +73,7 @@ Vigilantia/
 │   ├── templates/
 │   │   └── index.html
 │   ├── __init__.py
+│   ├── replay.py
 │   └── results.py
 ├── configs/
 │   ├── benchmark-split.json
@@ -88,6 +89,7 @@ Vigilantia/
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
 ├── reports/
+│   ├── benchmark-replay.json
 │   ├── benchmark-results.json
 │   └── README.md
 ├── scripts/
@@ -97,6 +99,7 @@ Vigilantia/
 │   ├── evaluate_benchmark.py
 │   ├── predict_host.py
 │   ├── prepare_benchmark.py
+│   ├── publish_replay.py
 │   ├── rehearse_hardware.py
 │   ├── render_results_svg.py
 │   ├── run_qpu.py
@@ -111,7 +114,8 @@ Vigilantia/
 │   ├── evaluation/
 │   │   ├── inputs.py
 │   │   ├── metrics.py
-│   │   └── publish.py
+│   │   ├── publish.py
+│   │   └── replay.py
 │   ├── features/
 │   │   ├── host_features.py
 │   │   └── scaling.py
@@ -125,6 +129,7 @@ Vigilantia/
 │       └── qpu_run.py
 ├── tests/
 │   ├── unit/
+│   │   ├── test_app_inference_replay.py
 │   │   ├── test_benchmark_split.py
 │   │   ├── test_check_ibm_access.py
 │   │   ├── test_download_dataset.py

@@ -1,9 +1,14 @@
-# Only app/, reports/ and requirements-app.txt are copied into the image.
+# Only the files the Dockerfile copies are allowed into the build context.
 # Everything else is excluded from the build context to keep data and secrets out.
 *
 !app/
 !reports/
 !requirements-app.txt
+!src/__init__.py
+!src/features/
+!src/inference/
+!configs/feature-scaler.json
+!docs/benchmark-results.svg
 **/__pycache__/
 **/*.pyc
 reports/runs/

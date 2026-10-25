@@ -4,6 +4,10 @@
 
 Only measured results go in this file. Do not add simulated values labeled as hardware, placeholder numbers, or hand-edited metrics. Raw counts, kernels, and job evidence stay under the ignored `reports/runs/` directory, or in private storage.
 
+## Replay file
+
+`scripts/publish_replay.py` writes `reports/benchmark-replay.json` from the frozen test rows, the simulated evaluation, and the latest full QPU run. It holds, for each of the 12 test samples, the true label and the quantum-kernel SVM prediction and decision margin per source: simulation, QPU uncorrected, and QPU calibrated. Samples are identified by test position, dataset row index, and hashed domain group, never by host or URL. The file is labeled replay and names its source runs; `app/replay.py` validates it, and the page and `GET /v1/benchmarks/replay` present it as replay, not live inference.
+
 ## Results contract (schema version 1)
 
 The service validates the file on every request; `app/results.py` is the reference implementation. A file that fails validation is reported as invalid and is never partially displayed.

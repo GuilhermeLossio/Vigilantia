@@ -83,8 +83,8 @@ The project measures predictive quality and computational cost. Classical models
 - [ ] Freeze four ordered features, training-fitted preprocessing, and fixed model settings.
 - [x] Compute the training kernel by exact simulation, and obtain the complete test kernel and calibration pairs from IBM Quantum hardware, with job IDs and raw counts.
 - [ ] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime. *Quality and QPU time are published; classical runtimes are recorded locally but not yet published.*
-- [ ] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts. *Inference core and command line implemented and tested; the Flask route is pending.*
-- [ ] Identify any saved QPU predictions exposed in the demo as replay, with sample and source-run metadata.
+- [x] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts.
+- [x] Identify any saved QPU predictions exposed in the demo as replay, with sample and source-run metadata.
 - [ ] Document tested environment setup and reproducible acquisition, experiment, and API commands.
 
 Simulator diagnostics alone do not complete the hardware criterion. Exposure analysis, incident replay, and AWS deployment belong to later phases. See the [benchmark protocol](docs/benchmark-protocol.md) for acceptance checks.
@@ -246,18 +246,20 @@ The chart shows test accuracy per model with the source of each result, the meas
 
 ## API
 
-**Partially implemented.** The Flask results service in `app/` serves `GET /health`, `GET /v1/benchmarks`, and a results page at `/`. It reads the [published results file](reports/README.md), validates it, and reports results as pending until the benchmark writes it. The other routes remain proposed.
+**MVP routes implemented.** The Flask service in `app/` reads the [published results and replay files](reports/README.md), validates them on every request, and reports them as pending until they exist. Live prediction loads the trained classical model on first use; without the model artifacts it answers `503 model_unavailable` while the rest of the service keeps working. Request bodies are limited to 2 KB, and the content security policy allows no scripts.
 
 | Method | Route | Planned behavior |
 | --- | --- | --- |
 | `GET` | `/health` | Application liveness |
-| `POST` | `/v1/phishing/predict` | MVP: validate structured features and return classical live inference with model version and score semantics |
+| `POST` | `/v1/phishing/predict` | Implemented: `{"host": "..."}` returns the RBF SVM prediction, decision margin, features, out-of-range features, and model version; `400` for invalid input, `503` without model artifacts |
 | `POST` | `/v1/exposure/analyze` | Later phase: consistency and reference-match checks on controlled samples |
 | `GET` | `/v1/incidents` | Later phase: demonstration incidents and review states |
 | `GET` | `/v1/benchmarks` | Implemented: return validated recorded results, `503` while pending, `500` for an invalid file |
-| `GET` | `/` | Implemented: results page labeling the source of every result |
+| `GET` | `/v1/benchmarks/replay` | Implemented: recorded quantum-kernel SVM test predictions per source, labeled replay, with source runs |
+| `GET` | `/benchmark.svg` | Implemented: the generated benchmark chart |
+| `GET` | `/` | Implemented: host form, results page with chart and sources, and the replay table |
 
-The feature schema will be finalized after inspecting PhiUSIIL. Invalid input and unavailable artifacts must be distinguishable from a classification result. Saved quantum benchmark predictions belong to recorded benchmark results and must identify their sample and run as replay. Training and hardware benchmark jobs will not run inside prediction requests. The later exposure module will return evidence observations, not authentication verdicts.
+The features are computed from the host alone; the page is never fetched. Invalid input and unavailable artifacts are distinguishable from a classification result. Saved quantum benchmark predictions belong to recorded benchmark results and must identify their sample and run as replay. Training and hardware benchmark jobs will not run inside prediction requests. The later exposure module will return evidence observations, not authentication verdicts.
 
 ## Repository Structure
 
@@ -275,6 +277,7 @@ Vigilantia/
 │   ├── templates/
 │   │   └── index.html
 │   ├── __init__.py
+│   ├── replay.py
 │   └── results.py
 ├── configs/
 │   ├── benchmark-split.json
@@ -290,6 +293,7 @@ Vigilantia/
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
 ├── reports/
+│   ├── benchmark-replay.json
 │   ├── benchmark-results.json
 │   └── README.md
 ├── scripts/
@@ -299,6 +303,7 @@ Vigilantia/
 │   ├── evaluate_benchmark.py
 │   ├── predict_host.py
 │   ├── prepare_benchmark.py
+│   ├── publish_replay.py
 │   ├── rehearse_hardware.py
 │   ├── render_results_svg.py
 │   ├── run_qpu.py
@@ -313,7 +318,8 @@ Vigilantia/
 │   ├── evaluation/
 │   │   ├── inputs.py
 │   │   ├── metrics.py
-│   │   └── publish.py
+│   │   ├── publish.py
+│   │   └── replay.py
 │   ├── features/
 │   │   ├── host_features.py
 │   │   └── scaling.py
@@ -327,6 +333,7 @@ Vigilantia/
 │       └── qpu_run.py
 ├── tests/
 │   ├── unit/
+│   │   ├── test_app_inference_replay.py
 │   │   ├── test_benchmark_split.py
 │   │   ├── test_check_ibm_access.py
 │   │   ├── test_download_dataset.py
@@ -381,9 +388,9 @@ python scripts/download_dataset.py
 
 This command uses only the standard library and writes the original ZIP, CSV, and `acquisition.json` to `data/raw/`. It can run before installing runtime dependencies. Repeating it verifies and reuses an intact snapshot without a new download. Partial or modified snapshots fail with an explanation and are preserved. The [data guide](data/README.md) explains recovery and validation boundaries.
 
-### Run the results service
+### Run the Flask service
 
-The Flask results service needs only the pinned dependencies in `requirements-app.txt`. Until `reports/benchmark-results.json` exists, the page and `/v1/benchmarks` report the results as pending.
+The Flask service needs the pinned dependencies in `requirements-app.txt`. Until the results and replay files exist, the page and the JSON routes report them as pending. Live prediction needs the trained models in `artifacts/benchmark/`, produced by `scripts/train_benchmark.py`.
 
 ```powershell
 python -m pip install -r requirements-app.txt
@@ -393,11 +400,11 @@ python -m flask --app "app:create_app()" run --port 8000
 Or build and run the container, which serves on port 8000 with Gunicorn as a non-root user:
 
 ```powershell
-docker build -t vigilantia-results .
-docker run --rm -p 8000:8000 vigilantia-results
+docker build -t vigilantia .
+docker run --rm -p 8000:8000 -v "${PWD}/artifacts/benchmark:/srv/vigilantia/artifacts/benchmark:ro" vigilantia
 ```
 
-Open `http://127.0.0.1:8000/`. Set `VIGILANTIA_RESULTS_PATH` to read results from another file.
+The image contains the code, the fitted scaler, the published results, the replay, and the chart, but not the trained models; the read-only mount provides them. Without the mount, prediction answers `503`. Open `http://127.0.0.1:8000/`. `VIGILANTIA_RESULTS_PATH`, `VIGILANTIA_REPLAY_PATH`, and `VIGILANTIA_CHART_PATH` override the file locations. After a new evaluation, refresh the replay with `scripts/publish_replay.py`.
 
 ### Build the benchmark sample
 
@@ -565,9 +572,9 @@ Tests should cover target mapping, domain isolation, training-only preprocessing
 - [ ] Produce reproducible metrics, plots, and runtime comparisons.
 - [x] Implement the Flask results service, its container image, and its unit tests.
 - [x] Implement live classical inference for new hosts, with a command-line entry point.
-- [ ] Implement and validate the Flask inference route.
-- [ ] Show the benchmark chart in the Flask results page.
-- [ ] Validate classical live inference and clearly labeled saved quantum predictions.
+- [x] Implement and validate the Flask inference route.
+- [x] Show the benchmark chart in the Flask results page.
+- [x] Validate classical live inference and clearly labeled saved quantum predictions.
 - [ ] Complete notebooks and verified environment instructions.
 - [x] Include the MIT code license.
 - [ ] Publish the repository, record the demo, and submit.
