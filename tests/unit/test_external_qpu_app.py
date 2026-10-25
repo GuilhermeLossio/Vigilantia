@@ -21,7 +21,7 @@ PUBLISHED = ROOT / "reports" / "external-qpu-subset.json"
 EXTERNAL = ROOT / "reports" / "external-validation.json"
 REPORT = json.loads(PUBLISHED.read_text(encoding="utf-8"))
 EXTERNAL_REPORT = json.loads(EXTERNAL.read_text(encoding="utf-8"))
-HEADING = "<h2>External subset on IBM Quantum hardware</h2>"
+HEADING = ">External subset on IBM Quantum hardware</h2>"
 SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"></svg>'
 
 
@@ -43,7 +43,7 @@ def client_for(tmp_path: Path, subset: Path, external: Path = EXTERNAL, comparis
 
 
 def section(page: str) -> str:
-    return page.split(HEADING, 1)[1].split("<h2>Replay", 1)[0]
+    return page.split(HEADING, 1)[1].split(">Replay:", 1)[0]
 
 
 def mutated(change) -> dict:
@@ -167,7 +167,7 @@ def test_reading_without_the_external_report_omits_the_full_set(tmp_path: Path) 
 
 def test_section_follows_external_validation(tmp_path: Path) -> None:
     page = client_for(tmp_path, PUBLISHED).get("/").get_data(as_text=True)
-    assert page.index("<h2>External validation</h2>") < page.index(HEADING) < page.index("Replay:")
+    assert page.index(">External validation</h2>") < page.index(HEADING) < page.index("Replay:")
     assert "<code>/v1/external-validation/qpu</code>" in page
 
 

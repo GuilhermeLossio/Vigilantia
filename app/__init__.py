@@ -3,6 +3,7 @@ validation report and its hardware subset, and live classical inference for new 
 
 from __future__ import annotations
 
+import mimetypes
 import os
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from app import replay as replay_module
 from app import results as results_module
 
 ROOT = Path(__file__).resolve().parents[1]
+mimetypes.add_type("font/woff2", ".woff2")  # self-hosted Cinzel; some systems lack this mapping
 DEFAULT_RESULTS_PATH = ROOT / "reports" / "benchmark-results.json"
 DEFAULT_REPLAY_PATH = ROOT / "reports" / "benchmark-replay.json"
 DEFAULT_EXTERNAL_PATH = ROOT / "reports" / "external-validation.json"
@@ -23,18 +25,73 @@ DEFAULT_COMPARISON_CHART_PATH = ROOT / "docs" / "model-comparison.svg"
 MAX_REQUEST_BYTES = 2048
 SECURITY_HEADERS = {
     "Content-Security-Policy": (
-        "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; "
+        "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; font-src 'self'; "
         "base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
     ),
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
 }
 STATUS_CODES = {None: 200, "results_unavailable": 503, "results_invalid": 500}
+# CSS class of each result source on the page; text colours stay legible on the parchment theme.
+SOURCE_CLASS = {"classical": "", "simulation": "sim", "qpu": "hw", "qpu_calibrated": "hw"}
 REPLAY_LABELS = {
     "simulation": "Simulation",
     "qpu": "QPU, uncorrected",
     "qpu_calibrated": "QPU, calibrated",
 }
+
+
+def _best(models: list[dict], sources: set[str]) -> dict | None:
+    rows = [
+        m for m in models if m["kernel_source"] in sources and m["metrics"]["accuracy"] is not None
+    ]
+    return max(rows, key=lambda m: m["metrics"]["accuracy"], default=None)
+
+
+def headline_stats(results: dict | None, external: dict | None, subset: dict | None) -> list[dict]:
+    """Headline figures for the page header, read from the validated reports only."""
+    stats = []
+    if results:
+        n = results["split"]["test"]
+        for sources, label, hardware in (
+            ({"classical"}, "Best classical", False),
+            ({"qpu_calibrated"}, "Quantum-kernel SVM, IBM hardware calibrated", True),
+        ):
+            row = _best(results["models"], sources)
+            if row:
+                name = f" ({row['name']})" if not hardware else ""
+                stats.append(
+                    {
+                        "value": f"{row['metrics']['accuracy']:.3f}",
+                        "label": f"{label}{name} · benchmark accuracy, n={n}",
+                        "hardware": hardware,
+                    }
+                )
+    if external:
+        row = _best(external["models"], {"classical"})
+        if row:
+            rows = external["preparation"]["primary_rows"]
+            stats.append(
+                {
+                    "value": f"{row['metrics']['accuracy']:.3f}",
+                    "label": f"Best classical ({row['name']}) · external accuracy, n={rows:,}",
+                    "hardware": False,
+                }
+            )
+    billed = [
+        r["runtime"]["qpu"]["charged_seconds"]
+        for r in (results, subset)
+        if r and (r.get("runtime") or {}).get("qpu")
+    ]
+    if billed and all(value is not None for value in billed):
+        stats.append(
+            {
+                "value": f"{sum(billed):.0f} s",
+                "label": "IBM Quantum time billed · benchmark and external subset runs",
+                "hardware": True,
+            }
+        )
+    return stats
 
 
 def _default_predictor():
@@ -197,6 +254,8 @@ def create_app(
             subset_sources=results_module.KERNEL_SOURCES,
             subset_labels=external_qpu_module.HARDWARE_LABELS,
             comparison_chart=comparison_file.is_file(),
+            source_class=SOURCE_CLASS,
+            stats=headline_stats(results, external, subset),
             query=query,
             prediction=prediction,
             prediction_status=prediction_status,

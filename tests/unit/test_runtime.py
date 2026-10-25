@@ -111,7 +111,7 @@ def test_page_shows_runtime_table(tmp_path, measured) -> None:
     publish.write(timed, path)
     page = create_app(path, tmp_path / "none.json", tmp_path / "none.svg").test_client()
     text = page.get("/").get_data(as_text=True)
-    assert "<h2>Runtime</h2>" in text
+    assert "<h3>Runtime</h3>" in text
     assert "80.5 s execution, 90.0 s billed, 1.50 resource units" in text
     assert "test machine" in text
 

@@ -2,6 +2,8 @@
 
 **MVP routes implemented.** The Flask service in `app/` reads the [published results, replay, external-validation, and hardware-subset files](../reports/README.md), validates them on every request, and reports them as pending until they exist. Live prediction loads the trained classical model on first use; without the model artifacts it answers `503 model_unavailable` while the rest of the service keeps working. Request bodies are limited to 2 KB, and the content security policy allows no scripts.
 
+The page follows the visual style of the [author's portfolio](https://guilhermelossio.github.io/GuilhermeLossio/): a forest-green frame, a parchment page, brass rules, and Cinzel headings over Georgia text. Its header shows headline figures computed from the validated reports and links to each section. Cinzel is self-hosted from `app/static/fonts/` under the SIL Open Font License (`OFL.txt` alongside the font), so the page loads nothing from other origins: the policy adds only `font-src 'self'`. The page declares a light color scheme, so it and its charts keep the parchment theme when the operating system uses dark mode.
+
 The service never trains models, fetches URLs, or submits quantum jobs. It runs locally; AWS deployment is a later phase described in the [roadmap](roadmap.md#deployment-strategy).
 
 ## API

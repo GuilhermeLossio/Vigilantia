@@ -130,6 +130,10 @@ Vigilantia/
 │   │   └── ci.yml
 │   └── dependabot.yml
 ├── app/
+│   ├── static/
+│   │   └── fonts/
+│   │       ├── cinzel-latin.woff2
+│   │       └── OFL.txt
 │   ├── templates/
 │   │   └── index.html
 │   ├── __init__.py
@@ -241,6 +245,7 @@ Vigilantia/
 │   │   ├── test_external_script.py
 │   │   ├── test_hardware_and_metrics.py
 │   │   ├── test_notebooks.py
+│   │   ├── test_page_theme.py
 │   │   ├── test_predictor.py
 │   │   ├── test_published_docs.py
 │   │   ├── test_qpu_evidence.py

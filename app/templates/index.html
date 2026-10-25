@@ -3,39 +3,107 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
   <title>Vigilantia Benchmark</title>
   <style>
-    :root { --fg: #1f2328; --muted: #57606a; --line: #d0d7de; --bg: #ffffff; --panel: #f6f8fa; --accent: #2563eb; --warn: #9a6700; --hw: #c2410c; }
-    @media (prefers-color-scheme: dark) {
-      :root { --fg: #e6edf3; --muted: #9da7b3; --line: #30363d; --bg: #0d1117; --panel: #161b22; --accent: #58a6ff; --warn: #d29922; --hw: #fb923c; }
+    /* Theme after the author's portfolio: forest frame, parchment codex, brass rules, Cinzel display type. */
+    @font-face { font-family: "Cinzel"; src: url("{{ url_for('static', filename='fonts/cinzel-latin.woff2') }}") format("woff2"); font-weight: 400 700; font-display: swap; }
+    :root {
+      color-scheme: light;
+      --night: #17231b; --forest: #293d2e; --paper: #f2e8ce; --paper-light: #faf5e7;
+      --ink: #253025; --muted: #53604a; --brass: #a58143; --brass-light: #d0b475; --accent: #783d30;
+      --line: rgba(110, 85, 43, 0.35); --sim: #1f5fa8; --hw: #8a3b12;
+      --display: "Cinzel", Georgia, serif;
     }
-    body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 "Segoe UI", Helvetica, Arial, sans-serif; }
-    main { max-width: 1080px; margin: 0 auto; padding: 32px 16px; }
-    h1 { margin: 0 0 4px; font-size: 26px; }
-    h2 { margin: 32px 0 8px; font-size: 19px; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+    body { margin: 0; background: radial-gradient(ellipse at 50% 0%, #354532, var(--night) 65%) fixed; color: var(--ink); font: 16px/1.6 Georgia, serif; }
+    a { color: var(--accent); }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.25; margin: 0; }
+    .page-shell { width: min(1180px, calc(100% - 32px)); margin: 16px auto 32px; }
+    .site-header { position: sticky; top: 8px; z-index: 20; margin-bottom: 16px; }
+    .nav { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; padding: 8px 16px; color: var(--paper); background: var(--forest); border: 1px solid var(--brass); box-shadow: 0 8px 24px #0002; }
+    .nav a:focus-visible { outline-color: var(--brass-light); }
+    .sigil { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--brass-light); font: 600 15px var(--display); color: var(--brass-light); text-decoration: none; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 4px 20px; flex: 1; font: 600 12px var(--display); letter-spacing: 0.09em; text-transform: uppercase; }
+    .nav-links a { display: flex; align-items: center; min-height: 40px; color: var(--paper); text-decoration: none; }
+    .nav-links a:hover { color: var(--brass-light); }
+    .codex { position: relative; background: var(--paper); border: 1px solid var(--brass); box-shadow: 0 0 0 4px var(--night), 0 0 0 5px var(--brass), 0 28px 70px #0004; }
+    .codex:after { content: ""; position: absolute; inset: 12px; border: 1px solid var(--line); pointer-events: none; }
+    .manuscript-section { position: relative; padding: 44px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 8px; }
+    .manuscript-section:last-of-type { border-bottom: 0; }
+    .container { width: min(1040px, calc(100% - 64px)); margin-inline: auto; }
+    .eyebrow { margin: 0 0 6px; font: 600 12px var(--display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+    .hero { text-align: center; padding-top: 56px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: 0.04em; }
+    .hero h1 span { color: var(--accent); }
+    .subtitle { margin: 6px 0 0; font: 600 14px var(--display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .lead { max-width: 760px; margin: 18px auto 0; font-size: 17px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 28px 0 0; padding: 0; list-style: none; text-align: left; }
+    .stat { padding: 14px 16px; background: var(--paper-light); border: 1px solid var(--line); border-top: 3px solid var(--forest); }
+    .stat.hwstat { border-top-color: var(--hw); }
+    .stat b { display: block; font: 600 26px var(--display); color: var(--ink); }
+    .stat span { display: block; font-size: 13px; color: var(--muted); }
+    h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); margin-bottom: 12px; }
+    h3 { font-size: 1.05rem; margin: 24px 0 8px; }
+    p { margin: 0 0 12px; }
     .muted { color: var(--muted); }
-    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 16px 0; }
-    .notice { border-left: 4px solid var(--warn); }
-    .table-wrap { overflow-x: auto; }
-    table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+    .panel { background: var(--paper-light); border: 1px solid var(--line); padding: 14px 16px; margin: 14px 0; }
+    .notice { border-left: 3px solid var(--accent); }
+    .plate { margin: 18px 0; padding: 10px; background: var(--paper-light); border: 1px solid var(--brass); box-shadow: inset 0 0 0 4px var(--paper-light), inset 0 0 0 5px var(--line); }
+    .chart { display: block; width: 100%; height: auto; }
+    .table-wrap { overflow-x: auto; margin: 12px 0; border: 1px solid var(--line); background: var(--paper-light); }
+    table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 15px; }
+    th { font: 600 11px var(--display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: #ebdfbf; }
     th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: right; white-space: nowrap; }
+    th { white-space: normal; vertical-align: bottom; }
+    tbody tr:last-child td { border-bottom: 0; }
     th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
-    .tag { font-size: 12px; color: var(--accent); }
-    .hw { color: var(--hw); }
-    .chart { width: 100%; height: auto; border-radius: 10px; }
-    form { display: flex; gap: 8px; flex-wrap: wrap; }
-    input[type=text] { flex: 1 1 280px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); font: inherit; }
-    button { padding: 8px 16px; border: 1px solid var(--accent); border-radius: 6px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
-    code { font-size: 13px; }
+    .tag { font-size: 13px; color: var(--muted); }
+    .tag.sim { color: var(--sim); }
+    .hw, .tag.hw { color: var(--hw); }
     .ci { font-size: 12px; }
+    form { display: flex; gap: 10px; flex-wrap: wrap; }
+    input[type=text] { flex: 1 1 280px; min-height: 46px; padding: 10px 12px; border: 1px solid var(--brass); background: var(--paper-light); color: var(--ink); font: inherit; }
+    button { min-height: 46px; padding: 10px 22px; border: 1px solid var(--forest); background: var(--forest); color: var(--paper-light); font: 600 12px var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+    button:hover { background: #3b513a; }
+    code { font-size: 13px; background: #ebdfbf; padding: 1px 4px; }
+    ul { margin: 6px 0 0; padding-left: 20px; }
+    .site-footer { padding: 24px 16px 32px; text-align: center; font-size: 14px; color: var(--brass-light); }
+    .site-footer code { background: var(--forest); color: var(--paper); }
+    @media (max-width: 640px) { .site-header { position: static; } .container { width: calc(100% - 40px); } .manuscript-section { padding: 32px 0; } .nav { gap: 10px; } }
   </style>
 </head>
 <body>
-<main>
-  <h1>Vigilantia benchmark results</h1>
-  <p class="muted">Phishing URL classification: classical baselines and a hybrid quantum-kernel SVM, trained classically and classifying with kernels measured on IBM Quantum hardware.</p>
+<div class="page-shell">
+  <header class="site-header">
+    <nav class="nav" aria-label="Sections">
+      <a class="sigil" href="#top" aria-label="Vigilantia, top of page">VG</a>
+      <div class="nav-links">
+        <a href="#classify">Classify</a><a href="#benchmark">Benchmark</a><a href="#external">External validation</a><a href="#hardware">IBM hardware</a><a href="#replay">Replay</a>
+      </div>
+    </nav>
+  </header>
+<main id="top" class="codex">
+  <section class="manuscript-section hero" aria-labelledby="hero-title">
+    <div class="container">
+      <p class="eyebrow">Quantum machine learning · Financial security</p>
+      <h1 id="hero-title">Vigil<span>antia</span></h1>
+      <p class="subtitle">Benchmark results</p>
+      <p class="lead">Phishing URL classification: classical baselines and a hybrid quantum-kernel SVM, trained classically and classifying with kernels measured on IBM Quantum hardware. Every number below names its source.</p>
+      {% if stats %}
+      <ul class="stats">
+        {% for stat in stats %}<li class="stat{{ ' hwstat' if stat.hardware else '' }}"><b>{{ stat.value }}</b><span>{{ stat.label }}</span></li>{% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  </section>
 
-  <h2>Classify a host</h2>
+  <section class="manuscript-section" id="classify" aria-labelledby="classify-title">
+  <div class="container">
+  <p class="eyebrow">Live inference · classical model</p>
+  <h2 id="classify-title">Classify a host</h2>
   <div class="panel">
     <form method="get" action="/">
       <input type="text" name="host" value="{{ query }}" maxlength="2048" placeholder="example.com or https://login.example.web.app/" aria-label="Host or URL">
@@ -56,7 +124,13 @@
     {% endif %}
   </div>
 
-  <h2>Recorded benchmark</h2>
+  </div>
+  </section>
+
+  <section class="manuscript-section" id="benchmark" aria-labelledby="benchmark-title">
+  <div class="container">
+  <p class="eyebrow">PhiUSIIL · 24 training, 12 test examples</p>
+  <h2 id="benchmark-title">Recorded benchmark</h2>
   {% if error == "results_unavailable" %}
     <div class="panel notice"><strong>Results pending.</strong> {{ detail }} No simulated or placeholder values are shown in their place.</div>
   {% elif error == "results_invalid" %}
@@ -69,7 +143,7 @@
       {% if results.status == "partial" %}<div><strong>Partial run:</strong> some results are missing; see the limitations below.</div>{% endif %}
     </div>
 
-    {% if chart %}<img class="chart" src="/benchmark.svg" alt="Charts of test accuracy per model, kernel error against the exact simulation, and IBM Quantum time used.">{% endif %}
+    {% if chart %}<figure class="plate"><img class="chart" src="/benchmark.svg" alt="Charts of test accuracy per model, kernel error against the exact simulation, and IBM Quantum time used."></figure>{% endif %}
 
     <div class="table-wrap">
       <table>
@@ -80,7 +154,7 @@
         {% for model in results.models %}
           <tr>
             <td>{{ model.name }}</td>
-            <td><span class="tag">{{ sources[model.kernel_source] }}</span></td>
+            <td><span class="tag {{ source_class[model.kernel_source] }}">{{ sources[model.kernel_source] }}</span></td>
             {% for m in metrics %}<td>{% if model.metrics[m] is none %}n/a{% else %}{{ "%.3f" | format(model.metrics[m]) }}{% endif %}</td>{% endfor %}
             <td>{{ model.confusion_matrix[0][0] }} / {{ model.confusion_matrix[0][1] }} / {{ model.confusion_matrix[1][0] }} / {{ model.confusion_matrix[1][1] }}</td>
           </tr>
@@ -91,7 +165,7 @@
     <p class="muted">With {{ results.split.test }} test examples, each example changes accuracy by about {{ "%.1f" | format(100 / results.split.test) }} percentage points.</p>
 
     {% if results.runtime %}
-    <h2>Runtime</h2>
+    <h3>Runtime</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Model</th><th>Source</th><th>Fit</th><th>Test kernel</th><th>Predict</th></tr></thead>
@@ -99,7 +173,7 @@
         {% for model in results.models if model.runtime_seconds %}
           <tr>
             <td>{{ model.name }}</td>
-            <td><span class="tag">{{ sources[model.kernel_source] }}</span></td>
+            <td><span class="tag {{ source_class[model.kernel_source] }}">{{ sources[model.kernel_source] }}</span></td>
             <td>{{ model.runtime_seconds.fit | duration }}</td>
             <td class="{{ 'hw' if model.kernel_source in ('qpu', 'qpu_calibrated') else '' }}">{{ model.runtime_seconds.test_kernel | duration }}</td>
             <td>{{ model.runtime_seconds.predict | duration }}</td>
@@ -120,7 +194,13 @@
     {% endif %}
   {% endif %}
 
-  <h2>External validation</h2>
+  </div>
+  </section>
+
+  <section class="manuscript-section" id="external" aria-labelledby="external-title">
+  <div class="container">
+  <p class="eyebrow">Second public dataset · frozen models</p>
+  <h2 id="external-title">External validation</h2>
   {% if external %}
     {% set prep = external.preparation %}
     <div class="panel">
@@ -151,7 +231,7 @@
         {% for model in external.models %}
           <tr>
             <td>{{ model.name }}</td>
-            <td><span class="tag">{{ external_sources[model.kernel_source] }}</span></td>
+            <td><span class="tag {{ source_class[model.kernel_source] }}">{{ external_sources[model.kernel_source] }}</span></td>
             {% for m in metrics %}{% set ci = model.confidence_intervals[m] %}
             <td>{% if model.metrics[m] is none %}n/a{% else %}{{ "%.3f" | format(model.metrics[m]) }}<br><span class="muted ci">{{ "%.3f" | format(ci[0]) }}&ndash;{{ "%.3f" | format(ci[1]) }}</span>{% endif %}</td>
             {% endfor %}
@@ -173,7 +253,13 @@
     <div class="panel notice"><strong>External validation pending.</strong> {{ external_detail }} No placeholder values are shown in its place.</div>
   {% endif %}
 
-  <h2>External subset on IBM Quantum hardware</h2>
+  </div>
+  </section>
+
+  <section class="manuscript-section" id="hardware" aria-labelledby="hardware-title">
+  <div class="container">
+  <p class="eyebrow">ibm_fez · 40 external rows</p>
+  <h2 id="hardware-title">External subset on IBM Quantum hardware</h2>
   {% if subset %}
     {% set run = subset.hardware %}
     {% set reading = subset_reading %}
@@ -183,7 +269,7 @@
       <div class="muted">{{ run.job_ids | length }} jobs, {{ "{:,}".format(run.circuits) }} circuits ({{ run.plan.test }} test, {{ run.plan.calibration }} calibration, {{ run.plan.diagonal }} diagonal), {{ "{:,}".format(run.shots) }} shots per circuit, sampler {{ run.sampler }}. Same frozen models (version <code>{{ subset.benchmark.model_version }}</code>, {{ subset.benchmark.training_examples }} training examples); generated {{ subset.generated_at_utc }}.</div>
     </div>
 
-    {% if comparison_chart %}<img class="chart" src="/comparison.svg" alt="Accuracy per model on the benchmark (no intervals), the full external set and the {{ subset.subset.size }}-row hardware subset (95% intervals where published), and runtime for the benchmark and the subset, local against {{ run.backend }}, on a log scale.">{% endif %}
+    {% if comparison_chart %}<figure class="plate"><img class="chart" src="/comparison.svg" alt="Accuracy per model on the benchmark (no intervals), the full external set and the {{ subset.subset.size }}-row hardware subset (95% intervals where published), and runtime for the benchmark and the subset, local against {{ run.backend }}, on a log scale."></figure>{% endif %}
 
     <div class="table-wrap">
       <table>
@@ -194,7 +280,7 @@
         {% for model in subset.models %}
           <tr>
             <td>{{ model.name }}</td>
-            <td><span class="tag{{ ' hw' if model.kernel_source in ('qpu', 'qpu_calibrated') else '' }}">{{ subset_sources[model.kernel_source] }}</span></td>
+            <td><span class="tag {{ source_class[model.kernel_source] }}">{{ subset_sources[model.kernel_source] }}</span></td>
             {% for m in metrics %}{% set ci = model.confidence_intervals[m] %}
             <td>{% if model.metrics[m] is none %}n/a{% else %}{{ "%.3f" | format(model.metrics[m]) }}<br><span class="muted ci">{{ "%.3f" | format(ci[0]) }}&ndash;{{ "%.3f" | format(ci[1]) }}</span>{% endif %}</td>
             {% endfor %}
@@ -244,7 +330,13 @@
     <div class="panel notice"><strong>Hardware subset pending.</strong> {{ subset_detail }} No simulated or placeholder values are shown in its place.</div>
   {% endif %}
 
-  <h2>Replay: recorded quantum-kernel SVM test predictions</h2>
+  </div>
+  </section>
+
+  <section class="manuscript-section" id="replay" aria-labelledby="replay-title">
+  <div class="container">
+  <p class="eyebrow">Recorded predictions · not live</p>
+  <h2 id="replay-title">Replay: recorded quantum-kernel SVM test predictions</h2>
   {% if replay %}
     <p class="muted">Replay of recorded predictions, not live inference. Simulation run <code>{{ replay.source_runs.simulation }}</code>{% if replay.source_runs.qpu %}; hardware run <code>{{ replay.source_runs.qpu }}</code> on {{ replay.source_runs.backend }}{% endif %}. Samples are identified by dataset row and hashed domain group; hosts are not shown.</p>
     <div class="table-wrap">
@@ -274,7 +366,12 @@
     <div class="panel notice"><strong>Replay pending.</strong> No recorded predictions have been published.</div>
   {% endif %}
 
-  <p class="muted">This service does not train models, submit quantum jobs, fetch URLs, or claim quantum advantage. JSON: <code>/v1/benchmarks</code>, <code>/v1/benchmarks/replay</code>, <code>/v1/external-validation</code>, <code>/v1/external-validation/qpu</code>, <code>POST /v1/phishing/predict</code>.</p>
+  </div>
+  </section>
 </main>
+  <footer class="site-footer">
+    <p>This service does not train models, submit quantum jobs, fetch URLs, or claim quantum advantage. JSON: <code>/v1/benchmarks</code>, <code>/v1/benchmarks/replay</code>, <code>/v1/external-validation</code>, <code>/v1/external-validation/qpu</code>, <code>POST /v1/phishing/predict</code>.</p>
+  </footer>
+</div>
 </body>
 </html>
