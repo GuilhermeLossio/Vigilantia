@@ -6,3 +6,11 @@ pandas==3.1.0
 scipy==1.18.1
 scikit-learn==1.9.1
 tldextract==5.4.0
+
+# Quantum kernel: circuit construction, exact statevector simulation, and local sampling.
+qiskit==2.6.1
+qiskit-aer==0.18.0
+qiskit-ibm-runtime==0.51.0
+
+# Reads IBM Quantum settings from the local .env file.
+python-dotenv==1.2.4

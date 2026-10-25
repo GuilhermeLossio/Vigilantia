@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "run_id": "sim-d36aedc6",
+  "generated_at_utc": "2026-10-25T09:16:14.683576+00:00",
+  "status": "partial",
+  "split": {
+    "train": 24,
+    "test": 12,
+    "seed": 42
+  },
+  "hardware": {
+    "backend": null,
+    "shots": null,
+    "job_ids": []
+  },
+  "models": [
+    {
+      "name": "Majority baseline",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "average_precision": null
+      },
+      "confusion_matrix": [
+        [
+          6,
+          0
+        ],
+        [
+          6,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "Logistic regression",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.8333333333333334,
+        "balanced_accuracy": 0.8333333333333333,
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "average_precision": 0.976190476190476
+      },
+      "confusion_matrix": [
+        [
+          6,
+          0
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "name": "RBF SVM",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.9166666666666666,
+        "balanced_accuracy": 0.9166666666666667,
+        "precision": 1.0,
+        "recall": 0.8333333333333334,
+        "f1": 0.9090909090909091,
+        "average_precision": 0.9333333333333333
+      },
+      "confusion_matrix": [
+        [
+          6,
+          0
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "kernel_source": "simulation",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.5,
+        "recall": 0.6666666666666666,
+        "f1": 0.5714285714285714,
+        "average_precision": 0.5259259259259259
+      },
+      "confusion_matrix": [
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    }
+  ],
+  "limitations": [
+    "Exploratory benchmark: 24 training and 12 test examples, one split, one seed. Each test example changes accuracy by about 8.3 percentage points.",
+    "Quantum-kernel SVM rows here use an exact statevector simulation. IBM Quantum hardware results are pending and are not replaced by simulation.",
+    "Features use only the host of each URL, because PhiUSIIL's legitimate URLs are all bare https://www. homepages. Host features still reflect how the dataset was collected.",
+    "The majority baseline breaks the 12/12 training tie toward legitimate, so it never predicts phishing. It has no decision scores, so average precision is not available.",
+    "The quantum-kernel SVM is trained on an exact simulated kernel; hardware is used only to classify the test set. No model trained on hardware measurements is evaluated.",
+    "No claim of quantum advantage is made."
+  ]
+}

@@ -11,11 +11,9 @@
 -r requirements-model.txt
 ucimlrepo
 
-# Quantum circuits, local simulation, and quantum-kernel classifiers
-qiskit
-qiskit-aer
-qiskit-machine-learning
-qiskit-ibm-runtime
+# Quantum circuits, local simulation, and IBM Runtime: qiskit, qiskit-aer, and
+# qiskit-ibm-runtime are pinned in requirements-model.txt. The kernel is implemented
+# directly; qiskit-machine-learning is not used.
 
 # Notebook experiments and benchmark plots
 jupyterlab

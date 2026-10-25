@@ -20,8 +20,8 @@ The acquisition entry point `scripts/download_dataset.py` is implemented: it sta
 
 - **Data preparation (`src/data/`)**: implemented for the benchmark. Deduplication, target mapping, registrable-domain grouping, and the frozen domain-disjoint split are produced by `scripts/prepare_benchmark.py`.
 - **Features (`src/features/`)**: host-only lexical features are implemented, and four are frozen: `host_entropy`, `host_label_count`, `host_digit_ratio`, and `host_hyphen_count`. Training-only scaling to `[0, pi/2]` is implemented and fitted; the inference schema remains planned.
-- **Models (`src/models/`)**: majority baseline, logistic regression, RBF SVM, and SVM with a precomputed quantum kernel. The training kernel comes from exact simulation; the test kernel comes from the QPU. Validate four-qubit circuit logic in simulation before hardware acquisition.
-- **Hardware acquisition (within `src/models/`)**: Qiskit Runtime SamplerV2 jobs, ISA transpilation, job/result mapping, raw counts, and resumable retrieval on the intended Open Plan instance.
+- **Models (`src/models/`)**: majority baseline, logistic regression, RBF SVM, and SVM with a precomputed quantum kernel. The four models and the exact training kernel in `src/quantum/` are implemented and fitted. The training kernel comes from exact simulation; the test kernel comes from the QPU. Validate four-qubit circuit logic in simulation before hardware acquisition.
+- **Hardware acquisition (`src/quantum/hardware.py`, `src/quantum/qpu_run.py`)**: implemented and rehearsed on a fake backend. `scripts/run_qpu.py` submits a pilot or the full run with confirmation, saves job IDs immediately, retrieves without resubmitting, and publishes evaluated results. Qiskit Runtime sampler jobs (SamplerV2 or its client-side replacement), ISA transpilation, job/result mapping, raw counts, and resumable retrieval on the intended Open Plan instance.
 - **Evaluation (`reports/`, `configs/`, `notebooks/`)**: frozen configurations, one domain-disjoint held-out evaluation, predictive metrics, and runtime reporting. No tuning or fold/seed variability estimate in the initial run.
 - **Serving (`app/`)**: the Flask results service is implemented. It validates and publishes recorded benchmark results, labeling each result's source, and runs in a Docker image with Gunicorn. Structured feature validation, classical live inference, and model-version reporting remain planned. Proposed routes are documented in the [README](README.md#api).
 - **Later evidence checks (`src/exposure/`)**: consistency checks and reference-record matches on fictitious samples, with incident replay for human review.
@@ -39,7 +39,7 @@ Run training and hardware benchmark jobs outside HTTP requests. The local API us
 
 ![Planned four-qubit quantum kernel](docs/quantum-circuit.svg)
 
-Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)` and the compute-uncompute fidelity measurement with Qiskit Runtime SamplerV2. The circuit encodes data; it has no trainable ansatz. See the [circuit specification](docs/quantum-circuit.md) for gate structure and logical counts.
+Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)` and the compute-uncompute fidelity measurement with a Qiskit Runtime sampler. The circuit encodes data; it has no trainable ansatz. See the [circuit specification](docs/quantum-circuit.md) for gate structure and logical counts.
 
 Training is classical: the `24 x 24` training kernel is computed by exact statevector simulation, so it needs no QPU time and no PSD correction. The hardware classifies: the benchmark requests 1,024 shots for each of 288 test-to-training pairs, 24 training calibration pairs, and 24 diagonal controls, for 336 evaluations and 344,064 shots. The calibration pairs measure how hardware noise scales kernel values, and the same SVM is reported on the ideal, raw hardware, and calibrated hardware test kernels. Preserve raw measurements separately from calibrated values. The [protocol](docs/benchmark-protocol.md) defines the exact matrix treatment and acceptance checks.
 
@@ -82,28 +82,54 @@ Vigilantia/
 ├── docs/
 │   ├── architecture-flow.svg
 │   ├── benchmark-protocol.md
+│   ├── benchmark-results.svg
 │   ├── ci-and-branch-protection.md
 │   ├── documentation-checklist.md
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
 ├── reports/
+│   ├── benchmark-results.json
 │   └── README.md
 ├── scripts/
+│   ├── check_ibm_access.py
 │   ├── check_repository.py
 │   ├── download_dataset.py
+│   ├── evaluate_benchmark.py
 │   ├── prepare_benchmark.py
-│   └── scale_benchmark.py
+│   ├── rehearse_hardware.py
+│   ├── render_results_svg.py
+│   ├── run_qpu.py
+│   ├── scale_benchmark.py
+│   └── train_benchmark.py
 ├── src/
+│   ├── config/
+│   │   ├── env_file.py
+│   │   └── ibm.py
 │   ├── data/
 │   │   └── benchmark_split.py
-│   └── features/
-│       ├── host_features.py
-│       └── scaling.py
+│   ├── evaluation/
+│   │   ├── inputs.py
+│   │   ├── metrics.py
+│   │   └── publish.py
+│   ├── features/
+│   │   ├── host_features.py
+│   │   └── scaling.py
+│   ├── models/
+│   │   └── benchmark_models.py
+│   └── quantum/
+│       ├── hardware.py
+│       ├── kernel.py
+│       └── qpu_run.py
 ├── tests/
 │   ├── unit/
 │   │   ├── test_benchmark_split.py
+│   │   ├── test_check_ibm_access.py
 │   │   ├── test_download_dataset.py
 │   │   ├── test_download_dataset_cli.py
+│   │   ├── test_hardware_and_metrics.py
+│   │   ├── test_qpu_run.py
+│   │   ├── test_quantum_kernel.py
+│   │   ├── test_render_results_svg.py
 │   │   ├── test_repository_checks.py
 │   │   ├── test_results_app.py
 │   │   └── test_scaling.py

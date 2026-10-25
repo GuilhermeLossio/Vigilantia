@@ -30,7 +30,7 @@ The unoptimized pair circuit has eight H gates, fourteen phase gates, and twelve
 
 ## IBM Quantum execution
 
-Use `QiskitRuntimeService` and `SamplerV2` from `qiskit_ibm_runtime`, authenticated against the intended Open Plan instance. Run in job mode with ISA-compatible circuits transpiled for one available backend. Backend selection and remaining quota must be recorded before any submission; no specific backend is promised by this design.
+Use `QiskitRuntimeService` and a sampler from `qiskit_ibm_runtime` (`SamplerV2`, or the client-side `Sampler` that replaces it from version 0.50), authenticated against the intended Open Plan instance. Run in job mode with ISA-compatible circuits transpiled for one available backend. Backend selection and remaining quota must be recorded before any submission; no specific backend is promised by this design.
 
 The example environment names are a proposed application contract. Future code must explicitly read and pass the token, instance, and backend to the service and sampler; copying `.env.example` does not authenticate or execute anything. Never publish credentials or saved-account files.
 

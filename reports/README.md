@@ -1,6 +1,6 @@
 # Published Benchmark Results
 
-**Status: no results published yet.** The results service reads `reports/benchmark-results.json`. Until the benchmark writes that file, the service reports the results as pending and shows no values.
+**Status: partial results published.** `scripts/evaluate_benchmark.py` writes `reports/benchmark-results.json` with the three classical models and the quantum-kernel SVM on the exact simulated kernel. `scripts/run_qpu.py evaluate` adds the uncorrected and calibrated IBM Quantum hardware rows after a full QPU run and marks the file complete; the simulation script then leaves a complete file untouched. Without the file, the service reports the results as pending and shows no values.
 
 Only measured results go in this file. Do not add simulated values labeled as hardware, placeholder numbers, or hand-edited metrics. Raw counts, kernels, and job evidence stay under the ignored `reports/runs/` directory, or in private storage.
 

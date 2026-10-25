@@ -73,8 +73,8 @@ The first run performs **no hyperparameter search, cross-validation model select
 
 - Majority baseline: `DummyClassifier(strategy="most_frequent")`.
 - Logistic regression: L2 regularization, `C=1.0`, `solver="lbfgs"`, `max_iter=1000`, no class weights. Treat a convergence warning as an unresolved run failure.
-- Classical SVM: `SVC(kernel="rbf", C=1.0, gamma="scale", probability=False)`, no class weights.
-- Quantum-kernel SVM: `SVC(kernel="precomputed", C=1.0, probability=False)`, no class weights, fitted to the simulated training kernel and applied to the test kernels specified below. The SVM optimization runs classically.
+- Classical SVM: `SVC(kernel="rbf", C=1.0, gamma="scale")`, no class weights. The default `probability=False` is kept; scikit-learn 1.9 deprecates passing it explicitly.
+- Quantum-kernel SVM: `SVC(kernel="precomputed", C=1.0)`, no class weights, fitted to the simulated training kernel and applied to the test kernels specified below. The SVM optimization runs classically.
 
 Use each classifier's default decision rule; report continuous decision scores for ranking metrics when available. Do not label SVM margins as probabilities. Larger simulator-only experiments, alternative seeds, and parameter sweeps are later extensions, separately labeled and never substituted for this QPU benchmark.
 
@@ -93,6 +93,18 @@ Tradeoff: the model is fitted to noise-free similarities and applied to noisy on
 ## Kernel computation
 
 **Training kernel.** Compute all `24 x 24` entries by exact statevector overlap, using the same circuit and pinned package versions. The matrix is symmetric with a unit diagonal by construction. Verify that its minimum eigenvalue is at least `-1e-10`; a lower value indicates an implementation error and stops the run. No PSD correction is applied. Report the mean and standard deviation of the off-diagonal entries as a concentration diagnostic: values clustered near one constant mean the kernel cannot separate examples. This diagnostic uses training data only and does not change the frozen settings of the first run.
+
+*Implemented.* `src/quantum/kernel.py` computes the kernel and `scripts/train_benchmark.py` fits the four models without reading test data. The 24 x 24 kernel passed every check:
+
+| Check | Value |
+| --- | --- |
+| Minimum eigenvalue | -7.3e-16, within tolerance |
+| Largest asymmetry | 4.4e-16 |
+| Largest diagonal error | 1.8e-15 |
+| Off-diagonal mean and standard deviation | 0.221 and 0.309 |
+| Off-diagonal range | 0.000 to 1.000 |
+
+The values are spread out, so the kernel is not concentrated. Off-diagonal values of exactly 1 come from 4 pairs of training examples with identical feature vectors, all with matching labels; the four host features are coarse and often zero. The training classes are tied at 12 and 12, so the majority baseline resolves the tie to the first class, legitimate. Fitted artifacts are stored locally under the ignored `artifacts/benchmark/` directory.
 
 **Ideal test kernel.** Compute the `12 x 24` test-to-training matrix by the same exact simulation. It is the simulation reference for classification, not a hardware result.
 
@@ -117,9 +129,23 @@ Report all three. No variant is selected using test results. Only the two QPU va
 
 ## Runtime and resource boundaries
 
-Use Qiskit Runtime `SamplerV2` in **job mode** on the user's Open Plan instance. Confirm the instance, remaining quota, backend access, and estimated execution usage before submission. Do not select a paid instance or silently reduce the agreed sample or shots. IBM's [instance guidance](https://quantum.cloud.ibm.com/docs/en/guides/instances) describes quota; [execution modes](https://quantum.cloud.ibm.com/docs/en/guides/execution-modes) describe job and session availability. Verify account-specific limits at execution time.
+Use the Qiskit Runtime sampler in **job mode** on the user's Open Plan instance. qiskit-ibm-runtime 0.50 deprecated `SamplerV2` in favor of a client-side `Sampler` (`qiskit_ibm_runtime.executor_sampler`). `src/quantum/hardware.py` supports both and records which one ran. Confirm at submission time which one the Open Plan account accepts; the local rehearsal uses `SamplerV2` because the client-side sampler took about 600 seconds locally for the 336 circuits, against about 12 seconds. Confirm the instance, remaining quota, backend access, and estimated execution usage before submission. Do not select a paid instance or silently reduce the agreed sample or shots. IBM's [instance guidance](https://quantum.cloud.ibm.com/docs/en/guides/instances) describes quota; [execution modes](https://quantum.cloud.ibm.com/docs/en/guides/execution-modes) describe job and session availability. Verify account-specific limits at execution time.
 
 Transpile for the selected backend and record optimization level, transpiler seed, layout, physical qubits, operation counts, and depth. Bind the eight independent pair parameters before transpilation so each circuit can be optimized for its data. Use optimization level 1 and seed 42 for the first run. Diagonal circuits can simplify to an identity and therefore test readout more than full-depth fidelity; label this limitation.
+
+*Implemented in `scripts/run_qpu.py` and `src/quantum/qpu_run.py`.* The run uses SamplerV2 in job mode on the backend named by `IBM_QUANTUM_BACKEND`. `submit` checks the instance quota and requires typing `SUBMIT`; a `--pilot N` run sends only the first N circuits and projects the full run's QPU time from IBM's reported usage. Every job ID is saved to the run record as soon as the job exists, before the next batch is sent. `retrieve` fetches jobs by ID and never resubmits; `evaluate` builds the hardware kernel, calibrates it on training pairs, and publishes the QPU rows. Pilot results are never published.
+
+Account checks on 2026-10-25 found an Open Plan instance with 600 seconds of QPU time per rolling 28-day window, none used, and access to `ibm_fez`, `ibm_kingston`, and `ibm_marrakesh`. Server-side dry runs were not available to the account, so no QPU-time estimate exists before the pilot. `ibm_fez` matches the fake backend used in the rehearsal.
+
+The pilot run `pilot-ibm_fez-20261025T092140Z` sent the first 12 test pairs to `ibm_fez` in one job. IBM reports usage as billed seconds (`qpu_charge_time_seconds`), resource units, and circuit execution time; the run script records all three.
+
+| Measure | Pilot, 12 circuits | Linear projection, 336 circuits |
+| --- | --- | --- |
+| Circuit execution time | 3.2 s | about 89 s |
+| Billed QPU time | 5 s | up to 140 s; the pilot's billing is rounded per job |
+| Resource units | 0.082 | about 2.3 of the 10 available |
+
+The pilot's mean absolute kernel error against the exact kernel was 0.034, about 2.6 times the 0.013 seen on the fake backend. Real hardware noise is therefore larger than the rehearsal suggested. Pilot results are not published.
 
 Batch circuit publications within the selected backend's current job limits; record pair-to-job/result-index mappings. Save job IDs immediately and resume retrieval instead of automatically resubmitting. No automatic paid fallback, quota increase, or retry loop is part of this protocol. If access, quota, queue, or execution failures prevent complete matrices, the hardware benchmark remains **pending/incomplete**. Preserve completed work and report the failure explicitly.
 
@@ -128,6 +154,45 @@ Batch circuit publications within the selected backend's current job limits; rec
 Save dataset/split/feature fingerprints, package and Python versions, model settings, circuit definition, backend name, job IDs, requested and actual shots, counts, kernel matrices, calibration parameters, and artifact checksums. Keep tokens and account credentials out of reports. Record timestamps and distinguish client wall time, queue time, and provider-reported execution usage; unavailable timing fields are reported as unavailable.
 
 Report average precision (the chosen PR summary), accuracy, precision, recall, F1, balanced accuracy, confusion matrix, class counts, and training/inference runtime. Record zero-denominator metrics using `zero_division=0` with a note when applicable. This first run has one split and one seed; no fold/seed variability estimate is available. Twelve test examples yield coarse and uncertain estimates; each test example changes accuracy by about 8.3 percentage points. Publish all four models and all three quantum SVM variants regardless of which performs best.
+
+## Recorded results
+
+![Benchmark results](benchmark-results.svg)
+
+The chart is generated by `scripts/render_results_svg.py` from the published results, the rehearsal summary, and the latest pilot and full QPU runs. Gray marks classical models, blue marks simulation, orange marks IBM Quantum hardware, and hatched bars are projections.
+
+### Simulation: test classification
+
+`scripts/evaluate_benchmark.py` classified the 12 test examples once, with the frozen models and settings. The quantum-kernel SVM used the exact simulated test kernel. These are the first and only test evaluations; nothing was changed after them.
+
+| Model | Source | Accuracy | Balanced accuracy | Precision | Recall | F1 | Average precision | TN / FP / FN / TP |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Majority baseline | Classical | 0.500 | 0.500 | 0.000 | 0.000 | 0.000 | n/a | 6 / 0 / 6 / 0 |
+| Logistic regression | Classical | 0.833 | 0.833 | 1.000 | 0.667 | 0.800 | 0.976 | 6 / 0 / 2 / 4 |
+| RBF SVM | Classical | 0.917 | 0.917 | 1.000 | 0.833 | 0.909 | 0.933 | 6 / 0 / 1 / 5 |
+| Quantum-kernel SVM | Exact simulation | 0.500 | 0.500 | 0.500 | 0.667 | 0.571 | 0.526 | 2 / 4 / 2 / 4 |
+
+The quantum-kernel SVM performed at chance level on this split. A training-only diagnostic, run after the test evaluation and changing nothing, helps interpret it:
+
+- Leave-one-out accuracy on the 24 training examples is 0.54 for the quantum-kernel SVM and 0.50 for the RBF SVM. Neither is reliably above chance on training data alone, so the RBF SVM's 0.917 on 12 test examples is an unstable estimate.
+- The quantum kernel separates the classes weakly: mean similarity is 0.245 within a class and 0.199 across classes. The quantum-kernel SVM fits 83% of its training examples but does not generalize.
+
+These results describe one small split with coarse features. They are not evidence about quantum kernels in general.
+
+### Noisy rehearsal on a fake backend
+
+`scripts/rehearse_hardware.py` ran the full hardware workload on `FakeFez`, a local fake backend with the noise model and connectivity of a 156-qubit IBM Heron device. No account or QPU was used. These are diagnostics labeled noisy simulation and are not published as hardware results.
+
+| Check | Value |
+| --- | --- |
+| Circuits and shots | 336 circuits, 1,024 shots each |
+| Transpiled depth / two-qubit gates | 1 to 54 / 0 to 10 per circuit |
+| Diagonal controls | mean 0.982, ideal 1 |
+| Calibration fit | slope 0.960, intercept 0.007, RMSE 0.009 |
+| Mean absolute kernel error vs ideal | 0.013 raw, 0.009 calibrated |
+| Quantum-kernel SVM on noisy kernels | same predictions as the ideal kernel |
+
+The rehearsal confirms that the hardware code path works end to end. The fake backend's noise did not change any prediction; real hardware noise can be larger.
 
 ## Acceptance checks
 

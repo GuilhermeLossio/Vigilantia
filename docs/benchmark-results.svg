@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 786" width="960" height="786" role="img" aria-labelledby="title desc">
+<title id="title">Vigilantia benchmark results</title>
+<desc id="desc">Bar charts of test accuracy per model, measured kernel error against the exact simulation, and IBM Quantum time used and projected against the Open Plan limit.</desc>
+<style>
+  .surface { fill: var(--surface); }
+  .ink { fill: var(--text-primary); }
+  .ink2 { fill: var(--text-secondary); }
+  .muted { fill: var(--text-muted); }
+  .grid { stroke: var(--grid); stroke-width: 1; }
+  .ref { stroke: var(--text-secondary); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .classical { fill: var(--neutral); }
+  .simulation { fill: var(--series-1); }
+  .hardware { fill: var(--series-2); }
+  .hatch-line { stroke: var(--series-2); stroke-width: 2; }
+  .projected { fill: url(#hatch); stroke: var(--series-2); stroke-width: 1.5; }
+  text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+  svg {
+    --surface: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e;
+    --text-muted: #6f6e69; --grid: #e4e3df; --neutral: #9a9994;
+    --series-1: #2a78d6; --series-2: #eb6834;
+  }
+  @media (prefers-color-scheme: dark) {
+    svg {
+      --surface: #1a1a19; --text-primary: #f0efec; --text-secondary: #c3c2b7;
+      --text-muted: #a3a29b; --grid: #383835; --neutral: #7d7c76;
+      --series-1: #3987e5; --series-2: #d95926;
+    }
+  }
+</style>
+<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="hatch-line" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="surface" width="960" height="786" rx="12"/>
+<text class="ink" x="40.0" y="42.0" font-size="22" text-anchor="start" font-weight="600">Vigilantia benchmark: phishing URL classification</text>
+<text class="ink2" x="40.0" y="64.0" font-size="12" text-anchor="start" font-weight="normal">Classical baselines and a hybrid quantum-kernel SVM (classical training, quantum classification). Exploratory: one split, 24 training / 12 test examples.</text>
+<rect class="classical" x="40" y="82" width="14" height="12" rx="2"/>
+<text class="ink2" x="60.0" y="92.0" font-size="12" text-anchor="start" font-weight="normal">Classical model</text>
+<rect class="simulation" x="175" y="82" width="14" height="12" rx="2"/>
+<text class="ink2" x="195.0" y="92.0" font-size="12" text-anchor="start" font-weight="normal">Simulation</text>
+<rect class="hardware" x="275" y="82" width="14" height="12" rx="2"/>
+<text class="ink2" x="295.0" y="92.0" font-size="12" text-anchor="start" font-weight="normal">IBM Quantum hardware</text>
+<rect class="projected" x="445" y="82" width="14" height="12" rx="2"/>
+<text class="ink2" x="465.0" y="92.0" font-size="12" text-anchor="start" font-weight="normal">Projected</text>
+<text class="ink" x="40.0" y="132.0" font-size="17" text-anchor="start" font-weight="600">Test accuracy by model</text>
+<text class="ink2" x="40.0" y="152.0" font-size="12" text-anchor="start" font-weight="normal">12 test examples, run sim-d36aedc6. Dashed line: chance level (0.5).</text>
+<line class="grid" x1="300.0" y1="168" x2="300.0" y2="352"/>
+<text class="muted" x="300.0" y="368.0" font-size="11" text-anchor="middle" font-weight="normal">0.00</text>
+<line class="grid" x1="430.0" y1="168" x2="430.0" y2="352"/>
+<text class="muted" x="430.0" y="368.0" font-size="11" text-anchor="middle" font-weight="normal">0.25</text>
+<line class="grid" x1="560.0" y1="168" x2="560.0" y2="352"/>
+<text class="muted" x="560.0" y="368.0" font-size="11" text-anchor="middle" font-weight="normal">0.50</text>
+<line class="grid" x1="690.0" y1="168" x2="690.0" y2="352"/>
+<text class="muted" x="690.0" y="368.0" font-size="11" text-anchor="middle" font-weight="normal">0.75</text>
+<line class="grid" x1="820.0" y1="168" x2="820.0" y2="352"/>
+<text class="muted" x="820.0" y="368.0" font-size="11" text-anchor="middle" font-weight="normal">1.00</text>
+<text class="ink" x="288.0" y="185.0" font-size="13" text-anchor="end" font-weight="normal">Majority baseline</text>
+<text class="muted" x="288.0" y="198.0" font-size="10" text-anchor="end" font-weight="normal">classical</text>
+<path class="classical" d="M300.0,172.0 h256.0 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-256.0 z"/>
+<text class="ink" x="568.0" y="186.0" font-size="12" text-anchor="start" font-weight="normal">0.500  (6/12 correct)</text>
+<text class="ink" x="288.0" y="215.0" font-size="13" text-anchor="end" font-weight="normal">Logistic regression</text>
+<text class="muted" x="288.0" y="228.0" font-size="10" text-anchor="end" font-weight="normal">classical</text>
+<path class="classical" d="M300.0,202.0 h429.3 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-429.3 z"/>
+<text class="ink" x="741.3" y="216.0" font-size="12" text-anchor="start" font-weight="normal">0.833  (10/12 correct)</text>
+<text class="ink" x="288.0" y="245.0" font-size="13" text-anchor="end" font-weight="normal">RBF SVM</text>
+<text class="muted" x="288.0" y="258.0" font-size="10" text-anchor="end" font-weight="normal">classical</text>
+<path class="classical" d="M300.0,232.0 h472.7 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-472.7 z"/>
+<text class="ink" x="784.7" y="246.0" font-size="12" text-anchor="start" font-weight="normal">0.917  (11/12 correct)</text>
+<text class="ink" x="288.0" y="275.0" font-size="13" text-anchor="end" font-weight="normal">Quantum-kernel SVM</text>
+<text class="muted" x="288.0" y="288.0" font-size="10" text-anchor="end" font-weight="normal">exact simulation</text>
+<path class="simulation" d="M300.0,262.0 h256.0 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-256.0 z"/>
+<text class="ink" x="568.0" y="276.0" font-size="12" text-anchor="start" font-weight="normal">0.500  (6/12 correct)</text>
+<text class="ink" x="288.0" y="305.0" font-size="13" text-anchor="end" font-weight="normal">Quantum-kernel SVM</text>
+<text class="muted" x="288.0" y="318.0" font-size="10" text-anchor="end" font-weight="normal">IBM QPU, uncorrected</text>
+<text class="muted" x="306.0" y="306.0" font-size="12" text-anchor="start" font-weight="normal">pending: full QPU run not yet evaluated</text>
+<text class="ink" x="288.0" y="335.0" font-size="13" text-anchor="end" font-weight="normal">Quantum-kernel SVM</text>
+<text class="muted" x="288.0" y="348.0" font-size="10" text-anchor="end" font-weight="normal">IBM QPU, calibrated</text>
+<text class="muted" x="306.0" y="336.0" font-size="12" text-anchor="start" font-weight="normal">pending: full QPU run not yet evaluated</text>
+<line class="ref" x1="560.0" y1="164" x2="560.0" y2="352"/>
+<text class="ink" x="40.0" y="392.0" font-size="17" text-anchor="start" font-weight="600">Kernel error against the exact simulation</text>
+<text class="ink2" x="40.0" y="412.0" font-size="12" text-anchor="start" font-weight="normal">Mean absolute difference of measured kernel values, 1,024 shots per circuit.</text>
+<line class="grid" x1="300.0" y1="428" x2="300.0" y2="552"/>
+<text class="muted" x="300.0" y="568.0" font-size="11" text-anchor="middle" font-weight="normal">0.00</text>
+<line class="grid" x1="404.0" y1="428" x2="404.0" y2="552"/>
+<text class="muted" x="404.0" y="568.0" font-size="11" text-anchor="middle" font-weight="normal">0.01</text>
+<line class="grid" x1="508.0" y1="428" x2="508.0" y2="552"/>
+<text class="muted" x="508.0" y="568.0" font-size="11" text-anchor="middle" font-weight="normal">0.02</text>
+<line class="grid" x1="612.0" y1="428" x2="612.0" y2="552"/>
+<text class="muted" x="612.0" y="568.0" font-size="11" text-anchor="middle" font-weight="normal">0.03</text>
+<line class="grid" x1="716.0" y1="428" x2="716.0" y2="552"/>
+<text class="muted" x="716.0" y="568.0" font-size="11" text-anchor="middle" font-weight="normal">0.04</text>
+<line class="grid" x1="820.0" y1="428" x2="820.0" y2="552"/>
+<text class="muted" x="820.0" y="568.0" font-size="11" text-anchor="middle" font-weight="normal">0.05</text>
+<text class="ink" x="288.0" y="445.0" font-size="13" text-anchor="end" font-weight="normal">FakeFez noisy simulation, uncorrected</text>
+<text class="muted" x="288.0" y="458.0" font-size="10" text-anchor="end" font-weight="normal">336 circuits</text>
+<path class="simulation" d="M300.0,432.0 h129.0 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-129.0 z"/>
+<text class="ink" x="441.0" y="446.0" font-size="12" text-anchor="start" font-weight="normal">0.013</text>
+<text class="ink" x="288.0" y="475.0" font-size="13" text-anchor="end" font-weight="normal">FakeFez noisy simulation, calibrated</text>
+<text class="muted" x="288.0" y="488.0" font-size="10" text-anchor="end" font-weight="normal">336 circuits</text>
+<path class="simulation" d="M300.0,462.0 h87.7 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-87.7 z"/>
+<text class="ink" x="399.7" y="476.0" font-size="12" text-anchor="start" font-weight="normal">0.009</text>
+<text class="ink" x="288.0" y="505.0" font-size="13" text-anchor="end" font-weight="normal">ibm_fez pilot, uncorrected</text>
+<text class="muted" x="288.0" y="518.0" font-size="10" text-anchor="end" font-weight="normal">12 circuits</text>
+<path class="hardware" d="M300.0,492.0 h350.5 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-350.5 z"/>
+<text class="ink" x="662.5" y="506.0" font-size="12" text-anchor="start" font-weight="normal">0.034</text>
+<text class="ink" x="288.0" y="535.0" font-size="13" text-anchor="end" font-weight="normal">Full QPU run</text>
+<text class="muted" x="288.0" y="548.0" font-size="10" text-anchor="end" font-weight="normal">pending</text>
+<text class="muted" x="306.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal">pending</text>
+<text class="ink" x="40.0" y="592.0" font-size="17" text-anchor="start" font-weight="600">IBM Quantum time budget</text>
+<text class="ink2" x="40.0" y="612.0" font-size="12" text-anchor="start" font-weight="normal">Open Plan limit: 600 s of QPU time per rolling 28 days. Hatched bars are projections from the pilot.</text>
+<line class="grid" x1="300.0" y1="628" x2="300.0" y2="722"/>
+<text class="muted" x="300.0" y="738.0" font-size="11" text-anchor="middle" font-weight="normal">0 s</text>
+<line class="grid" x1="430.0" y1="628" x2="430.0" y2="722"/>
+<text class="muted" x="430.0" y="738.0" font-size="11" text-anchor="middle" font-weight="normal">150 s</text>
+<line class="grid" x1="560.0" y1="628" x2="560.0" y2="722"/>
+<text class="muted" x="560.0" y="738.0" font-size="11" text-anchor="middle" font-weight="normal">300 s</text>
+<line class="grid" x1="690.0" y1="628" x2="690.0" y2="722"/>
+<text class="muted" x="690.0" y="738.0" font-size="11" text-anchor="middle" font-weight="normal">450 s</text>
+<line class="grid" x1="820.0" y1="628" x2="820.0" y2="722"/>
+<text class="muted" x="820.0" y="738.0" font-size="11" text-anchor="middle" font-weight="normal">600 s</text>
+<text class="ink" x="288.0" y="645.0" font-size="13" text-anchor="end" font-weight="normal">Pilot, billed</text>
+<text class="muted" x="288.0" y="658.0" font-size="10" text-anchor="end" font-weight="normal">12 circuits, measured</text>
+<path class="hardware" d="M300.0,632.0 h2.2 a2.1666666666666665,2.1666666666666665 0 0 1 2.1666666666666665,2.1666666666666665 v13.7 a2.1666666666666665,2.1666666666666665 0 0 1 -2.1666666666666665,2.1666666666666665 h-2.2 z"/>
+<text class="ink" x="312.3" y="646.0" font-size="12" text-anchor="start" font-weight="normal">5 s</text>
+<text class="ink" x="288.0" y="675.0" font-size="13" text-anchor="end" font-weight="normal">Full run, execution time</text>
+<text class="muted" x="288.0" y="688.0" font-size="10" text-anchor="end" font-weight="normal">336 circuits, projected</text>
+<path class="projected" d="M300.0,662.0 h73.2 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-73.2 z"/>
+<text class="ink" x="385.2" y="676.0" font-size="12" text-anchor="start" font-weight="normal">about 89 s</text>
+<text class="ink" x="288.0" y="705.0" font-size="13" text-anchor="end" font-weight="normal">Full run, billed upper bound</text>
+<text class="muted" x="288.0" y="718.0" font-size="10" text-anchor="end" font-weight="normal">336 circuits, projected</text>
+<path class="projected" d="M300.0,692.0 h117.3 a4.0,4.0 0 0 1 4.0,4.0 v10.0 a4.0,4.0 0 0 1 -4.0,4.0 h-117.3 z"/>
+<text class="ink" x="429.3" y="706.0" font-size="12" text-anchor="start" font-weight="normal">about 140 s</text>
+<line class="ref" x1="820.0" y1="624" x2="820.0" y2="722"/>
+<text class="muted" x="40.0" y="762.0" font-size="11" text-anchor="start" font-weight="normal">No quantum advantage is claimed. With 12 test examples, each example changes accuracy by about 8.3 percentage points.</text>
+</svg>
