@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 980" role="img" aria-labelledby="title desc">
-<title id="title">Vigilantia planned architecture</title><desc id="desc">Offline data preparation and classical comparison. The quantum SVM is trained on a simulated kernel and classifies the test set with kernels measured on IBM Quantum hardware. Local API serves classical inference and labeled saved QPU predictions. All components are planned; AWS and exposure are later phases.</desc>
+<title id="title">Vigilantia architecture</title><desc id="desc">Offline data preparation and classical comparison. The quantum SVM is trained on a simulated kernel and classifies the test set with kernels measured on IBM Quantum hardware. Local API serves classical inference and labeled saved QPU predictions. Data preparation, the experiment runner, the hardware runs, and the Flask service are implemented; the frozen models were also evaluated on an external dataset, with a 40-row subset run on ibm_fez. AWS and exposure are later phases.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#57606a"/></marker></defs>
 <rect width="1120" height="980" fill="#ffffff"/>
 <g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="#1f2328">
 <rect x="40" y="40" width="1040" height="65" rx="12" fill="#eff6ff" stroke="#2563eb"/>
 <text x="60" y="69" font-size="22" font-weight="bold" text-anchor="start">Vigilantia: hardware benchmark and local API</text>
-<text x="60" y="91" font-size="12" font-weight="normal" text-anchor="start">Design stage: no application, submitted jobs, or measured results</text>
+<text x="60" y="91" font-size="12" font-weight="normal" text-anchor="start">Implemented: benchmark and external subset run on ibm_fez; local Flask service</text>
 <rect x="40" y="140" width="600" height="80" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="60" y="171" font-size="16" font-weight="bold" text-anchor="start">PhiUSIIL snapshot</text>
 <text x="60" y="196" font-size="12" font-weight="normal" text-anchor="start">Source attribution, checksum, schema and label inspection</text>
@@ -53,7 +53,6 @@
 <text x="780" y="681" font-size="16" font-weight="bold" text-anchor="start">Execution boundaries</text>
 <text x="780" y="708" font-size="12" font-weight="normal" text-anchor="start">Training stays outside HTTP requests.</text>
 <text x="780" y="732" font-size="12" font-weight="normal" text-anchor="start">New QPU inference needs queued jobs.</text>
-<text x="780" y="756" font-size="12" font-weight="normal" text-anchor="start">Missing hardware results stay pending.</text>
 <rect x="40" y="850" width="1040" height="90" rx="12" fill="#eff6ff" stroke="#d0d7de"/>
 <text x="60" y="880" font-size="16" font-weight="bold" text-anchor="start">Later phases: AWS deployment, exposure evidence, and incident replay</text>
 <text x="60" y="907" font-size="12" font-weight="normal" text-anchor="start">Hardware and simulator evidence remain separate. No quantum-advantage or production-readiness claim.</text>

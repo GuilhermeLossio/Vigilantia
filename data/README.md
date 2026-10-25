@@ -83,7 +83,7 @@ For a locally downloaded CSV, PowerShell can calculate the checksum with:
 Get-FileHash -Algorithm SHA256 -LiteralPath data/raw/PhiUSIIL_Phishing_URL_Dataset.csv
 ```
 
-Run the downloader before using that checksum command on a fresh checkout. Store future transformed datasets and split manifests under `data/processed/`; both raw and processed data directories are ignored by Git. The acquisition manifest is also local and ignored. Publish only reviewed attribution and non-sensitive reproducibility metadata with reports. Do not commit the full CSV or follow the suspicious URLs in it.
+Run the downloader before using that checksum command on a fresh checkout. Store any future transformed datasets under `data/processed/`; both raw and processed data directories are ignored by Git. The split manifest is versioned separately in `configs/benchmark-split.json`. The acquisition manifest is also local and ignored. Publish only reviewed attribution and non-sensitive reproducibility metadata with reports. Do not commit the full CSV or follow the suspicious URLs in it.
 
 ## Required records before the benchmark
 
@@ -117,6 +117,6 @@ python scripts/download_external.py
 
 The script uses only the standard library. It downloads the file from the Mendeley Data URL recorded in [configs/external-validation.json](../configs/external-validation.json), checks the size and SHA-256 against the protocol and the row and label counts, and writes the CSV and `acquisition.json` to `data/external/hannousse-2020/`. Like the PhiUSIIL downloader, it stages files before publishing them, reuses an intact snapshot without downloading again, and fails without replacing an existing inconsistent snapshot. `data/external/` is ignored by Git.
 
-Changes made for the evaluation: rows are filtered and deduplicated by the frozen preparation steps (invalid host, conflicting labels, overlap with any PhiUSIIL registrable domain, one row per registrable domain). The resulting counts are in [External validation](../docs/external-validation.md#preparation). Do not commit the CSV or follow the URLs in it; published reports hold aggregates only.
+Changes made for the evaluation: rows are filtered and deduplicated by the frozen preparation steps (invalid host, conflicting labels, overlap with any PhiUSIIL registrable domain, one row per registrable domain). The resulting counts are in [External validation](../docs/external-validation.md#preparation). A stratified 40-row subset of the 6,441-row primary set (20 per class, seed 42) was also classified once on IBM Quantum hardware under [configs/external-qpu-subset.json](../configs/external-qpu-subset.json); rows are published only by index and hashed group. See [Hardware subset](../docs/external-validation.md#hardware-subset-40-rows-on-ibm_fez). Do not commit the CSV or follow the URLs in it; published reports hold aggregates only.
 
 See the [benchmark protocol](../docs/benchmark-protocol.md) for selection and leakage controls and the [README](../README.md) for project status.

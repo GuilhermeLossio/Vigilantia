@@ -6,15 +6,15 @@ Documents in this folder:
 
 | Document | What it answers |
 | --- | --- |
-| [Reproduction guide](reproducing.md) | The tested environment, the six notebooks, tests, and the script-only path |
+| [Reproduction guide](reproducing.md) | The tested environment, the seven notebooks, tests, and the script-only path |
 | [Benchmark protocol](benchmark-protocol.md) | The role of each model, the split, features, hybrid design, metrics, and recorded results |
-| [External validation](external-validation.md) | The frozen models on a second public dataset |
+| [External validation](external-validation.md) | The frozen models on a second public dataset, and its 40-row subset on IBM Quantum hardware |
 | [Quantum circuit](quantum-circuit.md) | The four-qubit encoding and the fidelity measurement |
-| [Hardware runs](hardware-runs.md) | IBM Quantum access, pilot and full runs, quota, and evidence |
+| [Hardware runs](hardware-runs.md) | IBM Quantum access, pilot, full, and external subset runs, quota, and evidence |
 | [Service](service.md) | API routes, Flask locally and in Docker, security |
 | [Development](development.md) | Pipeline scripts, local checks, and CI |
 | [Roadmap](roadmap.md) | Delivery checklist, decisions, and later phases |
 | [CI and branch protection](ci-and-branch-protection.md) | Workflow, rulesets, and Dependabot |
 | [Documentation checklist](documentation-checklist.md) | Review before documentation changes |
 
-Diagrams: [benchmark-results.svg](benchmark-results.svg), [architecture-flow.svg](architecture-flow.svg), [quantum-circuit.svg](quantum-circuit.svg).
+Diagrams: [benchmark-results.svg](benchmark-results.svg), [model-comparison.svg](model-comparison.svg), [architecture-flow.svg](architecture-flow.svg), [quantum-circuit.svg](quantum-circuit.svg).

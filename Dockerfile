@@ -1,4 +1,5 @@
-# Flask service: recorded results, replay, chart, and live classical inference.
+# Flask service: recorded results, replay, external validation and its hardware subset,
+# charts, and live classical inference.
 # Trained models are not baked in; mount artifacts/benchmark read-only to enable prediction.
 # The service never trains models, fetches URLs, or submits quantum jobs.
 FROM python:3.12-slim
@@ -20,6 +21,7 @@ COPY src/features/ src/features/
 COPY src/inference/ src/inference/
 COPY configs/feature-scaler.json configs/feature-scaler.json
 COPY docs/benchmark-results.svg docs/benchmark-results.svg
+COPY docs/model-comparison.svg docs/model-comparison.svg
 
 RUN useradd --system --uid 10001 --no-create-home vigilantia
 USER 10001

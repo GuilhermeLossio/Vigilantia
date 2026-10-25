@@ -7,7 +7,7 @@
 [![Flask](https://img.shields.io/badge/API-Flask-000000?style=flat-square&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Qiskit](https://img.shields.io/badge/QML-Qiskit-6929C4?style=flat-square)](https://github.com/Qiskit/qiskit)
 [![IBM Quantum](https://img.shields.io/badge/Quantum%20hardware-IBM%20Quantum-6929C4?style=flat-square)](https://quantum.cloud.ibm.com/)
-![Status](https://img.shields.io/badge/Status-MVP%20benchmark%20complete-22C55E?style=flat-square)
+![Status](https://img.shields.io/badge/Status-MVP%20complete-22C55E?style=flat-square)
 
 **A research prototype for phishing detection and data-exposure evidence triage.**
 
@@ -29,7 +29,7 @@ Vigilantia explores whether quantum kernels improve phishing classification unde
 
 The project measures predictive quality and computational cost. Classical models outperforming the quantum model is a valid outcome. Statistical similarity alone cannot establish the authenticity, source, or authorship of a breach.
 
-**Current status: first benchmark run complete; external validation complete; local service implemented.** The dataset downloaders, the frozen split and features, the four models, the IBM Quantum run tooling, the external validation, and the Flask service with its Docker image are implemented and unit-tested. The full benchmark ran on `ibm_fez`, and its quality, runtime, and replay are published. Cloud resources are not implemented, and no deployment exists.
+**Current status: benchmark run complete; external validation and its 40-row hardware subset complete; local service implemented.** The dataset downloaders, the frozen split and features, the four models, the IBM Quantum run tooling, the external validation, and the Flask service with its Docker image are implemented and unit-tested. The full benchmark and a 40-row external subset ran on `ibm_fez`, and their quality, runtime, and evidence are published. Cloud resources are not implemented, and no deployment exists. Remaining before submission: publishing the repository, recording the demo video, and submitting; see the [roadmap](docs/roadmap.md#delivery-checklist).
 
 ---
 
@@ -59,13 +59,30 @@ The RBF SVM scored highest, at 11 of 12. The quantum-kernel SVM scored 6 of 12, 
 | RBF SVM | 0.644 (0.632–0.656) | 0.637 (0.626–0.649) | 0.647 (0.629–0.666) |
 | Quantum-kernel SVM (simulation) | 0.522 (0.510–0.535) | 0.528 (0.516–0.541) | 0.461 (0.445–0.479) |
 
-The classical models keep a real but much smaller signal outside PhiUSIIL. The quantum-kernel SVM stays near chance: its average precision about equals the 46.1% phishing share of the evaluated rows. **No quantum advantage is claimed.**
+The classical models keep a real but much smaller signal outside PhiUSIIL. The quantum-kernel SVM stays near chance: its average precision about equals the 46.1% phishing share of the evaluated rows.
+
+**External subset on IBM Quantum hardware: 40 of those rows (20 per class), run once on `ibm_fez`.** 1,008 circuits in 4 jobs under a protocol frozen before submission. Values from [reports/external-qpu-subset.json](reports/external-qpu-subset.json), with 95% bootstrap intervals; details in [External validation: hardware subset](docs/external-validation.md#hardware-subset-40-rows-on-ibm_fez).
+
+| Model | Test kernel source | Accuracy (n=40) | TN / FP / FN / TP |
+| --- | --- | --- | --- |
+| Majority baseline | Classical | 0.500 (0.350–0.650) | 20 / 0 / 20 / 0 |
+| Logistic regression | Classical | 0.525 (0.375–0.675) | 13 / 7 / 12 / 8 |
+| RBF SVM | Classical | 0.525 (0.375–0.675) | 13 / 7 / 12 / 8 |
+| Quantum-kernel SVM | Exact simulation | 0.475 (0.325–0.625) | 7 / 13 / 8 / 12 |
+| Quantum-kernel SVM | `ibm_fez`, uncorrected | 0.500 (0.350–0.650) | 7 / 13 / 7 / 13 |
+| Quantum-kernel SVM | `ibm_fez`, calibrated | 0.525 (0.375–0.675) | 8 / 12 / 7 / 13 |
+
+On 40 rows no model separates from chance, and each row moves accuracy by 2.5 points. Hardware noise flipped 1 prediction (uncorrected) and 2 (calibrated) relative to the simulation, all toward the correct label; that is well within the intervals and is not evidence that hardware helps. The run used 267.6 s of execution and billed 280 s, and its test kernel error against the exact simulation was 0.026 uncorrected and 0.018 calibrated. **No quantum advantage is claimed.**
+
+![Accuracy by model on the benchmark test set, the full external set, and the 40-row hardware subset, and runtime on the benchmark test set and the subset](docs/model-comparison.svg)
+
+The comparison chart draws every model's accuracy on the three evaluation sets, with intervals where published, and the time to classify the benchmark test set and the 40-row subset: milliseconds locally against minutes of QPU execution on `ibm_fez`. The full external set has no published runtime.
 
 ---
 
 ## Quick start
 
-The [reproduction guide](docs/reproducing.md) is the tested path: a fresh Python 3.12 environment and the six [notebooks](notebooks/) rebuild every published number, including the IBM hardware rows from the recorded counts. No IBM account is needed, and no quantum job is submitted.
+The [reproduction guide](docs/reproducing.md) is the tested path: a fresh Python 3.12 environment and the seven [notebooks](notebooks/) rebuild every published number, including the IBM hardware rows from the recorded counts. No IBM account is needed, and no quantum job is submitted.
 
 ```powershell
 git clone https://github.com/GuilhermeLossio/Vigilantia.git
@@ -89,14 +106,14 @@ The [service guide](docs/service.md) covers Docker and the JSON routes; the [dev
 
 ## How it works
 
-![Planned architecture](docs/architecture-flow.svg)
+![Architecture](docs/architecture-flow.svg)
 
 - **Data:** a PhiUSIIL snapshot is verified by checksum, deduplicated, grouped by registrable domain, and split into a domain-disjoint 24-training/12-test sample with seed 42. See the [data guide](data/README.md).
 - **Features:** four host-only features (`host_entropy`, `host_label_count`, `host_digit_ratio`, `host_hyphen_count`), chosen on training-side data after a shortcut audit and scaled to `[0, pi/2]` on the 24 training rows only.
 - **Models:** majority baseline, logistic regression, RBF SVM, and an SVM with a precomputed four-qubit fidelity kernel built on `zz_feature_map`. No tuning; all settings are frozen in the [protocol](docs/benchmark-protocol.md).
 - **Hybrid execution:** training is classical, on an exactly simulated `24 x 24` kernel. IBM Quantum hardware measures the `12 x 24` test kernel plus 24 calibration pairs and 24 diagonal controls (336 circuits, 1,024 shots each). See the [circuit specification](docs/quantum-circuit.md).
-- **External validation:** the frozen models are applied once to a second public dataset under a protocol frozen beforehand. See [External validation](docs/external-validation.md).
-- **Serving:** a Flask service shows the validated results, the chart, recorded quantum predictions labeled as replay, the external validation, and live classical inference for new hosts. The page is never fetched; only the host is used.
+- **External validation:** the frozen models are applied once to a second public dataset under a protocol frozen beforehand, and a 40-row subset of it runs once on `ibm_fez` (1,008 circuits) under a second frozen protocol. See [External validation](docs/external-validation.md).
+- **Serving:** a Flask service shows the validated results, both charts, recorded quantum predictions labeled as replay, the external validation and its hardware subset, and live classical inference for new hosts. The page is never fetched; only the host is used.
 
 [Architecture.md](Architecture.md) describes components, the technology stack, the pipeline, design tradeoffs, and the repository structure.
 
@@ -112,6 +129,7 @@ The **[documentation catalog](CATALOG.md)** lists every document and notebook, w
 | Reproduce everything from scratch | [Reproduction guide](docs/reproducing.md) and the [notebooks](notebooks/) |
 | Understand the quantum part | [Quantum circuit](docs/quantum-circuit.md) and [Hardware runs](docs/hardware-runs.md) |
 | Run the service | [Service](docs/service.md) |
+| See what is done and what comes next | [Roadmap](docs/roadmap.md) |
 | Contribute | [Contributing](CONTRIBUTING.md) and [Architecture](Architecture.md) |
 
 ---
@@ -134,7 +152,7 @@ Simulator diagnostics alone do not complete the hardware criterion. Exposure ana
 - Small samples increase uncertainty; feature reduction may remove useful signals.
 - The quantum SVM is trained on ideal similarities and classifies with noisy hardware ones. Calibration is a linear approximation, and no model trained on hardware measurements is evaluated.
 - PhiUSIIL has collection shortcuts: every legitimate URL is a bare `https://www.` homepage. The benchmark uses only host-based features, but those still reflect how the data was collected.
-- The external validation tests the frozen models under distribution shift, with host-only features and an exactly simulated quantum kernel; it does not evaluate the method with more training data.
+- The external validation tests the frozen models under distribution shift, with host-only features and an exactly simulated quantum kernel; only its 40-row subset, one run on one backend, uses hardware. It does not evaluate the method with more training data.
 - Simulator results do not establish quantum speedup or production readiness.
 - PhiUSIIL cannot validate breach authenticity. Controlled exposure scenarios only test the stated laboratory checks.
 - Exposure experiments must separate source databases and their variants across splits; recognizing generator artifacts is not proof of authenticity.
@@ -151,6 +169,8 @@ The following event details were supplied in the project brief and have not been
 | Deadline provided by organizers | October 25, 2026, 16:00 UTC / 13:00 America/Sao_Paulo |
 | Required deliverables | Public repository, open-source license, README, environment instructions, explanatory notebooks, and a 1–3 minute demo video |
 | Submission | Email team details, track, GitHub link, and demo video to `submission@aiqtlab.com`; confirm receipt in the submissions channel |
+
+**Remaining:** make the GitHub repository public, record the 1–3 minute demo video, and submit. The license, README, environment instructions, and notebooks are in place; see the [delivery checklist](docs/roadmap.md#delivery-checklist).
 
 ## Author
 

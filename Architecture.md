@@ -4,7 +4,7 @@ Vigilantia is a phishing-classification research prototype using IBM Quantum har
 
 ## Implementation status
 
-The MVP components below are implemented and unit-tested: dataset acquisition, the frozen split and features, training, simulated and hardware evaluation, runtime measurement, the external validation, and the Flask service with its Docker image. The first benchmark ran on IBM Quantum hardware and is published. Model and service dependencies are pinned. Cloud infrastructure and the controlled exposure module remain proposed.
+The MVP components below are implemented and unit-tested: dataset acquisition, the frozen split and features, training, simulated and hardware evaluation, runtime measurement, the external validation, and the Flask service with its Docker image. The benchmark and a 40-row subset of the external validation ran on IBM Quantum hardware, and both are published. Model and service dependencies are pinned. Cloud infrastructure and the controlled exposure module remain proposed.
 
 | Item | Decision |
 | --- | --- |
@@ -23,9 +23,9 @@ The MVP components below are implemented and unit-tested: dataset acquisition, t
 
 ## Overview
 
-![Planned architecture](docs/architecture-flow.svg)
+![Architecture](docs/architecture-flow.svg)
 
-The offline path prepares a PhiUSIIL snapshot, creates a domain-disjoint 24-training/12-test split with seed 42, and fits a shared four-feature pipeline using training data only. Classical baselines and a quantum-kernel SVM are evaluated under the same fixed protocol. The quantum SVM uses a hybrid design: it is trained on an exactly simulated kernel, and IBM Quantum hardware measures the kernel used to classify the test set. A separate offline step applies the frozen models, unchanged, to a second public dataset. The local API consumes classical inference artifacts and recorded results. A later controlled evidence module would expose deterministic observations for analyst review.
+The offline path prepares a PhiUSIIL snapshot, creates a domain-disjoint 24-training/12-test split with seed 42, and fits a shared four-feature pipeline using training data only. Classical baselines and a quantum-kernel SVM are evaluated under the same fixed protocol. The quantum SVM uses a hybrid design: it is trained on an exactly simulated kernel, and IBM Quantum hardware measures the kernel used to classify the test set. A separate offline step applies the frozen models, unchanged, to a second public dataset, and a 40-row subset of it is classified once from kernels measured on IBM Quantum hardware. The local API consumes classical inference artifacts and recorded results. A later controlled evidence module would expose deterministic observations for analyst review.
 
 Training and benchmark jobs run separately from HTTP requests. The local API uses the classical model for new inputs. Saved QPU predictions are shown as explicitly labeled replay with their sample and source run. Live quantum inference requires additional reference-kernel evaluations and an asynchronous design, which is outside the initial API scope.
 
@@ -41,7 +41,8 @@ The acquisition entry point `scripts/download_dataset.py` stages and validates t
 - **Hardware acquisition (`src/quantum/hardware.py`, `src/quantum/qpu_run.py`)**: implemented, rehearsed on a fake backend, and run on `ibm_fez`. `scripts/run_qpu.py` submits a pilot or the full run with confirmation, saves job IDs immediately, retrieves without resubmitting, and publishes evaluated results. It uses Qiskit Runtime sampler jobs (SamplerV2 or its client-side replacement), ISA transpilation, job/result mapping, raw counts, and resumable retrieval on the intended Open Plan instance. See [hardware runs](docs/hardware-runs.md).
 - **Evaluation (`reports/`, `configs/`, `src/evaluation/`)**: frozen configurations, one domain-disjoint held-out evaluation, predictive metrics, and runtime reporting (`src/evaluation/runtime.py`, `scripts/time_benchmark.py`). No tuning or fold/seed variability estimate in the initial run.
 - **External validation (`src/evaluation/external.py`, `scripts/evaluate_external.py`)**: implemented. It verifies the downloaded snapshot offline, applies the frozen preparation in `configs/external-validation.json`, classifies the primary set with the four frozen models (the quantum kernel by exact simulation), adds bootstrap intervals, and publishes aggregates only to `reports/external-validation.json`. See [External validation](docs/external-validation.md).
-- **Serving (`app/`)**: implemented. The Flask service publishes the validated results and chart, shows recorded quantum-kernel SVM test predictions as replay with their source runs, shows the external validation, and serves live classical inference through `POST /v1/phishing/predict` and a page form. Inference lives in `src/inference/predictor.py`, with host validation, feature range reporting, and a model version derived from the artifacts; `scripts/predict_host.py` exposes it on the command line. The Docker image runs Gunicorn as a non-root user; trained models are mounted read-only rather than baked in. Routes are documented in the [service guide](docs/service.md#api).
+- **External hardware subset (`src/evaluation/external_qpu.py`, `scripts/run_qpu_external.py`)**: implemented and run once on `ibm_fez`. It draws a stratified 40-row subset of the primary set by the rule frozen in `configs/external-qpu-subset.json`, plans 1,008 circuits, submits them with the same QPU tooling under a budget guard, and evaluates the six frozen rows with bootstrap intervals. It publishes `reports/external-qpu-subset.json` and copies the counts to `reports/qpu-evidence-external/`. `scripts/rehearse_external_qpu.py` rehearses the same plan on a fake backend without an account.
+- **Serving (`app/`)**: implemented. The Flask service publishes the validated results and both charts, shows recorded quantum-kernel SVM test predictions as replay with their source runs, shows the external validation and its hardware subset, and serves live classical inference through `POST /v1/phishing/predict` and a page form. Inference lives in `src/inference/predictor.py`, with host validation, feature range reporting, and a model version derived from the artifacts; `scripts/predict_host.py` exposes it on the command line. The Docker image runs Gunicorn as a non-root user; trained models are mounted read-only rather than baked in. Routes are documented in the [service guide](docs/service.md#api).
 - **Later evidence checks (`src/exposure/`)**: proposed. Consistency checks and reference-record matches on fictitious samples, with incident replay for human review.
 - **Later infrastructure (`infra/`)**: proposed AWS deployment. The results container would run on Amazon ECS Express Mode, which provisions Fargate tasks and an HTTPS load balancer; ECR, S3, CloudWatch, and IAM support it, and DynamoDB is optional. Nothing has been deployed. See the [roadmap](docs/roadmap.md#deployment-strategy).
 
@@ -52,15 +53,15 @@ The `src/exposure/` and `infra/` paths are planned and do not currently exist.
 | Layer | Technology | Status |
 | --- | --- | --- |
 | Language | Python | Selected |
-| API | Flask with Jinja templates; Gunicorn in the container | Implemented locally: results, replay, external validation, chart, and live prediction |
+| API | Flask with Jinja templates; Gunicorn in the container | Implemented locally: results, replay, external validation and hardware subset, charts, and live prediction |
 | Quantum ML | Qiskit and Qiskit Aer; fidelity kernel implemented directly | Implemented |
-| Quantum hardware | IBM Quantum; qiskit-ibm-runtime sampler | Full benchmark run on `ibm_fez`; counts recorded |
+| Quantum hardware | IBM Quantum; qiskit-ibm-runtime sampler | Full benchmark run and the external subset run on `ibm_fez`; counts recorded |
 | Classical ML | scikit-learn | Implemented |
 | Data processing | pandas, NumPy, tldextract | Implemented |
-| Experiments | Jupyter notebooks | Six reproduction notebooks, executed from a fresh environment (see the [reproduction guide](docs/reproducing.md)) |
+| Experiments | Jupyter notebooks | Seven reproduction notebooks (01 to 07), executed in order from a fresh environment (see the [reproduction guide](docs/reproducing.md)) |
 | Packaging | Docker | Service image builds and runs locally |
 | Cloud | AWS | Later deployment target; services proposed in the [roadmap](docs/roadmap.md#deployment-strategy) |
-| Demo interface | Server-rendered results page and JSON routes | Implemented locally; shows results as pending until published |
+| Demo interface | Server-rendered results page and JSON routes | Implemented locally: published results, replay, external validation, hardware subset, and both charts; a missing file is shown as pending |
 
 Every dependency is pinned in the `requirements*.txt` files and was installed from scratch on Python 3.12; see the [reproduction guide](docs/reproducing.md).
 
@@ -74,6 +75,7 @@ Every dependency is pinned in the `requirements*.txt` files and was installed fr
 | Train | Classical models and SVM fitted to an exactly simulated quantum kernel | Identical examples and feature inputs |
 | Evaluate | Metrics on the test set; quantum SVM classified from QPU-measured kernels | Untouched final test set |
 | Validate externally | Aggregate metrics of the frozen models on a second public dataset | Frozen protocol, checksum, no overlap with PhiUSIIL domains |
+| Validate on hardware | The frozen models on a 40-row external subset, with QPU-measured test kernels | Subset rule frozen before submission, one run, budget guard |
 | Package | Model, preprocessing, reference data, and metadata | Artifact compatibility and inference smoke check |
 | Serve | Local classical inference and labeled saved QPU predictions | Input contract, model availability, and replay identification |
 
@@ -85,7 +87,7 @@ Run training and hardware benchmark jobs outside HTTP requests. The local API us
 
 ## Quantum circuit and execution
 
-![Planned four-qubit quantum kernel](docs/quantum-circuit.svg)
+![Four-qubit quantum kernel](docs/quantum-circuit.svg)
 
 Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)` and the compute-uncompute fidelity measurement with a Qiskit Runtime sampler. Encode four scaled values, apply the inverse map for a second example, and measure the probability of `0000` to estimate their fidelity kernel. Linear connections are 0–1, 1–2, and 2–3. The circuit encodes data; it has no trainable ansatz. See the [circuit specification](docs/quantum-circuit.md) for gate structure and logical counts.
 
@@ -105,7 +107,7 @@ The MVP accepts a host or URL and computes features from the host alone, rather 
 | Deferred exposure demonstration | Keeps the first release focused on the phishing experiment | Evidence workflows are unavailable in the MVP |
 | Simulator checks, hardware benchmark | Validate circuit logic locally before collecting QPU measurements | Hardware completion depends on access, quota, and queues |
 | Classical training, quantum classification | Halves QPU usage and keeps hardware noise out of the training matrix | The model is fitted to ideal similarities and applied to noisy ones, which requires calibration and a simulated reference |
-| External validation with frozen models and a simulated kernel | Tests generalization to other data without any tuning or QPU quota | Measures the frozen 24-example models under distribution shift, not the method with more data or hardware noise |
+| External validation with frozen models and a simulated kernel | Tests generalization to other data without any tuning or QPU quota | Measures the frozen 24-example models under distribution shift, not the method with more data; hardware noise is measured only on a 40-row subset |
 
 - Shared features and splits make comparisons interpretable, while four-feature reduction can remove useful signal.
 - Local simulation checks circuit logic; required hardware measurements expose noise and resource constraints without establishing quantum speedup.
@@ -132,10 +134,12 @@ Vigilantia/
 │   │   └── index.html
 │   ├── __init__.py
 │   ├── external.py
+│   ├── external_qpu.py
 │   ├── replay.py
 │   └── results.py
 ├── configs/
 │   ├── benchmark-split.json
+│   ├── external-qpu-subset.json
 │   ├── external-validation.json
 │   └── feature-scaler.json
 ├── data/
@@ -149,6 +153,7 @@ Vigilantia/
 │   ├── documentation-checklist.md
 │   ├── external-validation.md
 │   ├── hardware-runs.md
+│   ├── model-comparison.svg
 │   ├── quantum-circuit.md
 │   ├── quantum-circuit.svg
 │   ├── README.md
@@ -161,13 +166,17 @@ Vigilantia/
 │   ├── 03-training-and-simulated-evaluation.ipynb
 │   ├── 04-ibm-hardware-results-from-recorded-counts.ipynb
 │   ├── 05-live-inference-runtime-and-service.ipynb
-│   └── 06-external-validation.ipynb
+│   ├── 06-external-validation.ipynb
+│   └── 07-external-subset-on-ibm-hardware.ipynb
 ├── reports/
 │   ├── qpu-evidence/
 │   │   ├── full-ibm_fez-20261025T094010Z/
 │   │   └── pilot-ibm_fez-20261025T092140Z/
+│   ├── qpu-evidence-external/
+│   │   └── external-ibm_fez-20261025T132451Z/
 │   ├── benchmark-replay.json
 │   ├── benchmark-results.json
+│   ├── external-qpu-subset.json
 │   ├── external-validation.json
 │   └── README.md
 ├── scripts/
@@ -180,9 +189,12 @@ Vigilantia/
 │   ├── predict_host.py
 │   ├── prepare_benchmark.py
 │   ├── publish_replay.py
+│   ├── rehearse_external_qpu.py
 │   ├── rehearse_hardware.py
+│   ├── render_comparison_svg.py
 │   ├── render_results_svg.py
 │   ├── run_qpu.py
+│   ├── run_qpu_external.py
 │   ├── scale_benchmark.py
 │   ├── time_benchmark.py
 │   └── train_benchmark.py
@@ -194,6 +206,7 @@ Vigilantia/
 │   │   └── benchmark_split.py
 │   ├── evaluation/
 │   │   ├── external.py
+│   │   ├── external_qpu.py
 │   │   ├── inputs.py
 │   │   ├── metrics.py
 │   │   ├── publish.py
@@ -221,14 +234,19 @@ Vigilantia/
 │   │   ├── test_external_app.py
 │   │   ├── test_external_download.py
 │   │   ├── test_external_preparation.py
+│   │   ├── test_external_qpu.py
+│   │   ├── test_external_qpu_app.py
+│   │   ├── test_external_qpu_script.py
 │   │   ├── test_external_report.py
 │   │   ├── test_external_script.py
 │   │   ├── test_hardware_and_metrics.py
 │   │   ├── test_notebooks.py
 │   │   ├── test_predictor.py
+│   │   ├── test_published_docs.py
 │   │   ├── test_qpu_evidence.py
 │   │   ├── test_qpu_run.py
 │   │   ├── test_quantum_kernel.py
+│   │   ├── test_render_comparison_svg.py
 │   │   ├── test_render_results_svg.py
 │   │   ├── test_repository_checks.py
 │   │   ├── test_requirements.py
@@ -262,13 +280,13 @@ Vigilantia/
 | `src/features/` | Host features and training-fitted scaling |
 | `src/models/` | Classical and quantum model adapters |
 | `src/quantum/` | Fidelity kernel, hardware acquisition, and QPU run records |
-| `src/evaluation/` | Metrics, publishing, replay, runtimes, and the external validation |
+| `src/evaluation/` | Metrics, publishing, replay, runtimes, the external validation, and its hardware subset |
 | `src/inference/` | Live classical inference for new hosts |
 | `src/exposure/` | Controlled evidence checks (planned) |
 | `scripts/` | Command-line entry points for every pipeline step |
 | `notebooks/` | Reproduction notebooks: assumptions, replication checks, and interpretation |
-| `configs/` | Frozen split, scaler, and external-validation protocol |
-| `reports/` | Published results, replay, external validation, and QPU evidence |
+| `configs/` | Frozen split, scaler, external-validation protocol, and hardware-subset protocol |
+| `reports/` | Published results, replay, external validation and its hardware subset, and QPU evidence |
 | `infra/` | AWS deployment definitions (planned) |
 | `Dockerfile` | Service image |
 

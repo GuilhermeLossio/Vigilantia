@@ -1,5 +1,5 @@
 """Flask service: recorded benchmark results, replayed quantum predictions, the external
-validation report, and live classical inference for new hosts. It never fetches URLs, trains models, or submits jobs."""
+validation report and its hardware subset, and live classical inference for new hosts. It never fetches URLs, trains models, or submits jobs."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from pathlib import Path
 from flask import Flask, abort, jsonify, render_template, request, send_file
 
 from app import external as external_module
+from app import external_qpu as external_qpu_module
 from app import replay as replay_module
 from app import results as results_module
 
@@ -17,6 +18,8 @@ DEFAULT_RESULTS_PATH = ROOT / "reports" / "benchmark-results.json"
 DEFAULT_REPLAY_PATH = ROOT / "reports" / "benchmark-replay.json"
 DEFAULT_EXTERNAL_PATH = ROOT / "reports" / "external-validation.json"
 DEFAULT_CHART_PATH = ROOT / "docs" / "benchmark-results.svg"
+DEFAULT_EXTERNAL_QPU_PATH = ROOT / "reports" / "external-qpu-subset.json"
+DEFAULT_COMPARISON_CHART_PATH = ROOT / "docs" / "model-comparison.svg"
 MAX_REQUEST_BYTES = 2048
 SECURITY_HEADERS = {
     "Content-Security-Policy": (
@@ -47,6 +50,8 @@ def create_app(
     chart_path: str | Path | None = None,
     predictor_factory=None,
     external_path: str | Path | None = None,
+    external_qpu_path: str | Path | None = None,
+    comparison_chart_path: str | Path | None = None,
 ) -> Flask:
     app = Flask(__name__)
 
@@ -62,6 +67,14 @@ def create_app(
     replay_file = Path(replay_path or env("VIGILANTIA_REPLAY_PATH") or DEFAULT_REPLAY_PATH)
     external_file = Path(external_path or env("VIGILANTIA_EXTERNAL_PATH") or DEFAULT_EXTERNAL_PATH)
     chart_file = Path(chart_path or env("VIGILANTIA_CHART_PATH") or DEFAULT_CHART_PATH)
+    external_qpu_file = Path(
+        external_qpu_path or env("VIGILANTIA_EXTERNAL_QPU_PATH") or DEFAULT_EXTERNAL_QPU_PATH
+    )
+    comparison_file = Path(
+        comparison_chart_path
+        or env("VIGILANTIA_COMPARISON_CHART_PATH")
+        or DEFAULT_COMPARISON_CHART_PATH
+    )
     factory = predictor_factory or _default_predictor
     state: dict = {}
 
@@ -121,11 +134,25 @@ def create_app(
             return jsonify(error=error, detail=detail), STATUS_CODES[error]
         return jsonify(data)
 
+    @app.get("/v1/external-validation/qpu")
+    def external_qpu():
+        data, error, detail = read(external_qpu_module.load, external_qpu_file)
+        if error:
+            return jsonify(error=error, detail=detail), STATUS_CODES[error]
+        return jsonify(data)
+
+    def svg(path: Path):
+        if not path.is_file():
+            abort(404)
+        return send_file(path, mimetype="image/svg+xml", max_age=300)
+
     @app.get("/benchmark.svg")
     def chart():
-        if not chart_file.is_file():
-            abort(404)
-        return send_file(chart_file, mimetype="image/svg+xml", max_age=300)
+        return svg(chart_file)
+
+    @app.get("/comparison.svg")
+    def comparison_chart():
+        return svg(comparison_file)
 
     @app.post("/v1/phishing/predict")
     def predict():
@@ -142,6 +169,7 @@ def create_app(
         results, error, detail = read(results_module.load, results_file)
         replay_data, replay_error, _ = read(replay_module.load, replay_file)
         external, external_error, external_detail = read(external_module.load, external_file)
+        subset, subset_error, subset_detail = read(external_qpu_module.load, external_qpu_file)
         query = request.args.get("host", "").strip()
         prediction, prediction_status = (None, 200)
         if query:
@@ -162,6 +190,13 @@ def create_app(
             external_detail=external_detail,
             external_steps=external_module.STEPS,
             external_sources=external_module.SOURCES,
+            subset=subset,
+            subset_error=subset_error,
+            subset_detail=subset_detail,
+            subset_reading=subset and external_qpu_module.interpretation(subset, external),
+            subset_sources=results_module.KERNEL_SOURCES,
+            subset_labels=external_qpu_module.HARDWARE_LABELS,
+            comparison_chart=comparison_file.is_file(),
             query=query,
             prediction=prediction,
             prediction_status=prediction_status,

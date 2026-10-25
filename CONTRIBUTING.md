@@ -6,7 +6,7 @@ Start with the [README](README.md), the [documentation catalog](CATALOG.md), the
 
 Create a short-lived branch from `develop` with a descriptive prefix such as `docs/`, `feat/`, or `fix/`. Target `develop` in your PR; promote reviewed changes from `develop` to `main` through a separate PR. Keep each change focused and describe the problem, resulting behavior, validation performed, and remaining limitations. Update documentation in the same change as implementation or experimental protocol changes.
 
-Do not mark a proposed feature complete until evidence exists. Changes to sample selection, features, preprocessing, shots, circuits, or model settings must be versioned and documented before the final test set is evaluated. Do not overwrite a previous run's results with a different configuration. The [external validation protocol](docs/external-validation.md) is frozen in `configs/external-validation.json`; never edit it or tune anything after seeing external results.
+Do not mark a proposed feature complete until evidence exists. Changes to sample selection, features, preprocessing, shots, circuits, or model settings must be versioned and documented before the final test set is evaluated. Do not overwrite a previous run's results with a different configuration. The [external validation protocol](docs/external-validation.md) is frozen in `configs/external-validation.json`; never edit it or tune anything after seeing external results. The hardware-subset protocol in `configs/external-qpu-subset.json` is also frozen and allows one run only; never edit it or submit a second subset run.
 
 ## Local checks
 

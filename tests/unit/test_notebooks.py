@@ -19,6 +19,7 @@ EXPECTED = {
     "04-ibm-hardware-results-from-recorded-counts",
     "05-live-inference-runtime-and-service",
     "06-external-validation",
+    "07-external-subset-on-ibm-hardware",
 }
 # Notebooks reproduce hardware results from recorded counts; they never reach IBM.
 FORBIDDEN_CODE = (

@@ -1,8 +1,8 @@
 # Four-Qubit Quantum Kernel
 
-**Status: implemented and executed.** `src/quantum/kernel.py` builds this circuit, and the first benchmark run measured it on `ibm_fez`; see [hardware runs](hardware-runs.md). The circuit is a fixed data-encoding map, not a variational classifier with trainable gate angles. The external validation uses only its exact simulation.
+**Status: implemented and executed.** `src/quantum/kernel.py` builds this circuit, and two runs measured it on `ibm_fez`: the benchmark run (336 circuits) and the 40-row external subset run (1,008 circuits); see [hardware runs](hardware-runs.md). The circuit is a fixed data-encoding map, not a variational classifier with trainable gate angles. The external validation's 6,441-row primary set uses its exact simulation; only the [40-row subset](external-validation.md#hardware-subset-40-rows-on-ibm_fez) ran on hardware.
 
-![Planned quantum kernel circuit](quantum-circuit.svg)
+![Four-qubit quantum kernel circuit](quantum-circuit.svg)
 
 ## Encoding map
 
@@ -32,7 +32,7 @@ The unoptimized pair circuit has eight H gates, fourteen phase gates, and twelve
 
 Use `QiskitRuntimeService` and a sampler from `qiskit_ibm_runtime` (`SamplerV2`, or the client-side `Sampler` that replaces it from version 0.50), authenticated against the intended Open Plan instance. Run in job mode with ISA-compatible circuits transpiled for one available backend. Backend selection and remaining quota must be recorded before any submission; no specific backend is promised by this design.
 
-The example environment names are a proposed application contract. Future code must explicitly read and pass the token, instance, and backend to the service and sampler; copying `.env.example` does not authenticate or execute anything. Never publish credentials or saved-account files.
+The hardware scripts read the token, instance, and backend from the environment names in `.env.example` and pass them explicitly to the service and sampler (see [hardware runs](hardware-runs.md#configure-ibm-quantum-access)); copying `.env.example` does not authenticate or execute anything. Never publish credentials or saved-account files.
 
 Local statevector/Aer checks precede hardware submission. Check normalization, ideal diagonal values near 1, symmetry, and agreement between direct state overlap and the compute-uncompute circuit for fixed inputs. Validate actual parameter binding and register parsing with the pinned package versions. The same exact statevector computation produces the training kernel and the ideal test kernel. These simulations do not satisfy the hardware classification requirement.
 
@@ -40,6 +40,6 @@ Local statevector/Aer checks precede hardware submission. Check normalization, i
 
 The [benchmark protocol](benchmark-protocol.md) defines the hybrid design, the 336 hardware evaluations, shots, calibration, baselines, and evidence retention. The classifier is a classical SVM fitted to simulated similarities; the hardware measures the similarities used to classify the test set. One shallow linear layer keeps the initial experiment small but is not evidence of improved classification or quantum advantage.
 
-Training and benchmark jobs run outside HTTP requests. New live quantum predictions require kernels against reference training examples and can incur queue delays. The local API will serve the classical model for live inputs and may expose saved QPU test predictions as explicitly labeled replay until a separate asynchronous inference design is implemented. A replay must identify its sample, model, and source run; it is not live QPU inference.
+Training and benchmark jobs run outside HTTP requests. New live quantum predictions require kernels against reference training examples and can incur queue delays. The local API serves the classical model for live inputs and exposes the saved QPU test predictions as explicitly labeled replay (`GET /v1/benchmarks/replay`); live quantum inference would need a separate asynchronous design, which is not implemented. A replay must identify its sample, model, and source run; it is not live QPU inference.
 
 See the [README](../README.md), the [architecture](../Architecture.md), and the [service guide](service.md).

@@ -50,11 +50,14 @@ Classify the test set with the simulated kernel, and rehearse the hardware path 
 .\.venv\Scripts\python.exe scripts/rehearse_hardware.py
 ```
 
-The first writes the published `reports/benchmark-results.json`, with status partial until QPU results exist; it keeps the published file when that file already holds hardware results. The second uses no IBM account and writes only local diagnostics. See the [benchmark protocol](benchmark-protocol.md) for the rules. Regenerate the results chart after any new evaluation:
+The first writes the published `reports/benchmark-results.json`, with status partial until QPU results exist; it keeps the published file when that file already holds hardware results. The second uses no IBM account and writes only local diagnostics. See the [benchmark protocol](benchmark-protocol.md) for the rules. Regenerate the results chart and the comparison chart after any new evaluation:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/render_results_svg.py
+.\.venv\Scripts\python.exe scripts/render_comparison_svg.py
 ```
+
+The comparison chart, `docs/model-comparison.svg`, reads the benchmark, external-validation, and hardware-subset reports, and marks a report that is not published yet as "report not published".
 
 Hardware runs, runtimes, and the replay file are covered in [hardware runs](hardware-runs.md).
 
@@ -66,6 +69,8 @@ Hardware runs, runtimes, and the replay file are covered in [hardware runs](hard
 ```
 
 `download_external.py` uses only the standard library and writes the verified CSV and `acquisition.json` to `data/external/hannousse-2020/`. `evaluate_external.py` makes no network access: it verifies that snapshot, the PhiUSIIL CSV, and the benchmark inputs, then publishes `reports/external-validation.json`. It needs the trained models in `artifacts/benchmark/`. On a missing or inconsistent input it exits with code 1 and publishes nothing. See [External validation](external-validation.md) for the frozen protocol.
+
+The 40-row hardware subset uses `scripts/run_qpu_external.py`: `plan` and `evaluate` are local, and `submit` and `retrieve` contact IBM Quantum. `scripts/rehearse_external_qpu.py` rehearses the same plan on a local fake backend. See [hardware runs](hardware-runs.md#external-subset-40-rows).
 
 ### Classify new hosts
 
@@ -89,6 +94,6 @@ The unit tests need no data, network, or IBM account. See [tests/README.md](../t
 
 ## Development and CI
 
-Development tooling is configured in `pyproject.toml`. GitHub Actions runs Ruff (including the notebooks), Pytest, and offline repository checks on Python 3.12 and 3.13 for PRs and pushes to `develop` and `main`. The unit tests cover data preparation, features, the quantum kernel and hardware tooling with stubbed IBM services, models, evaluation, the external validation, inference, the Flask service, requirements, recorded QPU evidence, and notebook hygiene. CI does not execute the notebooks, because that needs the dataset downloads; the [reproduction guide](reproducing.md) records their tested run.
+Development tooling is configured in `pyproject.toml`. GitHub Actions runs Ruff (including the notebooks), Pytest, and offline repository checks on Python 3.12 and 3.13 for PRs and pushes to `develop` and `main`. The unit tests cover data preparation, features, the quantum kernel and hardware tooling with stubbed IBM services, models, evaluation, the external validation, the external hardware subset, the results and comparison charts, the published numbers quoted in the documentation, inference, the Flask service, requirements, recorded QPU evidence, and notebook hygiene. CI does not execute the notebooks, because that needs the dataset downloads; the [reproduction guide](reproducing.md) records their tested run.
 
 Use feature branches targeting `develop`, then a PR from `develop` to `main`. The importable ruleset requires the stable **CI required** check and PRs, and blocks force-push and deletion. **Remote branch protection is not activated by these files.** See [CI and branch protection](ci-and-branch-protection.md) for activation instructions and current limitations, and [CONTRIBUTING.md](../CONTRIBUTING.md) for the change workflow.
