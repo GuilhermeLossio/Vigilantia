@@ -46,7 +46,7 @@ The project measures predictive quality and computational cost. Classical models
 | [Evaluation Metrics](#evaluation-metrics) | Quality, cost, and reporting |
 | [API](#api) | Flask results service and proposed routes |
 | [Repository Structure](#repository-structure) | Planned modules and responsibilities |
-| [Getting Started](#getting-started) | Setup readiness and prerequisites |
+| [Getting Started](#getting-started) | Reproduction guide, setup, and commands |
 | [Development and CI](#development-and-ci) | Python checks, tests, and branch protection |
 | [Deployment Strategy](#deployment-strategy) | Target AWS infrastructure |
 | [Security and Data Handling](#security-and-data-handling) | Input, access, and evidence boundaries |
@@ -61,7 +61,7 @@ The project measures predictive quality and computational cost. Classical models
 
 ## About
 
-**Current status: acquisition tooling and the results service implemented; modeling remains in design.** The standard-library downloader, the Flask results service with its Docker image, and their unit tests are implemented, and the original PhiUSIIL snapshot has been downloaded and structurally validated locally. Documentation, CI tooling, an unpinned runtime dependency proposal, and a commented configuration example exist. Feature processing, models, the prediction route, hardware jobs, and cloud resources are not implemented. No benchmark results or working deployment are available yet.
+**Current status: first benchmark run complete; local service implemented.** The dataset downloader, the frozen split and features, the four models, the IBM Quantum run tooling, and the Flask service with its Docker image are implemented and unit-tested. The full benchmark ran on `ibm_fez`, and its quality, runtime, and replay are published. Cloud resources are not implemented, and no deployment exists.
 
 | Item | Decision |
 | --- | --- |
@@ -71,7 +71,7 @@ The project measures predictive quality and computational cost. Classical models
 | Positive modeling class | Phishing |
 | Quantum approach | Quantum-kernel SVM / QSVC |
 | Initial experiment | Four features, four qubits, 24 training and 12 test examples, seed 42 |
-| Quantum hardware | IBM Quantum Open Plan, Qiskit Runtime SamplerV2, job mode |
+| Quantum hardware | IBM Quantum Open Plan, Qiskit Runtime sampler, job mode |
 | API | Python and Flask |
 | MVP environment | Local API; IBM Quantum hardware for the benchmark |
 | Later deployment target | AWS |
@@ -79,20 +79,19 @@ The project measures predictive quality and computational cost. Classical models
 
 ## MVP Completion Criteria
 
-- [ ] Acquire and attribute the dataset; record checksums, inspection results, and domain-disjoint splits.
-- [ ] Freeze four ordered features, training-fitted preprocessing, and fixed model settings.
-- [ ] Compute the training kernel by exact simulation, and obtain the complete test kernel and calibration pairs from IBM Quantum hardware, with job IDs and raw counts.
-- [ ] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime.
-- [ ] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts.
-- [ ] Identify any saved QPU predictions exposed in the demo as replay, with sample and source-run metadata.
-- [ ] Document tested environment setup and reproducible acquisition, experiment, and API commands.
+- [x] Acquire and attribute the dataset; record checksums, inspection results, and domain-disjoint splits.
+- [x] Freeze four ordered features, training-fitted preprocessing, and fixed model settings.
+- [x] Compute the training kernel by exact simulation, and obtain the complete test kernel and calibration pairs from IBM Quantum hardware, with job IDs and raw counts.
+- [x] Compare majority, logistic regression, RBF SVM, and quantum-kernel SVM on the same examples; publish measured quality and runtime.
+- [x] Validate local classical inference for new structured inputs, input errors, and missing/incompatible artifacts.
+- [x] Identify any saved QPU predictions exposed in the demo as replay, with sample and source-run metadata.
+- [x] Document tested environment setup and reproducible acquisition, experiment, and API commands.
 
 Simulator diagnostics alone do not complete the hardware criterion. Exposure analysis, incident replay, and AWS deployment belong to later phases. See the [benchmark protocol](docs/benchmark-protocol.md) for acceptance checks.
 
 ## Open Decisions
 
 - **Python and dependency versions:** resolve compatibility in an isolated environment, run import/circuit/inference checks, then pin the tested environment before benchmarking.
-- **Four numerical features:** inspect the snapshot and feature provenance; use training data only and freeze names/order before test evaluation.
 - **Backend and quota:** confirm the accessible Open Plan instance, remaining quota, backend limits, and estimated execution usage before submission; record the selected backend and configuration.
 - **Public authentication and AWS limits:** resolve during the later deployment phase, before exposing analysis routes publicly.
 
@@ -137,7 +136,7 @@ The original dataset has been acquired and structurally validated locally: 235,7
 - Record the acquisition date, source version, file checksum, sampling seed, and attribution.
 - Drop `FILENAME` from model inputs. Preserve URL and domain fields for deduplication and grouping, rather than treating them as memorized identifiers.
 - Keep equivalent registrable domains in the same split, using a documented Public Suffix List rule. Handle missing or invalid domains explicitly.
-- Select four reproducible numerical features using training data only. Freeze their names, ordering, training-fitted scaling to `[0, pi]`, and clipping behavior before evaluation and serving.
+- Select four reproducible numerical features using training data only. Freeze their names, ordering, training-fitted scaling to `[0, pi/2]`, and clipping behavior before evaluation and serving.
 - Audit similarity, reputation, and derived probability features before use. Their construction must not expose test labels or unavailable inference-time information.
 - Fit scaling and feature selection on training rows only. If cross-validation is introduced later, refit transformations inside each training fold.
 
@@ -171,17 +170,17 @@ Training and benchmark jobs run separately from HTTP requests. The local MVP API
 | Layer | Technology | Status |
 | --- | --- | --- |
 | Language | Python | Selected |
-| API | Flask with Jinja templates; Gunicorn in the container | Results service implemented locally; prediction route planned |
-| Quantum ML | Qiskit, Qiskit Machine Learning, Qiskit Aer | Selected; implementation pending |
-| Quantum hardware | IBM Quantum; qiskit-ibm-runtime SamplerV2 | Open Plan selected; jobs pending |
-| Classical ML | scikit-learn | Planned |
-| Data processing | pandas, NumPy | Planned |
-| Experiments | Jupyter notebooks | Planned |
-| Packaging | Docker | Results-service image builds and runs locally |
+| API | Flask with Jinja templates; Gunicorn in the container | Implemented locally: results, replay, chart, and live prediction |
+| Quantum ML | Qiskit and Qiskit Aer; fidelity kernel implemented directly | Implemented |
+| Quantum hardware | IBM Quantum; qiskit-ibm-runtime sampler | Full benchmark run on `ibm_fez`; counts recorded |
+| Classical ML | scikit-learn | Implemented |
+| Data processing | pandas, NumPy, tldextract | Implemented |
+| Experiments | Jupyter notebooks | Five reproduction notebooks, executed from a fresh environment |
+| Packaging | Docker | Service image builds and runs locally |
 | Cloud | AWS | Later deployment target; services proposed below |
 | Demo interface | Server-rendered results page and JSON route | Implemented locally; shows results as pending until published |
 
-Dependency versions will be pinned after compatibility checks. Technology badges identify the intended stack, not a validated build.
+Every dependency is pinned in the `requirements*.txt` files and was installed from scratch on Python 3.12; see the [reproduction guide](docs/reproducing.md).
 
 ---
 
@@ -237,24 +236,30 @@ Use `zz_feature_map(4, reps=1, entanglement="linear", alpha=2.0)`. Encode four s
 | Training and inference runtime | Computational cost and serving feasibility |
 | Fold and seed variability | Later extension; unavailable in the initial single-seed run |
 
-**Results: pending.** No performance values or advantage claims are available. Reports must include class prevalence, split definitions, thresholds, feature choices, and runtime conditions. Scores will not be described as probabilities without appropriate calibration and evaluation.
+**Results: complete for the first run.** All results are recorded in the [benchmark protocol](docs/benchmark-protocol.md#recorded-results) and published in `reports/benchmark-results.json`. The RBF SVM scored highest, at 11 of 12. The quantum-kernel SVM scored 6 of 12, chance level, with the simulated kernel and with the kernels measured on `ibm_fez`, uncorrected and calibrated; hardware noise changed no prediction. With 12 test examples, every estimate here is unstable. Every model fits and predicts in milliseconds locally; measuring the hardware test kernel took 89.2 s of QPU execution. No advantage claim is made. Reports must include class prevalence, split definitions, thresholds, feature choices, and runtime conditions. Scores will not be described as probabilities without appropriate calibration and evaluation.
+
+![Benchmark results](docs/benchmark-results.svg)
+
+The chart shows test accuracy per model with the source of each result, the measured kernel error against the exact simulation, and the IBM Quantum time used. The full 336-circuit run on `ibm_fez` billed 92 s of the Open Plan's 600 s, matching the pilot's projection of 89 s of execution time. Its test kernel error was 0.037 uncorrected and 0.029 calibrated, about three times the fake-backend rehearsal. `scripts/render_results_svg.py` regenerates the chart from the recorded results.
 
 ---
 
 ## API
 
-**Partially implemented.** The Flask results service in `app/` serves `GET /health`, `GET /v1/benchmarks`, and a results page at `/`. It reads the [published results file](reports/README.md), validates it, and reports results as pending until the benchmark writes it. The other routes remain proposed.
+**MVP routes implemented.** The Flask service in `app/` reads the [published results and replay files](reports/README.md), validates them on every request, and reports them as pending until they exist. Live prediction loads the trained classical model on first use; without the model artifacts it answers `503 model_unavailable` while the rest of the service keeps working. Request bodies are limited to 2 KB, and the content security policy allows no scripts.
 
 | Method | Route | Planned behavior |
 | --- | --- | --- |
 | `GET` | `/health` | Application liveness |
-| `POST` | `/v1/phishing/predict` | MVP: validate structured features and return classical live inference with model version and score semantics |
+| `POST` | `/v1/phishing/predict` | Implemented: `{"host": "..."}` returns the RBF SVM prediction, decision margin, features, out-of-range features, and model version; `400` for invalid input, `503` without model artifacts |
 | `POST` | `/v1/exposure/analyze` | Later phase: consistency and reference-match checks on controlled samples |
 | `GET` | `/v1/incidents` | Later phase: demonstration incidents and review states |
 | `GET` | `/v1/benchmarks` | Implemented: return validated recorded results, `503` while pending, `500` for an invalid file |
-| `GET` | `/` | Implemented: results page labeling the source of every result |
+| `GET` | `/v1/benchmarks/replay` | Implemented: recorded quantum-kernel SVM test predictions per source, labeled replay, with source runs |
+| `GET` | `/benchmark.svg` | Implemented: the generated benchmark chart |
+| `GET` | `/` | Implemented: host form, results page with chart and sources, and the replay table |
 
-The feature schema will be finalized after inspecting PhiUSIIL. Invalid input and unavailable artifacts must be distinguishable from a classification result. Saved quantum benchmark predictions belong to recorded benchmark results and must identify their sample and run as replay. Training and hardware benchmark jobs will not run inside prediction requests. The later exposure module will return evidence observations, not authentication verdicts.
+The features are computed from the host alone; the page is never fetched. Invalid input and unavailable artifacts are distinguishable from a classification result. Saved quantum benchmark predictions belong to recorded benchmark results and must identify their sample and run as replay. Training and hardware benchmark jobs will not run inside prediction requests. The later exposure module will return evidence observations, not authentication verdicts.
 
 ## Repository Structure
 
@@ -272,27 +277,91 @@ Vigilantia/
 │   ├── templates/
 │   │   └── index.html
 │   ├── __init__.py
+│   ├── replay.py
 │   └── results.py
+├── configs/
+│   ├── benchmark-split.json
+│   └── feature-scaler.json
 ├── data/
 │   └── README.md
 ├── docs/
 │   ├── architecture-flow.svg
 │   ├── benchmark-protocol.md
+│   ├── benchmark-results.svg
 │   ├── ci-and-branch-protection.md
 │   ├── documentation-checklist.md
 │   ├── quantum-circuit.md
-│   └── quantum-circuit.svg
+│   ├── quantum-circuit.svg
+│   └── reproducing.md
+├── notebooks/
+│   ├── 01-data-and-split.ipynb
+│   ├── 02-features-scaling-and-kernel.ipynb
+│   ├── 03-training-and-simulated-evaluation.ipynb
+│   ├── 04-ibm-hardware-results-from-recorded-counts.ipynb
+│   └── 05-live-inference-runtime-and-service.ipynb
 ├── reports/
+│   ├── qpu-evidence/
+│   │   ├── full-ibm_fez-20261025T094010Z/
+│   │   └── pilot-ibm_fez-20261025T092140Z/
+│   ├── benchmark-replay.json
+│   ├── benchmark-results.json
 │   └── README.md
 ├── scripts/
+│   ├── check_ibm_access.py
 │   ├── check_repository.py
-│   └── download_dataset.py
+│   ├── download_dataset.py
+│   ├── evaluate_benchmark.py
+│   ├── predict_host.py
+│   ├── prepare_benchmark.py
+│   ├── publish_replay.py
+│   ├── rehearse_hardware.py
+│   ├── render_results_svg.py
+│   ├── run_qpu.py
+│   ├── scale_benchmark.py
+│   ├── time_benchmark.py
+│   └── train_benchmark.py
+├── src/
+│   ├── config/
+│   │   ├── env_file.py
+│   │   └── ibm.py
+│   ├── data/
+│   │   └── benchmark_split.py
+│   ├── evaluation/
+│   │   ├── inputs.py
+│   │   ├── metrics.py
+│   │   ├── publish.py
+│   │   ├── replay.py
+│   │   └── runtime.py
+│   ├── features/
+│   │   ├── host_features.py
+│   │   └── scaling.py
+│   ├── inference/
+│   │   └── predictor.py
+│   ├── models/
+│   │   └── benchmark_models.py
+│   └── quantum/
+│       ├── hardware.py
+│       ├── kernel.py
+│       └── qpu_run.py
 ├── tests/
 │   ├── unit/
+│   │   ├── test_app_inference_replay.py
+│   │   ├── test_benchmark_split.py
+│   │   ├── test_check_ibm_access.py
 │   │   ├── test_download_dataset.py
 │   │   ├── test_download_dataset_cli.py
+│   │   ├── test_hardware_and_metrics.py
+│   │   ├── test_notebooks.py
+│   │   ├── test_predictor.py
+│   │   ├── test_qpu_evidence.py
+│   │   ├── test_qpu_run.py
+│   │   ├── test_quantum_kernel.py
+│   │   ├── test_render_results_svg.py
 │   │   ├── test_repository_checks.py
-│   │   └── test_results_app.py
+│   │   ├── test_requirements.py
+│   │   ├── test_results_app.py
+│   │   ├── test_runtime.py
+│   │   └── test_scaling.py
 │   └── README.md
 ├── .dockerignore
 ├── .env.example
@@ -306,25 +375,30 @@ Vigilantia/
 ├── README.md
 ├── requirements-app.txt
 ├── requirements-dev.txt
+├── requirements-model.txt
 └── requirements.txt
 ```
 
-**Planned layout.** Only `app/`, `reports/`, and the `Dockerfile` exist so far; the other paths have not been created.
+**Responsibilities.** `src/exposure/` and `infra/` are planned for later phases and do not exist yet.
 
 | Path | Responsibility |
 | --- | --- |
-| `app/` | Flask application, routes, and templates; the results service exists, prediction is planned |
+| `app/` | Flask application, routes, and templates |
 | `src/data/` | Acquisition, validation, deduplication, and splits |
 | `src/features/` | Transformations and feature selection |
 | `src/models/` | Classical and quantum model adapters |
 | `src/exposure/` | Controlled evidence checks |
-| `notebooks/` | Assumptions, experiments, and interpretation |
+| `notebooks/` | Reproduction notebooks: assumptions, replication checks, and interpretation |
 | `configs/` | Experiment configurations and seeds |
 | `reports/` | Metrics, plots, and limitations |
 | `infra/` | AWS deployment definitions |
 | `Dockerfile` | Application image |
 
 ## Getting Started
+
+### Reproduce everything
+
+The [reproduction guide](docs/reproducing.md) is the tested path for evaluators: install the pinned environment in a fresh Python 3.12 virtual environment, then run the five [notebooks](notebooks/) in order. They rebuild the dataset snapshot, split, scaler, models, simulated results, and IBM hardware results from the recorded counts, and check every value against the published files. No IBM account is needed. The sections below describe the individual commands.
 
 ### Download the dataset
 
@@ -334,9 +408,9 @@ python scripts/download_dataset.py
 
 This command uses only the standard library and writes the original ZIP, CSV, and `acquisition.json` to `data/raw/`. It can run before installing runtime dependencies. Repeating it verifies and reuses an intact snapshot without a new download. Partial or modified snapshots fail with an explanation and are preserved. The [data guide](data/README.md) explains recovery and validation boundaries.
 
-### Run the results service
+### Run the Flask service
 
-The Flask results service needs only the pinned dependencies in `requirements-app.txt`. Until `reports/benchmark-results.json` exists, the page and `/v1/benchmarks` report the results as pending.
+The Flask service needs the pinned dependencies in `requirements-app.txt`. Until the results and replay files exist, the page and the JSON routes report them as pending. Live prediction needs the trained models in `artifacts/benchmark/`, produced by `scripts/train_benchmark.py`.
 
 ```powershell
 python -m pip install -r requirements-app.txt
@@ -346,33 +420,97 @@ python -m flask --app "app:create_app()" run --port 8000
 Or build and run the container, which serves on port 8000 with Gunicorn as a non-root user:
 
 ```powershell
-docker build -t vigilantia-results .
-docker run --rm -p 8000:8000 vigilantia-results
+docker build -t vigilantia .
+docker run --rm -p 8000:8000 -v "${PWD}/artifacts/benchmark:/srv/vigilantia/artifacts/benchmark:ro" vigilantia
 ```
 
-Open `http://127.0.0.1:8000/`. Set `VIGILANTIA_RESULTS_PATH` to read results from another file.
+The image contains the code, the fitted scaler, the published results, the replay, and the chart, but not the trained models; the read-only mount provides them. Without the mount, prediction answers `503`. Open `http://127.0.0.1:8000/`. `VIGILANTIA_RESULTS_PATH`, `VIGILANTIA_REPLAY_PATH`, and `VIGILANTIA_CHART_PATH` override the file locations. After a new evaluation, refresh the replay with `scripts/publish_replay.py`.
 
-### Prepare the future application environment
+### Build the benchmark sample
 
-The application scaffold and dependency lockfile are pending. There is no verified local startup command yet.
-
-> **Reader notice:** [requirements.txt](requirements.txt) is an initial dependency proposal, not a tested or locked environment. Versions are unpinned and installations may change over time. [.env.example](.env.example) documents proposed settings only; no application reads them yet. Installing dependencies and copying the example does not produce a running service.
-
-To prepare an isolated environment on Windows (PowerShell):
+Use a Python 3.12 environment for modeling; Qiskit Aer may not support newer versions yet.
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m pip check
-# Run once, if you do not already have a local .env file:
+py -3.12 -m venv .venv-qml
+.\.venv-qml\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv-qml\Scripts\python.exe scripts/prepare_benchmark.py
+```
+
+The script checks the CSV checksum, then writes `configs/benchmark-split.json` and the local `data/processed/benchmark-sample.csv`. Then fit the training-only angle scaler:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/scale_benchmark.py
+```
+
+It writes `configs/feature-scaler.json` and the local `data/processed/benchmark-scaled.csv`. Then build the simulated training kernel and fit the four models; no test data is read:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/train_benchmark.py
+```
+
+Fitted models, the training kernel, and a summary go to the ignored `artifacts/benchmark/` directory. Then classify the test set with the simulated kernel, and rehearse the hardware path on a local fake backend:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/evaluate_benchmark.py
+.\.venv-qml\Scripts\python.exe scripts/rehearse_hardware.py
+```
+
+The first writes the published `reports/benchmark-results.json`, with status partial until QPU results exist. The second uses no IBM account and writes only local diagnostics. See the [benchmark protocol](docs/benchmark-protocol.md) for the rules. Regenerate the results chart after any new evaluation:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/render_results_svg.py
+```
+
+### Configure IBM Quantum access (optional)
+
+Only new hardware runs need an IBM Quantum account; the [reproduction guide](docs/reproducing.md) rebuilds the published hardware results from the recorded counts without one. [.env.example](.env.example) documents the settings. Create a local `.env` from it once:
+
+```powershell
 Copy-Item .env.example .env
 ```
 
-On macOS/Linux, use `.venv/bin/python` in place of `.\.venv\Scripts\python.exe` and `cp .env.example .env` to copy the example.
+On macOS/Linux, use `cp .env.example .env`.
 
-The dependency list covers API serving, data preparation, classical baselines, local quantum simulation, IBM Quantum Runtime, notebooks, and plots. Installation guidance: [Flask](https://flask.palletsprojects.com/) and [Qiskit Machine Learning](https://github.com/qiskit-community/qiskit-machine-learning/blob/main/docs/getting_started.rst). Dependencies are proposals; no hardware integration is implemented yet.
+The `.env.example` entries are commented out deliberately. `scripts/check_ibm_access.py` reads `IBM_QUANTUM_TOKEN`, `IBM_QUANTUM_INSTANCE`, and `IBM_QUANTUM_BACKEND` from `.env` and passes them to the SDK; variables set in the terminal session take precedence, and a saved Qiskit account is used when no token is set. These are not automatic SDK environment variables. The check submits only a dry run, which IBM validates without executing on a QPU:
 
-The `.env.example` entries are commented out deliberately. No environment-file loader exists. Future code must explicitly read the proposed IBM token, Open Plan instance, and backend settings and pass them to the SDK; these are not automatic SDK environment variables. Confirm names against that implementation before enabling them. Local `.env` variants and project-local provider credential files are ignored by Git; the example remains versionable. Keep real secrets out of the example.
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/check_ibm_access.py
+.\.venv-qml\Scripts\python.exe scripts/check_ibm_access.py --full-workload
+```
+
+The second form dry-runs all 336 benchmark circuits and prints IBM's estimate of the QPU time they would use. Dry runs depend on IBM making a mock backend available; for the current Open Plan account they are not, which says nothing about real jobs.
+
+### Classify new hosts
+
+Classify hosts or URLs with the served classical model. Only the host is used, and nothing is fetched or visited:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/predict_host.py example.com https://login-check.web.app/
+```
+
+Each result includes the prediction, the SVM decision margin, the four features, any feature outside the training range, and a model version derived from the artifacts. The served model is the RBF SVM, named the primary nonlinear baseline before any test result existed; `--model logistic_regression` is also available. The margin is not a probability. The quantum-kernel SVM is not served live, because each prediction would need QPU kernel evaluations.
+
+### Run the benchmark on IBM Quantum hardware
+
+These commands use real QPU quota. Set `IBM_QUANTUM_BACKEND` in `.env` first, for example `ibm_fez`, so every circuit runs on the same device. `submit` checks the instance quota, transpiles for that backend, and asks you to type `SUBMIT` before sending anything:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/run_qpu.py submit --pilot 12
+.\.venv-qml\Scripts\python.exe scripts/run_qpu.py retrieve <run-id>
+.\.venv-qml\Scripts\python.exe scripts/run_qpu.py evaluate <run-id>
+```
+
+The pilot sends 12 circuits and `evaluate` reports their QPU time and a projection for the full run. If the projection fits the remaining quota, submit the full run with `submit` and no `--pilot`, then retrieve and evaluate it. `retrieve` can be repeated while jobs are queued; it never resubmits. `evaluate` of a full run calibrates the hardware kernel, classifies the test set, and publishes `reports/benchmark-results.json` with the QPU rows. `list` shows recorded runs. Run records, job IDs, and raw counts are kept in the ignored `artifacts/benchmark/qpu-runs/` directory.
+
+After `evaluate`, add measured runtimes to the published file. This is local and makes no IBM call; hardware rows reuse the execution time IBM recorded for the run:
+
+```powershell
+.\.venv-qml\Scripts\python.exe scripts/time_benchmark.py
+```
+
+It times fit, test-kernel computation, and prediction for every row, as the median of 25 repeats, and records the machine and package versions. A new `evaluate` rewrites the results file without runtimes, so run it again afterwards.
+
+Local `.env` variants and project-local provider credential files are ignored by Git; the example remains versionable. Keep real secrets out of the example.
 
 Before the first runnable release, validate the supported Python version and package compatibility, pin dependencies, and document dataset retrieval, API startup, and benchmark commands. Local simulator experiments should be reproducible independently of cloud deployment.
 
@@ -382,7 +520,7 @@ Required resources for the planned workflow are a compatible Python environment,
 
 ## Development and CI
 
-Development tooling is configured in `pyproject.toml` with pinned direct tools in `requirements-dev.txt`. GitHub Actions runs Ruff, Pytest, and offline repository checks on Python 3.12 and 3.13 for PRs and pushes to `develop` and `main`. Initial unit tests exercise the repository-checking helpers; application/model tests will accompany their implementations. This CI matrix does not establish compatibility of the untested QML runtime.
+Development tooling is configured in `pyproject.toml`; `requirements-dev.txt` adds pytest and Ruff to the complete pinned environment. GitHub Actions runs Ruff (including the notebooks), Pytest, and offline repository checks on Python 3.12 and 3.13 for PRs and pushes to `develop` and `main`. The unit tests cover data preparation, features, the quantum kernel and hardware tooling with stubbed IBM services, models, evaluation, inference, the Flask service, requirements, recorded QPU evidence, and notebook hygiene. CI does not execute the notebooks, because that needs the UCI download; the [reproduction guide](docs/reproducing.md) records their tested run.
 
 Use feature branches targeting `develop`, then a PR from `develop` to `main`. The importable ruleset requires the stable **CI required** check and PRs, and blocks force-push and deletion. **Remote branch protection is not activated by these files.** See [CI and branch protection](docs/ci-and-branch-protection.md) for local commands, activation instructions, and current limitations; see [tests/README.md](tests/README.md) for test conventions.
 
@@ -442,16 +580,20 @@ Tests should cover target mapping, domain isolation, training-only preprocessing
 - [x] Select Python, Flask, Qiskit, and IBM Quantum Open Plan; retain AWS as a later target.
 - [x] Document the initial four-qubit circuit and 24/12 hardware benchmark protocol.
 - [x] Acquire the original data; record attribution, checksums, structural checks, and class counts.
-- [ ] Inspect feature types/provenance, duplicates, and domain quality before modeling.
-- [ ] Freeze the split protocol and initial feature contract.
+- [x] Inspect feature provenance, duplicates, and domain quality; exclude collection shortcuts.
+- [x] Freeze the domain-disjoint 24/12 split and four host-only features.
 - [x] Adopt the hybrid design: classical training on a simulated kernel, quantum classification on hardware.
-- [ ] Implement classical baselines, simulator checks, and hardware kernel acquisition.
-- [ ] Collect the complete QPU test and calibration kernels and preserve job/result evidence within the verified Open Plan quota.
-- [ ] Produce reproducible metrics, plots, and runtime comparisons.
+- [x] Implement the simulated training kernel and fit the four fixed models.
+- [x] Classify the test set with the simulated kernel and publish partial results.
+- [x] Implement hardware kernel acquisition and rehearse it on a fake backend.
+- [x] Collect the complete QPU test and calibration kernels and preserve job/result evidence within the verified Open Plan quota.
+- [x] Produce reproducible metrics, plots, and runtime comparisons.
 - [x] Implement the Flask results service, its container image, and its unit tests.
-- [ ] Implement and validate the Flask inference route.
-- [ ] Validate classical live inference and clearly labeled saved quantum predictions.
-- [ ] Complete notebooks and verified environment instructions.
+- [x] Implement live classical inference for new hosts, with a command-line entry point.
+- [x] Implement and validate the Flask inference route.
+- [x] Show the benchmark chart in the Flask results page.
+- [x] Validate classical live inference and clearly labeled saved quantum predictions.
+- [x] Complete notebooks and verified environment instructions.
 - [x] Include the MIT code license.
 - [ ] Publish the repository, record the demo, and submit.
 - [ ] Later: build the controlled exposure and incident replay demonstration.
@@ -464,7 +606,7 @@ Delivery priority: data inspection, frozen protocol, local circuit checks, QPU a
 - Historical phishing data does not establish performance against current attacks or banking-specific campaigns.
 - Small samples increase uncertainty; feature reduction may remove useful signals.
 - The quantum SVM is trained on ideal similarities and classifies with noisy hardware ones. Calibration is a linear approximation, and no model trained on hardware measurements is evaluated.
-- Derived dataset attributes may introduce shortcuts or leakage unless their provenance is audited.
+- PhiUSIIL has collection shortcuts: every legitimate URL is a bare `https://www.` homepage. The benchmark uses only host-based features, but those still reflect how the data was collected.
 - Simulator results do not establish quantum speedup or production readiness.
 - PhiUSIIL cannot validate breach authenticity. Controlled exposure scenarios only test the stated laboratory checks.
 - Exposure experiments must separate source databases and their variants across splits; recognizing generator artifacts is not proof of authenticity.
@@ -503,6 +645,7 @@ Project: **Vigilantia**.
 - [Architecture.md](Architecture.md): planned components, data flow, and implementation gaps.
 - [docs/](docs/): version-controlled SVG diagrams.
 - [LICENSE](LICENSE): MIT code license.
+- [Reproduction guide](docs/reproducing.md): tested setup, notebooks, and commands to rebuild every result.
 - [Benchmark protocol](docs/benchmark-protocol.md): fixed comparison, hardware budget, and reporting.
 - [Quantum circuit](docs/quantum-circuit.md): encoding, fidelity measurement, and execution design.
 - [Data guide](data/README.md): attribution, acquisition, storage, and inspection status.

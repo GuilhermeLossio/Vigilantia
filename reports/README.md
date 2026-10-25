@@ -1,8 +1,16 @@
 # Published Benchmark Results
 
-**Status: no results published yet.** The results service reads `reports/benchmark-results.json`. Until the benchmark writes that file, the service reports the results as pending and shows no values.
+**Status: complete results published** for run `full-ibm_fez-20261025T094010Z`. `scripts/evaluate_benchmark.py` writes `reports/benchmark-results.json` with the three classical models and the quantum-kernel SVM on the exact simulated kernel. `scripts/run_qpu.py evaluate` adds the uncorrected and calibrated IBM Quantum hardware rows after a full QPU run and marks the file complete; the simulation script then leaves a complete file untouched. `scripts/time_benchmark.py` then adds measured runtimes; a new evaluation removes them until it runs again. Without the file, the service reports the results as pending and shows no values.
 
-Only measured results go in this file. Do not add simulated values labeled as hardware, placeholder numbers, or hand-edited metrics. Raw counts, kernels, and job evidence stay under the ignored `reports/runs/` directory, or in private storage.
+Only measured results go in this file. Do not add simulated values labeled as hardware, placeholder numbers, or hand-edited metrics. Measured kernels and other generated files stay under the ignored `artifacts/` directory.
+
+## QPU evidence
+
+`reports/qpu-evidence/<run-id>/` holds the recorded IBM Quantum runs, the 12-circuit pilot and the 336-circuit full run on `ibm_fez`: `run.json` with the plan, transpilation summary, job IDs, timestamps, and IBM's usage metrics, and `counts-<job-id>.json` with the raw counts of every circuit. The files contain no token, instance, or account identifier. They let anyone rebuild the hardware rows offline; [notebook 04](../notebooks/04-ibm-hardware-results-from-recorded-counts.ipynb) does so and compares the result with this file. `tests/unit/test_qpu_evidence.py` checks that the evidence is complete and consistent with the published hardware section and runtimes.
+
+## Replay file
+
+`scripts/publish_replay.py` writes `reports/benchmark-replay.json` from the frozen test rows, the simulated evaluation, and the latest full QPU run. It holds, for each of the 12 test samples, the true label and the quantum-kernel SVM prediction and decision margin per source: simulation, QPU uncorrected, and QPU calibrated. Samples are identified by test position, dataset row index, and hashed domain group, never by host or URL. The file is labeled replay and names its source runs; `app/replay.py` validates it, and the page and `GET /v1/benchmarks/replay` present it as replay, not live inference.
 
 ## Results contract (schema version 1)
 
@@ -19,6 +27,8 @@ The service validates the file on every request; `app/results.py` is the referen
 | `kernel_source` | `classical`, `simulation`, `qpu`, or `qpu_calibrated`. It labels where each result came from. |
 | `metrics` | Exactly `accuracy`, `balanced_accuracy`, `precision`, `recall`, `f1`, and `average_precision`. Each is a number in `[0, 1]`, or `null` when unavailable. |
 | `confusion_matrix` | `[[TN, FP], [FN, TP]]` with phishing as the positive class. The four cells must sum to `split.test`. |
+| `runtime_seconds` | Optional, per model: exactly `fit`, `test_kernel`, and `predict`, each a non-negative number of seconds or `null` when not applicable. |
+| `runtime` | Required when any model has `runtime_seconds`: non-empty `method` and `environment` strings, and optionally `qpu` with exactly `execution_seconds`, `charged_seconds`, and `resource_units`, each non-negative or `null`. |
 | `limitations` | List of strings shown with the results. |
 
 Structure, with illustrative field values only:

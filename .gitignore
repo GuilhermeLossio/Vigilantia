@@ -141,6 +141,7 @@ data/processed/
 artifacts/
 reports/runs/
 .venv
+.venv-qml/
 env/
 venv/
 ENV/

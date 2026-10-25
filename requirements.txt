@@ -1,25 +1,15 @@
-# Initial dependency proposal for Vigilantia (design stage).
-# Versions are intentionally unpinned until the first implementation is tested.
-# This is NOT a lockfile or a validated, reproducible environment.
-# Install in an isolated environment: python -m pip install -r requirements.txt
-# Validate compatibility and pin resolved versions before publishing benchmarks.
+# Complete pinned environment: the benchmark pipeline, the notebooks, and the Flask service.
+# Tested from a fresh Python 3.12 virtual environment; see docs/reproducing.md.
+# Install: python -m pip install -r requirements.txt
 
-# API: the Flask results service has pinned dependencies in requirements-app.txt.
+# Flask service and the classical model it loads.
 -r requirements-app.txt
 
-# Data acquisition, preparation, and classical baselines
-numpy
-pandas
-scikit-learn
-ucimlrepo
-tldextract
+# Data preparation, classical baselines, quantum kernel simulation, and IBM Runtime.
+-r requirements-model.txt
 
-# Quantum circuits, local simulation, and quantum-kernel classifiers
-qiskit
-qiskit-aer
-qiskit-machine-learning
-qiskit-ibm-runtime
-
-# Notebook experiments and benchmark plots
-jupyterlab
-matplotlib
+# Notebooks (notebooks/): open with JupyterLab, or execute headless with nbconvert.
+jupyterlab==4.6.4
+ipykernel==7.4.0
+nbconvert==7.17.2
+nbclient==0.11.0

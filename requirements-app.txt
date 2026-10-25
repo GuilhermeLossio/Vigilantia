@@ -1,4 +1,9 @@
-# Runtime dependencies of the read-only results service (app/) and its container image.
-# Kept separate from requirements.txt, which holds the unpinned research/QML proposal.
+# Runtime dependencies of the Flask service (app/) and its container image. numpy, scipy,
+# and scikit-learn load the classical model for live inference; versions match
+# requirements-model.txt, which produced the trained artifacts.
+# requirements.txt combines this file with the model and notebook dependencies.
 flask==3.1.3
 gunicorn==26.2.0
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.9.1

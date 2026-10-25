@@ -8,7 +8,7 @@
 
 Use Qiskit's functional constructor `zz_feature_map(feature_dimension=4, reps=1, entanglement="linear", alpha=2.0)`. The [official API](https://quantum.cloud.ibm.com/docs/en/api/qiskit/qiskit.circuit.library.zz_feature_map) defines the phase functions and supported entanglement patterns.
 
-The input is the ordered vector of four numerical features transformed to `[0, pi]` by the training-fitted preprocessing described in the [benchmark protocol](benchmark-protocol.md). The feature names are pending inspection, but there is exactly one encoded value per logical qubit.
+The input is the ordered vector of four numerical features transformed to `[0, pi/2]` by the training-fitted preprocessing described in the [benchmark protocol](benchmark-protocol.md). The frozen features are `host_entropy`, `host_label_count`, `host_digit_ratio`, and `host_hyphen_count`, one per logical qubit in that order. The range stops at pi/2 because each qubit receives a phase of `2 * x`; a range up to pi would make the smallest and largest values produce the same single-qubit phase.
 
 Starting from `|0000>`:
 
@@ -30,7 +30,7 @@ The unoptimized pair circuit has eight H gates, fourteen phase gates, and twelve
 
 ## IBM Quantum execution
 
-Use `QiskitRuntimeService` and `SamplerV2` from `qiskit_ibm_runtime`, authenticated against the intended Open Plan instance. Run in job mode with ISA-compatible circuits transpiled for one available backend. Backend selection and remaining quota must be recorded before any submission; no specific backend is promised by this design.
+Use `QiskitRuntimeService` and a sampler from `qiskit_ibm_runtime` (`SamplerV2`, or the client-side `Sampler` that replaces it from version 0.50), authenticated against the intended Open Plan instance. Run in job mode with ISA-compatible circuits transpiled for one available backend. Backend selection and remaining quota must be recorded before any submission; no specific backend is promised by this design.
 
 The example environment names are a proposed application contract. Future code must explicitly read and pass the token, instance, and backend to the service and sampler; copying `.env.example` does not authenticate or execute anything. Never publish credentials or saved-account files.
 

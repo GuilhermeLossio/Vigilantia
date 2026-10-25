@@ -14,7 +14,7 @@ Use before the initial documentation commit and whenever the design changes. Che
 ## Navigation and presentation
 
 - [ ] Local Markdown links and heading anchors resolve.
-- [ ] Both SVG diagrams render with readable labels, accessible descriptions, and no clipping or overlapping connectors.
+- [ ] All SVG diagrams, including the generated results chart, render in light and dark mode with readable labels, accessible descriptions, and no clipping or overlapping connectors.
 - [ ] README and architecture link both diagrams and the supporting documents.
 - [ ] English text, Unicode directory trees, and formatting are consistent.
 

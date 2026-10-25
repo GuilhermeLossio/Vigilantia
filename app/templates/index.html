@@ -5,21 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vigilantia Benchmark</title>
   <style>
-    :root { --fg: #1f2328; --muted: #57606a; --line: #d0d7de; --bg: #ffffff; --panel: #f6f8fa; --accent: #2563eb; --warn: #9a6700; }
+    :root { --fg: #1f2328; --muted: #57606a; --line: #d0d7de; --bg: #ffffff; --panel: #f6f8fa; --accent: #2563eb; --warn: #9a6700; --hw: #c2410c; }
     @media (prefers-color-scheme: dark) {
-      :root { --fg: #e6edf3; --muted: #9da7b3; --line: #30363d; --bg: #0d1117; --panel: #161b22; --accent: #58a6ff; --warn: #d29922; }
+      :root { --fg: #e6edf3; --muted: #9da7b3; --line: #30363d; --bg: #0d1117; --panel: #161b22; --accent: #58a6ff; --warn: #d29922; --hw: #fb923c; }
     }
     body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 "Segoe UI", Helvetica, Arial, sans-serif; }
     main { max-width: 1080px; margin: 0 auto; padding: 32px 16px; }
     h1 { margin: 0 0 4px; font-size: 26px; }
+    h2 { margin: 32px 0 8px; font-size: 19px; }
     .muted { color: var(--muted); }
-    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 20px 0; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 16px 0; }
     .notice { border-left: 4px solid var(--warn); }
     .table-wrap { overflow-x: auto; }
     table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
     th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: right; white-space: nowrap; }
     th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
     .tag { font-size: 12px; color: var(--accent); }
+    .hw { color: var(--hw); }
+    .chart { width: 100%; height: auto; border-radius: 10px; }
+    form { display: flex; gap: 8px; flex-wrap: wrap; }
+    input[type=text] { flex: 1 1 280px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); font: inherit; }
+    button { padding: 8px 16px; border: 1px solid var(--accent); border-radius: 6px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
     code { font-size: 13px; }
   </style>
 </head>
@@ -28,6 +34,28 @@
   <h1>Vigilantia benchmark results</h1>
   <p class="muted">Phishing URL classification: classical baselines and a hybrid quantum-kernel SVM, trained classically and classifying with kernels measured on IBM Quantum hardware.</p>
 
+  <h2>Classify a host</h2>
+  <div class="panel">
+    <form method="get" action="/">
+      <input type="text" name="host" value="{{ query }}" maxlength="2048" placeholder="example.com or https://login.example.web.app/" aria-label="Host or URL">
+      <button type="submit">Classify</button>
+    </form>
+    <p class="muted">Only the host is used; the page is never fetched. Live predictions use the classical RBF SVM. The quantum-kernel SVM is shown below only as replay, because live quantum inference would need new QPU jobs.</p>
+    {% if prediction %}
+      {% if prediction_status == 200 %}
+        <p><strong>{{ prediction.host }}</strong>: <strong>{{ prediction.prediction }}</strong>
+          &middot; decision margin {{ "%.3f" | format(prediction.decision_score) }} (positive means phishing; not a probability)
+          &middot; model <code>{{ prediction.model }}</code> version <code>{{ prediction.model_version }}</code></p>
+        <p class="muted">Features:
+          {% for name, value in prediction.features.items() %}{{ name }} {{ "%.3f" | format(value) }}{% if not loop.last %}, {% endif %}{% endfor %}.
+          {% if prediction.outside_training_range %}Outside the training range: {{ prediction.outside_training_range | join(", ") }}.{% endif %}</p>
+      {% else %}
+        <p class="notice panel"><strong>Not classified.</strong> {{ prediction.detail }}</p>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <h2>Recorded benchmark</h2>
   {% if error == "results_unavailable" %}
     <div class="panel notice"><strong>Results pending.</strong> {{ detail }} No simulated or placeholder values are shown in their place.</div>
   {% elif error == "results_invalid" %}
@@ -39,6 +67,8 @@
         {% if results.hardware.backend %}Backend {{ results.hardware.backend }}, {{ results.hardware.shots }} shots per circuit, {{ results.hardware.job_ids | length }} job(s).{% endif %}</div>
       {% if results.status == "partial" %}<div><strong>Partial run:</strong> some results are missing; see the limitations below.</div>{% endif %}
     </div>
+
+    {% if chart %}<img class="chart" src="/benchmark.svg" alt="Charts of test accuracy per model, kernel error against the exact simulation, and IBM Quantum time used.">{% endif %}
 
     <div class="table-wrap">
       <table>
@@ -59,6 +89,28 @@
     </div>
     <p class="muted">With {{ results.split.test }} test examples, each example changes accuracy by about {{ "%.1f" | format(100 / results.split.test) }} percentage points.</p>
 
+    {% if results.runtime %}
+    <h2>Runtime</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Source</th><th>Fit</th><th>Test kernel</th><th>Predict</th></tr></thead>
+        <tbody>
+        {% for model in results.models if model.runtime_seconds %}
+          <tr>
+            <td>{{ model.name }}</td>
+            <td><span class="tag">{{ sources[model.kernel_source] }}</span></td>
+            <td>{{ model.runtime_seconds.fit | duration }}</td>
+            <td class="{{ 'hw' if model.kernel_source in ('qpu', 'qpu_calibrated') else '' }}">{{ model.runtime_seconds.test_kernel | duration }}</td>
+            <td>{{ model.runtime_seconds.predict | duration }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">{{ results.runtime.method }} Environment: {{ results.runtime.environment }}.
+      {% if results.runtime.qpu %}IBM Quantum usage for the run: {{ results.runtime.qpu.execution_seconds | duration }} execution, {{ results.runtime.qpu.charged_seconds | duration }} billed{% if results.runtime.qpu.resource_units is not none %}, {{ "%.2f" | format(results.runtime.qpu.resource_units) }} resource units{% endif %}.{% endif %}</p>
+    {% endif %}
+
     {% if results.limitations %}
     <div class="panel">
       <strong>Limitations</strong>
@@ -67,7 +119,37 @@
     {% endif %}
   {% endif %}
 
-  <p class="muted">These are recorded results. This service does not run models, submit quantum jobs, or claim quantum advantage. JSON: <code>/v1/benchmarks</code>.</p>
+  <h2>Replay: recorded quantum-kernel SVM test predictions</h2>
+  {% if replay %}
+    <p class="muted">Replay of recorded predictions, not live inference. Simulation run <code>{{ replay.source_runs.simulation }}</code>{% if replay.source_runs.qpu %}; hardware run <code>{{ replay.source_runs.qpu }}</code> on {{ replay.source_runs.backend }}{% endif %}. Samples are identified by dataset row and hashed domain group; hosts are not shown.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Test sample</th><th>Dataset row</th><th>True label</th>
+            {% for source in ("simulation", "qpu", "qpu_calibrated") %}{% if source in replay.samples[0].predictions %}<th>{{ replay_labels[source] }}</th>{% endif %}{% endfor %}</tr>
+        </thead>
+        <tbody>
+        {% for sample in replay.samples %}
+          <tr>
+            <td>#{{ sample.position + 1 }} <span class="muted">{{ sample.group_hash }}</span></td>
+            <td>{{ sample.row_index }}</td>
+            <td>{{ "phishing" if sample.is_phishing else "legitimate" }}</td>
+            {% for source in ("simulation", "qpu", "qpu_calibrated") %}{% if source in sample.predictions %}
+              {% set p = sample.predictions[source] %}
+              <td class="{{ 'hw' if source != 'simulation' else '' }}">{{ p.prediction }}{% if p.is_phishing != sample.is_phishing %} &#x2717;{% else %} &#x2713;{% endif %}</td>
+            {% endif %}{% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% elif replay_error == "results_invalid" %}
+    <div class="panel notice"><strong>Replay unavailable.</strong> The replay file failed validation.</div>
+  {% else %}
+    <div class="panel notice"><strong>Replay pending.</strong> No recorded predictions have been published.</div>
+  {% endif %}
+
+  <p class="muted">This service does not train models, submit quantum jobs, fetch URLs, or claim quantum advantage. JSON: <code>/v1/benchmarks</code>, <code>/v1/benchmarks/replay</code>, <code>POST /v1/phishing/predict</code>.</p>
 </main>
 </body>
 </html>

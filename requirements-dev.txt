@@ -1,4 +1,4 @@
-# CI tooling plus the pinned results-service runtime. Research/QML dependencies remain in requirements.txt.
--r requirements-app.txt
+# Development and CI: the complete pinned environment plus test and lint tooling.
+-r requirements.txt
 pytest==9.1.1
 ruff==0.17.2

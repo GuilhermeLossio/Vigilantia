@@ -43,7 +43,7 @@ The verified snapshot contains 235,795 rows: 100,945 with label `0` and 134,850 
 - Archive: 15,376,007 bytes; SHA-256 `0a639fd03aea6308c5b1c10c92aa23c2ce1505447a9137271865cd0badc9a59a`.
 - CSV: 56,854,345 bytes; SHA-256 `a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6`.
 
-These values describe this acquisition, not a permanent guarantee about future UCI downloads. Feature-type/provenance analysis, URL deduplication, domain validation, feature selection, and train/test splits remain pending.
+These values describe this acquisition, not a permanent guarantee about future UCI downloads. The split and feature selection built from it are recorded in `configs/benchmark-split.json`; [notebook 01](../notebooks/01-data-and-split.ipynb) re-verifies the snapshot and regenerates the split.
 
 For a locally downloaded CSV, PowerShell can calculate the checksum with:
 
@@ -57,9 +57,10 @@ Run the downloader before using that checksum command on a fresh checkout. Store
 
 - Snapshot checksum and acquisition metadata: **verified locally**.
 - Structural CSV checks, original labels, row/class counts, and empty cells: **verified locally**.
-- Feature types/provenance and modeling-target transformation: **pending**.
-- Deduplication, invalid-host exclusions, and Public Suffix List configuration: **pending**.
-- Domain-disjoint 24/12 split and seed 42 manifest: **pending**.
-- Four ordered numerical features and training-fitted scaler: **pending**.
+- Feature provenance audit and modeling-target transformation: **done**. Source URL, page, and derived similarity features are excluded as shortcuts or unavailable at inference.
+- Deduplication, invalid-host exclusions, and Public Suffix List configuration: **done**, recorded in `configs/benchmark-split.json`.
+- Domain-disjoint 24/12 split and seed 42 manifest: **done**, recorded in `configs/benchmark-split.json`.
+- Four ordered numerical features: **frozen** as `host_entropy`, `host_label_count`, `host_digit_ratio`, and `host_hyphen_count`. See the [benchmark protocol](../docs/benchmark-protocol.md) for the shortcut audit and selection rule.
+- Training-fitted scaler: **done**, recorded in `configs/feature-scaler.json`.
 
 See the [benchmark protocol](../docs/benchmark-protocol.md) for selection and leakage controls and the [README](../README.md) for project status.

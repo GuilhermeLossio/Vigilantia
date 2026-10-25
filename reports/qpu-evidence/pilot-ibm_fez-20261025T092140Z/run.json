@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "run_id": "pilot-ibm_fez-20261025T092140Z",
+  "created_at_utc": "2026-10-25T09:21:40.887331+00:00",
+  "pilot": true,
+  "full_plan_circuits": 336,
+  "backend": "ibm_fez",
+  "sampler": "v2",
+  "shots": 1024,
+  "inputs": {
+    "split_manifest_sha256": "d36aedc6e1fec11329ef040b41fea08bcd5dc47208220a2a147395225103510e",
+    "scaler_sha256": "d7d7c571b08bd05cda25b8653abea8e055795146b133584535d19fd62643adda"
+  },
+  "plan": [
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 11
+    }
+  ],
+  "transpilation": {
+    "optimization_level": 1,
+    "seed_transpiler": 42,
+    "depth": {
+      "min": 14,
+      "mean": 20.666666666666668,
+      "max": 54
+    },
+    "two_qubit_gates": {
+      "min": 2,
+      "mean": 3.3333333333333335,
+      "max": 10
+    },
+    "distinct_physical_layouts": [
+      [
+        0,
+        1,
+        2,
+        3
+      ]
+    ],
+    "transpile_seconds": 0.024386700009927154
+  },
+  "status": "retrieved",
+  "jobs": [
+    {
+      "job_id": "dbesk98m94ac738secsg",
+      "start": 0,
+      "stop": 12,
+      "submitted_at_utc": "2026-10-25T09:21:41.737962+00:00",
+      "status": "DONE",
+      "checked_at_utc": "2026-10-25T09:22:21.463327+00:00",
+      "metrics": {
+        "caller": "qiskit_ibm_runtime~sampler.py",
+        "qiskit_version": "qiskit_ibm_runtime-0.51.0,qiskit-2.6.1*,qiskit_aer-0.18.0",
+        "timestamps": {
+          "created": "2026-10-25T09:21:41.265112Z",
+          "finished": "2026-10-25T09:21:50.881447Z",
+          "running": "2026-10-25T09:21:43.027669Z"
+        },
+        "usage": {
+          "qpu_charge_time_seconds": 5,
+          "value": 0.081754,
+          "unit": "resource_units",
+          "status": "complete",
+          "details": [
+            {
+              "value": 0.081754,
+              "unit": "resource_units",
+              "metric": {
+                "id": "caffe3ca-729c-5750-8777-df63bbf8bfd9",
+                "value": 5
+              }
+            }
+          ]
+        },
+        "circuits_execution_time_ns": 3181137408
+      }
+    }
+  ]
+}

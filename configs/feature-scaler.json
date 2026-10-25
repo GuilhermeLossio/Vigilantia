@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "method": "training-only min-max to [0, angle_max]; clip outside; constant feature -> 0",
+  "angle_max": 1.5707963267948966,
+  "features": [
+    "host_entropy",
+    "host_label_count",
+    "host_digit_ratio",
+    "host_hyphen_count"
+  ],
+  "minima": [
+    2.321928094887362,
+    2.0,
+    0.0,
+    0.0
+  ],
+  "maxima": [
+    4.573868243829436,
+    3.0,
+    0.15584415584415584,
+    6.0
+  ],
+  "constant": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "fitted_on": "train partition of configs/benchmark-split.json (24 rows)",
+  "clipped_values": {
+    "test": {
+      "host_entropy": 1,
+      "host_label_count": 2,
+      "host_digit_ratio": 1,
+      "host_hyphen_count": 0
+    }
+  }
+}

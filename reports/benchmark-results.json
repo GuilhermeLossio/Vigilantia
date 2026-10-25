@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "run_id": "full-ibm_fez-20261025T094010Z",
+  "generated_at_utc": "2026-10-25T09:43:02.457171+00:00",
+  "status": "complete",
+  "split": {
+    "train": 24,
+    "test": 12,
+    "seed": 42
+  },
+  "hardware": {
+    "backend": "ibm_fez",
+    "shots": 1024,
+    "job_ids": [
+      "dbessv7pc3tc739mbc6g"
+    ]
+  },
+  "models": [
+    {
+      "name": "Majority baseline",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "average_precision": null
+      },
+      "confusion_matrix": [
+        [
+          6,
+          0
+        ],
+        [
+          6,
+          0
+        ]
+      ],
+      "runtime_seconds": {
+        "fit": 7.520004874095321e-05,
+        "test_kernel": null,
+        "predict": 7.199996616691351e-06
+      }
+    },
+    {
+      "name": "Logistic regression",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.8333333333333334,
+        "balanced_accuracy": 0.8333333333333333,
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "average_precision": 0.976190476190476
+      },
+      "confusion_matrix": [
+        [
+          6,
+          0
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.0013231000048108399,
+        "test_kernel": null,
+        "predict": 0.00011150003410875797
+      }
+    },
+    {
+      "name": "RBF SVM",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.9166666666666666,
+        "balanced_accuracy": 0.9166666666666667,
+        "precision": 1.0,
+        "recall": 0.8333333333333334,
+        "f1": 0.9090909090909091,
+        "average_precision": 0.9333333333333333
+      },
+      "confusion_matrix": [
+        [
+          6,
+          0
+        ],
+        [
+          1,
+          5
+        ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.0004946999833919108,
+        "test_kernel": null,
+        "predict": 0.00018699996871873736
+      }
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "kernel_source": "simulation",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.5,
+        "recall": 0.6666666666666666,
+        "f1": 0.5714285714285714,
+        "average_precision": 0.5259259259259259
+      },
+      "confusion_matrix": [
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.00958600000012666,
+        "test_kernel": 0.011717000044882298,
+        "predict": 0.00014819996431469917
+      }
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "kernel_source": "qpu",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.5,
+        "recall": 0.6666666666666666,
+        "f1": 0.5714285714285714,
+        "average_precision": 0.5378306878306878
+      },
+      "confusion_matrix": [
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.00958600000012666,
+        "test_kernel": 89.187152896,
+        "predict": 0.00014110002666711807
+      }
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "kernel_source": "qpu_calibrated",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.5,
+        "recall": 0.6666666666666666,
+        "f1": 0.5714285714285714,
+        "average_precision": 0.5092592592592593
+      },
+      "confusion_matrix": [
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "runtime_seconds": {
+        "fit": 0.00958600000012666,
+        "test_kernel": 89.187152896,
+        "predict": 0.00013780000153928995
+      }
+    }
+  ],
+  "limitations": [
+    "Exploratory benchmark: 24 training and 12 test examples, one split, one seed. Each test example changes accuracy by about 8.3 percentage points.",
+    "Features use only the host of each URL, because PhiUSIIL's legitimate URLs are all bare https://www. homepages. Host features still reflect how the dataset was collected.",
+    "The majority baseline breaks the 12/12 training tie toward legitimate, so it never predicts phishing. It has no decision scores, so average precision is not available.",
+    "The quantum-kernel SVM is trained on an exact simulated kernel; hardware is used only to classify the test set. No model trained on hardware measurements is evaluated.",
+    "No claim of quantum advantage is made."
+  ],
+  "runtime": {
+    "method": "Local wall-clock seconds, median of 25 repeats on one machine; fit and predict cover the 24 training and 12 test examples. The quantum-kernel SVM's fit includes simulating its training kernel. Hardware test-kernel time is IBM's recorded execution time for the run's circuits, which also measured calibration pairs and diagonal controls; queueing is excluded.",
+    "environment": "Windows 10, AMD64, Python 3.12.10, numpy 2.5.4, scikit-learn 1.9.1, qiskit 2.6.1",
+    "qpu": {
+      "execution_seconds": 89.187152896,
+      "charged_seconds": 92.0,
+      "resource_units": 1.526017
+    }
+  }
+}

@@ -34,7 +34,7 @@
 <text x="60" y="731" font-size="16" font-weight="bold" text-anchor="start">Flask results service</text>
 <text x="60" y="756" font-size="12" font-weight="normal" text-anchor="start">Live classical inference; saved QPU predictions labeled replay</text>
 <rect x="760" y="420" width="320" height="100" rx="12" fill="#dbeafe" stroke="#2563eb"/>
-<text x="780" y="448" font-size="16" font-weight="bold" text-anchor="start">IBM Quantum / SamplerV2</text>
+<text x="780" y="448" font-size="16" font-weight="bold" text-anchor="start">IBM Quantum / Sampler</text>
 <text x="780" y="473" font-size="12" font-weight="normal" text-anchor="start">Open Plan; job mode; 1,024 shots</text>
 <text x="780" y="497" font-size="12" font-weight="normal" text-anchor="start">ISA circuits; backend and quota checked</text>
 <line x1="640" y1="448" x2="760" y2="448" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
