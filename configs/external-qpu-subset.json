@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "name": "External validation subset on IBM Quantum hardware",
+  "status": "frozen before any hardware job for this subset was submitted",
+  "frozen_at_utc": "2026-10-25T12:52:39+00:00",
+  "parent_protocol": {
+    "path": "configs/external-validation.json",
+    "sha256": "f1c8250b15e706d6aa4ec0e6d1d042e20c6188b3fd878a163afc5e7c3be0b78a",
+    "relation": "This subset is drawn from the parent protocol's primary set, with the parent's dataset, preparation, frozen models, scaler, and metrics. The parent's statement that it runs no hardware jobs applies to the parent only."
+  },
+  "subset": {
+    "source": "the primary set produced by the parent protocol (6,441 rows)",
+    "size": 40,
+    "per_class": {"legitimate": 20, "phishing": 20},
+    "rule": "for each class in the order legitimate then phishing, numpy.random.default_rng(42).choice over that class's primary-set positions, size 20, without replacement, using one generator for both draws; then sort the 40 chosen rows by primary-set position (file order)",
+    "identifiers": "row_index and group_hash only; hosts and URLs are never published"
+  },
+  "hardware": {
+    "backend": "ibm_fez",
+    "sampler": "v2",
+    "shots": 1024,
+    "optimization_level": 1,
+    "seed_transpiler": 42,
+    "plan": "src.quantum.hardware.plan_pairs(n_train=24, n_test=40): 960 test pairs, then 24 calibration pairs, then 24 diagonal controls",
+    "circuits": 1008,
+    "batch_size": 252,
+    "calibration": "a fresh linear fit measured = a * ideal + c on this run's 24 calibration pairs, applied with clipping to [0, 1]; the benchmark run's calibration is not reused",
+    "projected_execution_seconds": 267,
+    "budget_guard": "refuse submission unless the instance's remaining quota exceeds the projected billed time (1,008 circuits at the benchmark run's measured 0.274 billed seconds per circuit) plus 60 seconds"
+  },
+  "compared": [
+    {"model": "majority", "kernel_source": "classical"},
+    {"model": "logistic_regression", "kernel_source": "classical"},
+    {"model": "rbf_svm", "kernel_source": "classical"},
+    {"model": "quantum_kernel_svm", "kernel_source": "simulation"},
+    {"model": "quantum_kernel_svm", "kernel_source": "qpu"},
+    {"model": "quantum_kernel_svm", "kernel_source": "qpu_calibrated"}
+  ],
+  "metrics": {
+    "reported": ["accuracy", "balanced_accuracy", "precision", "recall", "f1", "average_precision"],
+    "positive_class": "phishing",
+    "confidence_intervals": {"method": "percentile bootstrap over the 40 rows", "level": 0.95, "resamples": 2000, "seed": 42},
+    "decision_rule": "each model's default predict; no threshold, calibration of the classifier, or retraining"
+  },
+  "runtime": {
+    "local": "median wall-clock seconds over 25 repeats of fit, test-kernel computation, and prediction for the 40 rows, measured by src.evaluation.runtime",
+    "hardware": "IBM's recorded circuit execution time and billed QPU time for the run's jobs; queueing is excluded"
+  },
+  "reporting": [
+    "Publish all six rows regardless of their results, with the subset size next to every number.",
+    "Report the kernel error of the uncorrected and calibrated hardware kernels against the exact simulation, the calibration fit, and the diagonal controls.",
+    "Label the 40-row subset as a small sample: each row changes accuracy by 2.5 points.",
+    "Publish no host or URL.",
+    "Nothing in the benchmark, the parent protocol, or this file changes after hardware results are seen."
+  ]
+}

@@ -1,0 +1,508 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-25T13:34:41.535584+00:00",
+  "source": "ibm_quantum",
+  "label": "IBM Quantum hardware",
+  "protocol": {
+    "path": "configs/external-qpu-subset.json",
+    "sha256": "fa3cdc9485bb6f8e0addd3cf21990a26826171c7d8cf4010be73087789291b84",
+    "frozen_at_utc": "2026-10-25T12:52:39+00:00"
+  },
+  "parent_protocol": {
+    "path": "configs/external-validation.json",
+    "sha256": "f1c8250b15e706d6aa4ec0e6d1d042e20c6188b3fd878a163afc5e7c3be0b78a"
+  },
+  "benchmark": {
+    "model_version": "a2e084f5eb36",
+    "training_examples": 24,
+    "input_hashes": {
+      "split_manifest_sha256": "d36aedc6e1fec11329ef040b41fea08bcd5dc47208220a2a147395225103510e",
+      "scaler_sha256": "d7d7c571b08bd05cda25b8653abea8e055795146b133584535d19fd62643adda"
+    }
+  },
+  "subset": {
+    "size": 40,
+    "primary_rows": 6441,
+    "class_counts": {
+      "legitimate": 20,
+      "phishing": 20
+    },
+    "seed": 42,
+    "row_index": [
+      353,
+      574,
+      814,
+      844,
+      880,
+      1255,
+      1362,
+      1446,
+      1718,
+      2019,
+      3311,
+      3449,
+      4300,
+      4568,
+      4631,
+      4683,
+      4834,
+      4923,
+      5466,
+      5577,
+      5707,
+      6479,
+      7071,
+      7176,
+      7363,
+      7701,
+      7905,
+      7922,
+      8035,
+      8097,
+      8127,
+      8404,
+      8429,
+      8559,
+      8748,
+      9508,
+      9662,
+      9852,
+      10918,
+      11068
+    ],
+    "group_hash": [
+      "2685d69300742759",
+      "8e26e9d53057f40a",
+      "af40464fe84a7132",
+      "dcb5e8b1bf7c022d",
+      "94396ed4e48c8aee",
+      "2922e1270c47004f",
+      "4f0cfb605daffd0f",
+      "083df244805d3fab",
+      "17acc0a29bffd2af",
+      "abf9477f79d9f9ec",
+      "d0456d4c61801ff1",
+      "b1846f351e6e1c5d",
+      "6639532df316500e",
+      "0085c948357647df",
+      "b8b4a1ea19522c39",
+      "9603315535ae2a1a",
+      "e2d6c4f5b64f7cc1",
+      "c8573600f4bafc85",
+      "ab3beb5604645566",
+      "ad722d8475407990",
+      "50cdaf2fdf7da516",
+      "87038932f9f9e043",
+      "b85c30568f58d368",
+      "2067bdd623a00f5d",
+      "7a7ecfe7e5569988",
+      "923197ee2641bfd0",
+      "e6bf5cf6b3a26562",
+      "eac6afab0245c972",
+      "1ece51fd2944bd9d",
+      "27cac172fa2434b5",
+      "7792d53dac0371f9",
+      "9022583f4afba4da",
+      "2042b556358d2163",
+      "841440880bfa2112",
+      "4843b123e0da093e",
+      "4e2644da886bab2d",
+      "1f99f218c2dbbe3f",
+      "7e3329b37b6433e1",
+      "051f6d327b4702a8",
+      "4342e90f65fb5ee1"
+    ],
+    "clipped_values": {
+      "per_feature": {
+        "host_entropy": 0,
+        "host_label_count": 4,
+        "host_digit_ratio": 4,
+        "host_hyphen_count": 0
+      },
+      "rows_with_any_clipped": 7
+    }
+  },
+  "hardware": {
+    "backend": "ibm_fez",
+    "run_id": "external-ibm_fez-20261025T132451Z",
+    "sampler": "v2",
+    "shots": 1024,
+    "job_ids": [
+      "dbf0697gdj9s73fmk1e0",
+      "dbf069fgdj9s73fmk1g0",
+      "dbf069vsstms73fcsssg",
+      "dbf06a7pc3tc739mh380"
+    ],
+    "circuits": 1008,
+    "plan": {
+      "test": 960,
+      "calibration": 24,
+      "diagonal": 24
+    },
+    "shots_returned": [
+      1024
+    ]
+  },
+  "kernel": {
+    "mean_abs_kernel_error_vs_ideal": 0.026487407722705216,
+    "test_kernel_error_vs_ideal": {
+      "qpu": 0.026004756447902958,
+      "qpu_calibrated": 0.018488872879338376
+    },
+    "calibration": {
+      "valid": true,
+      "a": 0.8670410983029146,
+      "c": 0.007913473572193642,
+      "rmse": 0.020910263272415876,
+      "clipped_test_values": 218
+    },
+    "diagonal_controls_mean": 0.9547119140625
+  },
+  "runtime": {
+    "method": "Local rows: median wall-clock seconds over 25 repeats of fit, test-kernel computation, and prediction for the subset rows on the machine named in environment. Hardware rows take their test-kernel time from IBM's recorded circuit execution time for the run's jobs; queueing is excluded.",
+    "repeats": 25,
+    "environment": "Windows 10, AMD64, Python 3.12.10, numpy 2.5.4, scikit-learn 1.9.1, qiskit 2.6.1",
+    "qpu": {
+      "execution_seconds": 267.584005888,
+      "charged_seconds": 280.0,
+      "resource_units": 4.606761
+    }
+  },
+  "bootstrap": {
+    "method": "Percentile bootstrap over the subset rows; the same resampled row indices are used for every row of the table. Resamples containing only one class are skipped for every metric and counted in resamples_used. Intervals are null when the point metric is null.",
+    "level": 0.95,
+    "resamples": 2000,
+    "resamples_used": 2000,
+    "seed": 42
+  },
+  "models": [
+    {
+      "name": "Majority baseline",
+      "model": "majority",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "average_precision": null
+      },
+      "confusion_matrix": [
+        [
+          20,
+          0
+        ],
+        [
+          20,
+          0
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.35,
+          0.65
+        ],
+        "balanced_accuracy": [
+          0.5,
+          0.5
+        ],
+        "precision": [
+          0.0,
+          0.0
+        ],
+        "recall": [
+          0.0,
+          0.0
+        ],
+        "f1": [
+          0.0,
+          0.0
+        ],
+        "average_precision": null
+      },
+      "runtime_seconds": {
+        "fit": 7.700000423938036e-05,
+        "test_kernel": null,
+        "predict": 7.399998139590025e-06
+      }
+    },
+    {
+      "name": "Logistic regression",
+      "model": "logistic_regression",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.525,
+        "balanced_accuracy": 0.525,
+        "precision": 0.5333333333333333,
+        "recall": 0.4,
+        "f1": 0.45714285714285713,
+        "average_precision": 0.6027255098246994
+      },
+      "confusion_matrix": [
+        [
+          13,
+          7
+        ],
+        [
+          12,
+          8
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.375,
+          0.675
+        ],
+        "balanced_accuracy": [
+          0.36964950254423945,
+          0.675
+        ],
+        "precision": [
+          0.2727272727272727,
+          0.7860714285714266
+        ],
+        "recall": [
+          0.18510101010101024,
+          0.631578947368421
+        ],
+        "f1": [
+          0.23076923076923078,
+          0.6486486486486487
+        ],
+        "average_precision": [
+          0.4119273216580388,
+          0.8029894159450218
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.0013694000081159174,
+        "test_kernel": null,
+        "predict": 0.00012100004823878407
+      }
+    },
+    {
+      "name": "RBF SVM",
+      "model": "rbf_svm",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.525,
+        "balanced_accuracy": 0.525,
+        "precision": 0.5333333333333333,
+        "recall": 0.4,
+        "f1": 0.45714285714285713,
+        "average_precision": 0.605425117193306
+      },
+      "confusion_matrix": [
+        [
+          13,
+          7
+        ],
+        [
+          12,
+          8
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.375,
+          0.675
+        ],
+        "balanced_accuracy": [
+          0.36964950254423945,
+          0.675
+        ],
+        "precision": [
+          0.2727272727272727,
+          0.7860714285714266
+        ],
+        "recall": [
+          0.18510101010101024,
+          0.631578947368421
+        ],
+        "f1": [
+          0.23076923076923078,
+          0.6486486486486487
+        ],
+        "average_precision": [
+          0.4035748414696019,
+          0.7977923389352052
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.0004770999657921493,
+        "test_kernel": null,
+        "predict": 0.00026269996305927634
+      }
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "model": "quantum_kernel_svm",
+      "kernel_source": "simulation",
+      "metrics": {
+        "accuracy": 0.475,
+        "balanced_accuracy": 0.475,
+        "precision": 0.48,
+        "recall": 0.6,
+        "f1": 0.5333333333333333,
+        "average_precision": 0.49886554172034775
+      },
+      "confusion_matrix": [
+        [
+          7,
+          13
+        ],
+        [
+          8,
+          12
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.325,
+          0.625
+        ],
+        "balanced_accuracy": [
+          0.3245314140050983,
+          0.6250704887218042
+        ],
+        "precision": [
+          0.2857142857142857,
+          0.68
+        ],
+        "recall": [
+          0.38095238095238093,
+          0.8214810924369744
+        ],
+        "f1": [
+          0.3412601626016264,
+          0.69234693877551
+        ],
+        "average_precision": [
+          0.3390313317477883,
+          0.7339939422037031
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.008606999996118248,
+        "test_kernel": 0.0206698999973014,
+        "predict": 0.00016259995754808187
+      }
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "model": "quantum_kernel_svm",
+      "kernel_source": "qpu",
+      "metrics": {
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "precision": 0.5,
+        "recall": 0.65,
+        "f1": 0.5652173913043478,
+        "average_precision": 0.5236750726368418
+      },
+      "confusion_matrix": [
+        [
+          7,
+          13
+        ],
+        [
+          7,
+          13
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.35,
+          0.65
+        ],
+        "balanced_accuracy": [
+          0.34997762148337597,
+          0.6490151515151514
+        ],
+        "precision": [
+          0.30434782608695654,
+          0.6956521739130435
+        ],
+        "recall": [
+          0.42857142857142855,
+          0.85
+        ],
+        "f1": [
+          0.37200122399020824,
+          0.7170053217223027
+        ],
+        "average_precision": [
+          0.35253115915944866,
+          0.7431535393136438
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.008606999996118248,
+        "test_kernel": 267.584005888,
+        "predict": 0.0001580000389367342
+      }
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "model": "quantum_kernel_svm",
+      "kernel_source": "qpu_calibrated",
+      "metrics": {
+        "accuracy": 0.525,
+        "balanced_accuracy": 0.525,
+        "precision": 0.52,
+        "recall": 0.65,
+        "f1": 0.5777777777777777,
+        "average_precision": 0.504224352249235
+      },
+      "confusion_matrix": [
+        [
+          8,
+          12
+        ],
+        [
+          7,
+          13
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.375,
+          0.675
+        ],
+        "balanced_accuracy": [
+          0.3721804511278195,
+          0.675
+        ],
+        "precision": [
+          0.32,
+          0.7142857142857143
+        ],
+        "recall": [
+          0.42857142857142855,
+          0.85
+        ],
+        "f1": [
+          0.3783783783783784,
+          0.7307692307692307
+        ],
+        "average_precision": [
+          0.34123660596901695,
+          0.7406696788397057
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.008606999996118248,
+        "test_kernel": 267.584005888,
+        "predict": 0.00015059998258948326
+      }
+    }
+  ],
+  "limitations": [
+    "Small sample: the subset holds 40 rows (20 per class) of the external primary set, so each row changes accuracy by 2.5 percentage points and the intervals are wide.",
+    "The models were trained on only 24 PhiUSIIL examples (12 per class) and were not retrained, recalibrated, or re-thresholded; the hardware kernel calibration is a fresh linear fit on this run's 24 training pairs.",
+    "Features use only the host of each URL, and the external dataset was collected by other authors with another method, so this is a test under distribution shift.",
+    "The hardware rows come from one run on one backend; shot noise and device drift change kernel values between runs.",
+    "No claim of quantum advantage is made."
+  ]
+}

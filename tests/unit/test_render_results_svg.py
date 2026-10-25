@@ -90,3 +90,21 @@ def test_missing_results_file_fails_clearly(
     point_paths(monkeypatch, tmp_path)
     with pytest.raises(SystemExit, match="missing"):
         render.render()
+
+
+def test_latest_runs_ignore_external_subset_runs(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    point_paths(monkeypatch, tmp_path)
+    for name, circuits in (
+        ("full-ibm_fez-20260101T000000Z", 336),
+        ("pilot-ibm_fez-20260101T000000Z", 12),
+        ("external-ibm_fez-20260102T000000Z", 1008),
+        ("rehearsal-fake_fez-20260103T000000Z", 1008),
+    ):
+        (tmp_path / "runs" / name).mkdir(parents=True)
+        (tmp_path / "runs" / name / "evaluation.json").write_text(
+            json.dumps({"circuits": circuits}), encoding="utf-8"
+        )
+    assert render.latest_run("full") == {"circuits": 336}
+    assert render.latest_run("pilot") == {"circuits": 12}

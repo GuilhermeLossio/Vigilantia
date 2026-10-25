@@ -42,15 +42,22 @@ def _predict(model, inputs: np.ndarray) -> None:
         model.decision_function(inputs)
 
 
-def measure(data, qpu_kernels: dict | None = None, repeats: int = REPEATS) -> dict:
+def measure(
+    data,
+    qpu_kernels: dict | None = None,
+    repeats: int = REPEATS,
+    test_angles: np.ndarray | None = None,
+) -> dict:
     """Return {row: {"fit", "test_kernel", "predict"}} in seconds for this machine.
 
     Rows are the classical model names, "simulation", and each key of `qpu_kernels`
     (for example "qpu" and "qpu_calibrated"), whose test kernels were measured on hardware.
+    `test_angles` replaces the benchmark test set, for example with an external subset.
     """
     measured = {}
+    test = data.test_angles if test_angles is None else test_angles
     quantum = data.models["quantum_kernel_svm"]
-    test_kernel = qkernel.statevector_kernel(data.test_angles, data.train_angles)
+    test_kernel = qkernel.statevector_kernel(test, data.train_angles)
     quantum_fit = median_seconds(
         lambda: clone(quantum).fit(
             qkernel.statevector_kernel(data.train_angles), data.train_labels
@@ -63,7 +70,7 @@ def measure(data, qpu_kernels: dict | None = None, repeats: int = REPEATS) -> di
             measured[row] = {
                 "fit": quantum_fit,
                 "test_kernel": median_seconds(
-                    lambda: qkernel.statevector_kernel(data.test_angles, data.train_angles),
+                    lambda: qkernel.statevector_kernel(test, data.train_angles),
                     repeats,
                 ),
                 "predict": median_seconds(lambda: _predict(quantum, test_kernel), repeats),
@@ -74,7 +81,7 @@ def measure(data, qpu_kernels: dict | None = None, repeats: int = REPEATS) -> di
                 lambda m=model: clone(m).fit(data.train_angles, data.train_labels), repeats
             ),
             "test_kernel": None,
-            "predict": median_seconds(lambda m=model: _predict(m, data.test_angles), repeats),
+            "predict": median_seconds(lambda m=model: _predict(m, test), repeats),
         }
     for source, kernel in (qpu_kernels or {}).items():
         measured[source] = {

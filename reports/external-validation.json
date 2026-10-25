@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-25T11:19:54.166113+00:00",
+  "protocol": {
+    "path": "configs/external-validation.json",
+    "sha256": "f1c8250b15e706d6aa4ec0e6d1d042e20c6188b3fd878a163afc5e7c3be0b78a",
+    "frozen_at_utc": "2026-10-25T11:10:26+00:00"
+  },
+  "dataset": {
+    "title": "Web page phishing detection",
+    "doi": "10.17632/c2gw7fy2j4.2",
+    "file": "dataset_B_05_2020.csv",
+    "sha256": "21093e2902e5441c86a6daf95e86e7c332046e477fdf109a579d7bd81e586d6c",
+    "rows": 11430,
+    "license": "CC BY 4.0",
+    "attribution": "Hannousse, A. and Yahiouche, S. (2020). Web page phishing detection, version 2. Mendeley Data. DOI 10.17632/c2gw7fy2j4.2. CC BY 4.0."
+  },
+  "benchmark": {
+    "model_version": "a2e084f5eb36",
+    "training_examples": 24,
+    "benchmark_test_examples": 12,
+    "input_hashes": {
+      "split_manifest_sha256": "d36aedc6e1fec11329ef040b41fea08bcd5dc47208220a2a147395225103510e",
+      "scaler_sha256": "d7d7c571b08bd05cda25b8653abea8e055795146b133584535d19fd62643adda"
+    }
+  },
+  "preparation": {
+    "input_rows": 11430,
+    "exclusions": [
+      {
+        "step": "invalid_host",
+        "rows": 0,
+        "valid_host_without_registrable_domain": 0
+      },
+      {
+        "step": "conflicting_labels",
+        "rows": 397,
+        "groups": 17
+      },
+      {
+        "step": "phiusiil_overlap",
+        "rows": 1805,
+        "groups": 802
+      },
+      {
+        "step": "duplicate_group",
+        "rows": 2787
+      }
+    ],
+    "primary_rows": 6441,
+    "class_counts": {
+      "legitimate": 3470,
+      "phishing": 2971
+    }
+  },
+  "clipped_values": {
+    "per_feature": {
+      "host_entropy": 59,
+      "host_label_count": 396,
+      "host_digit_ratio": 317,
+      "host_hyphen_count": 3
+    },
+    "rows_with_any_clipped": 600
+  },
+  "bootstrap": {
+    "method": "Percentile bootstrap over rows of the primary set; the same resampled row indices are used for every model. A resample containing only one class leaves balanced accuracy, recall, and average precision undefined, so such resamples are skipped for every metric and counted in resamples_used. Intervals are null when the point metric is null.",
+    "level": 0.95,
+    "resamples": 2000,
+    "resamples_used": 2000,
+    "seed": 42
+  },
+  "models": [
+    {
+      "name": "Majority baseline",
+      "model": "majority",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.5387362210836827,
+        "balanced_accuracy": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "average_precision": null
+      },
+      "confusion_matrix": [
+        [
+          3470,
+          0
+        ],
+        [
+          2971,
+          0
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.526311908088806,
+          0.5508500232883092
+        ],
+        "balanced_accuracy": [
+          0.5,
+          0.5
+        ],
+        "precision": [
+          0.0,
+          0.0
+        ],
+        "recall": [
+          0.0,
+          0.0
+        ],
+        "f1": [
+          0.0,
+          0.0
+        ],
+        "average_precision": null
+      }
+    },
+    {
+      "name": "Logistic regression",
+      "model": "logistic_regression",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.6626300263934172,
+        "balanced_accuracy": 0.6531268157026084,
+        "precision": 0.6694987255734919,
+        "recall": 0.5304611242006059,
+        "f1": 0.591924882629108,
+        "average_precision": 0.6695336170422908
+      },
+      "confusion_matrix": [
+        [
+          2692,
+          778
+        ],
+        [
+          1395,
+          1576
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.6514516379444185,
+          0.6744294364229158
+        ],
+        "balanced_accuracy": [
+          0.6416268070172112,
+          0.6648144219216604
+        ],
+        "precision": [
+          0.6510324170588108,
+          0.6890235936051804
+        ],
+        "recall": [
+          0.5128361429475811,
+          0.5480258331586669
+        ],
+        "f1": [
+          0.5767025596012302,
+          0.6066907251029189
+        ],
+        "average_precision": [
+          0.6527414491968748,
+          0.6865087573933802
+        ]
+      }
+    },
+    {
+      "name": "RBF SVM",
+      "model": "rbf_svm",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.6436888681881695,
+        "balanced_accuracy": 0.6373142587762395,
+        "precision": 0.6289092295957285,
+        "recall": 0.5550319757657355,
+        "f1": 0.5896656534954408,
+        "average_precision": 0.647283712655146
+      },
+      "confusion_matrix": [
+        [
+          2497,
+          973
+        ],
+        [
+          1322,
+          1649
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.6321960875640428,
+          0.655798789007918
+        ],
+        "balanced_accuracy": [
+          0.6256467648195149,
+          0.6488150816707423
+        ],
+        "precision": [
+          0.6108267464789446,
+          0.6472852032391971
+        ],
+        "recall": [
+          0.5377434577785135,
+          0.5724345496675539
+        ],
+        "f1": [
+          0.5745869429420487,
+          0.6040521422713857
+        ],
+        "average_precision": [
+          0.6291659391182829,
+          0.6664636740931273
+        ]
+      }
+    },
+    {
+      "name": "Quantum-kernel SVM",
+      "model": "quantum_kernel_svm",
+      "kernel_source": "simulation",
+      "metrics": {
+        "accuracy": 0.5219686384101847,
+        "balanced_accuracy": 0.5283875736344704,
+        "precision": 0.4855614973262032,
+        "recall": 0.6112420060585662,
+        "f1": 0.5412010132618089,
+        "average_precision": 0.4609814650945123
+      },
+      "confusion_matrix": [
+        [
+          1546,
+          1924
+        ],
+        [
+          1155,
+          1816
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.5096995808104331,
+          0.5346995808104331
+        ],
+        "balanced_accuracy": [
+          0.5160489296752286,
+          0.5405358513573686
+        ],
+        "precision": [
+          0.4694163692593698,
+          0.5024415684381502
+        ],
+        "recall": [
+          0.5937885734438371,
+          0.629058251234989
+        ],
+        "f1": [
+          0.526854181581841,
+          0.5556705878709025
+        ],
+        "average_precision": [
+          0.4446537699480041,
+          0.47884049467084344
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "The models were trained on only 24 PhiUSIIL examples (12 per class) and were not retrained, recalibrated, or re-thresholded for this dataset.",
+    "Features use only the host of each URL (entropy, label count, digit ratio, hyphen count); paths, page content, and the dataset's 87 published features are ignored.",
+    "The external dataset was collected by different authors with a different method and period (file dated May 2020), so this is a test under distribution shift; host values outside the training range are clipped and counted.",
+    "One row per registrable domain is kept and domains seen anywhere in PhiUSIIL are removed, so the primary set is smaller than the published 11,430 rows.",
+    "The quantum-kernel SVM uses an exact statevector simulation of the kernel between each external example and the 24 training examples; no IBM Quantum hardware job was run.",
+    "No claim of quantum advantage is made."
+  ]
+}

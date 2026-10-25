@@ -9,6 +9,9 @@
 !src/inference/
 !configs/feature-scaler.json
 !docs/benchmark-results.svg
+!docs/model-comparison.svg
 **/__pycache__/
 **/*.pyc
 reports/runs/
+reports/qpu-evidence/
+reports/qpu-evidence-external/

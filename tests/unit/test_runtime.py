@@ -114,3 +114,19 @@ def test_page_shows_runtime_table(tmp_path, measured) -> None:
     assert "<h2>Runtime</h2>" in text
     assert "80.5 s execution, 90.0 s billed, 1.50 resource units" in text
     assert "test machine" in text
+
+
+def test_measure_accepts_other_test_rows(data, monkeypatch: pytest.MonkeyPatch) -> None:
+    subset = np.vstack([data.test_angles, data.test_angles])
+    kernel = qkernel.statevector_kernel(subset, data.train_angles)
+    sizes: list[int] = []
+    original = runtime._predict
+
+    def recording(model, inputs) -> None:
+        sizes.append(len(inputs))
+        original(model, inputs)
+
+    monkeypatch.setattr(runtime, "_predict", recording)
+    measured = runtime.measure(data, {"qpu": kernel}, repeats=1, test_angles=subset)
+    assert set(measured) == {"majority", "logistic_regression", "rbf_svm", "simulation", "qpu"}
+    assert sizes and set(sizes) == {len(subset)}

@@ -2,11 +2,11 @@
 
 ## Current status
 
-The workflow, test tooling, unit tests for repository checks, and an importable branch ruleset are committed-file proposals. They become available remotely only after publication. A JSON file in the repository does **not** activate branch protection. Remote enforcement has not been configured or verified by this change: the local GitHub CLI could not access this private repository's administration API.
+The workflow is published on `develop` and `main`, and CI passes. The importable branch ruleset is committed but has not been imported or enforced; a JSON file in the repository does **not** activate branch protection. Remote enforcement is therefore not configured or verified: the local GitHub CLI could not access the repository's administration API.
 
 ## Python checks
 
-[Python CI](../.github/workflows/ci.yml) runs on pushes to `develop` and `main`, pull requests targeting either branch, and manual dispatch. It has no path filters, so documentation-only PRs still produce the required check. Python 3.12 and 3.13 are the CI targets for tooling; this is not yet a compatibility guarantee for the full QML runtime.
+[Python CI](../.github/workflows/ci.yml) runs on pushes to `develop` and `main`, pull requests targeting either branch, and manual dispatch. It has no path filters, so documentation-only PRs still produce the required check. Python 3.12 and 3.13 are the CI targets; the full QML runtime was tested end to end on Python 3.12 (see the [reproduction guide](reproducing.md#tested-environment)).
 
 The lint job runs Ruff lint and format checks. Each Python matrix job installs [requirements-dev.txt](../requirements-dev.txt), runs `pip check`, Pytest, and the offline repository checks. The stable **CI required** job succeeds only when lint and the whole test matrix succeed. Failure, cancellation, or a skipped dependency cannot produce a passing gate.
 
@@ -23,19 +23,21 @@ python -m venv .venv
 .\.venv\Scripts\python.exe scripts/check_repository.py
 ```
 
-On macOS/Linux, replace `.\.venv\Scripts\python.exe` with `.venv/bin/python`. The repository checker validates local inline Markdown file targets and commented environment settings; it does not validate heading anchors, remote URLs, rendered layout, or detect every possible secret. Continue the [documentation checklist](documentation-checklist.md).
+On macOS/Linux, replace `.\.venv\Scripts\python.exe` with `.venv/bin/python`. The repository checker validates local inline Markdown file targets and commented environment settings; it does not validate heading anchors, remote URLs, rendered layout, or detect every possible secret. Continue the [documentation checklist](documentation-checklist.md). The [development guide](development.md) lists every pipeline script.
 
-## Activate protection after publishing CI
+## Activate protection
 
-1. Publish the workflow and `develop`, then let CI complete successfully. Inspect existing rules before adding another ruleset.
+The workflow and `develop` are already published, and CI has completed successfully.
+
+1. Inspect existing rules before adding another ruleset.
 2. With repository administrator access, open **Settings > Rules > Rulesets > New ruleset > Import a ruleset** and import [.github/rulesets/protected-branches.json](../.github/rulesets/protected-branches.json).
 3. Confirm both `main` and `develop` are targeted and enforcement is Active. Select GitHub Actions as the source for **CI required** if available after its first run.
 4. Verify with a feature-branch PR that a failing check blocks merging, an unresolved review thread blocks merging, and a successful up-to-date PR can merge. Verify force-push and deletion restrictions in the effective rules without attempting destructive operations.
 
 The rules require PRs, resolved review discussions, the latest base changes, and **CI required**; they block force-push and deletion with no bypass actors. Required approvals are zero to support a solo maintainer, who cannot approve their own PR. Raise this to one when another reviewer is available. Work on short-lived branches targeting `develop`; promote `develop` to `main` through a PR. Do not work directly on protected branches once enforcement is active.
 
-The repository is private. GitHub plan eligibility must be checked before enabling rulesets; see [ruleset availability and creation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository). Publishing workflow YAML alone does not block direct pushes or merges.
+Ruleset availability depends on repository visibility and the GitHub plan; check eligibility before importing; see [ruleset availability and creation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository). Publishing workflow YAML alone does not block direct pushes or merges.
 
 ## Dependency updates
 
-[Dependabot](../.github/dependabot.yml) proposes weekly GitHub Actions and Python dependency updates targeting `develop`. GitHub reads this configuration from the default branch, so it must reach `main` to activate. Updates must pass the same CI and PR process; no automatic merging is configured. Runtime dependencies remain an unpinned design-stage proposal; only direct test/lint tool versions are pinned here.
+[Dependabot](../.github/dependabot.yml) proposes weekly GitHub Actions and Python dependency updates targeting `develop`. GitHub reads this configuration from the default branch; it is on `main`. Updates must pass the same CI and PR process; no automatic merging is configured. Every runtime, model, and tooling dependency is pinned in the `requirements*.txt` files.
