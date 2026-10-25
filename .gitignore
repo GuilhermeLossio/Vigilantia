@@ -129,6 +129,16 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
+!.env.example
+# Project-local provider credentials and generated experiment artifacts
+.qiskit/
+.aws/
+qiskit-ibm.json
+data/raw/
+data/processed/
+artifacts/
+reports/runs/
 .venv
 env/
 venv/

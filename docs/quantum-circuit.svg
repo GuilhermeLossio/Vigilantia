@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" role="img" aria-labelledby="title desc">
+<title id="title">Vigilantia four-qubit fidelity kernel</title><desc id="desc">Four logical wires show H and feature phase gates followed by linear ZZ interactions on pairs 0-1, 1-2, and 2-3. An inverse U(y) block and measurements estimate the all-zero probability. This is a planned logical circuit, not a transpiled hardware circuit.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#57606a"/></marker></defs>
+<rect width="1240" height="800" fill="#ffffff"/>
+<g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="#1f2328">
+<rect x="40" y="40" width="1160" height="70" rx="12" fill="#eff6ff" stroke="#2563eb"/>
+<text x="60" y="70" font-size="22" font-weight="bold" text-anchor="start">Four-qubit fidelity kernel: planned logical circuit</text>
+<text x="60" y="94" font-size="14" font-weight="normal" text-anchor="start">zz_feature_map(4, reps=1, entanglement=&quot;linear&quot;, alpha=2.0)</text>
+<rect x="40" y="140" width="1160" height="360" rx="12" fill="#ffffff" stroke="#d0d7de"/>
+<text x="60" y="168" font-size="13" font-weight="bold" text-anchor="start">U(x): H + single-feature phases + linear ZZ interactions</text>
+<text x="60" y="225" font-size="14" font-weight="normal" text-anchor="start">q0 |0&gt;</text>
+<line x1="128" y1="220" x2="1170" y2="220" stroke="#57606a" stroke-width="2"/>
+<rect x="150" y="198" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="173" y="225" font-size="14" font-weight="bold" text-anchor="middle">H</text>
+<rect x="220" y="198" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="243" y="225" font-size="14" font-weight="bold" text-anchor="middle">P0</text>
+<text x="60" y="295" font-size="14" font-weight="normal" text-anchor="start">q1 |0&gt;</text>
+<line x1="128" y1="290" x2="1170" y2="290" stroke="#57606a" stroke-width="2"/>
+<rect x="150" y="268" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="173" y="295" font-size="14" font-weight="bold" text-anchor="middle">H</text>
+<rect x="220" y="268" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="243" y="295" font-size="14" font-weight="bold" text-anchor="middle">P1</text>
+<text x="60" y="365" font-size="14" font-weight="normal" text-anchor="start">q2 |0&gt;</text>
+<line x1="128" y1="360" x2="1170" y2="360" stroke="#57606a" stroke-width="2"/>
+<rect x="150" y="338" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="173" y="365" font-size="14" font-weight="bold" text-anchor="middle">H</text>
+<rect x="220" y="338" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="243" y="365" font-size="14" font-weight="bold" text-anchor="middle">P2</text>
+<text x="60" y="435" font-size="14" font-weight="normal" text-anchor="start">q3 |0&gt;</text>
+<line x1="128" y1="430" x2="1170" y2="430" stroke="#57606a" stroke-width="2"/>
+<rect x="150" y="408" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="173" y="435" font-size="14" font-weight="bold" text-anchor="middle">H</text>
+<rect x="220" y="408" width="46" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="243" y="435" font-size="14" font-weight="bold" text-anchor="middle">P3</text>
+<line x1="320" y1="220" x2="320" y2="290" stroke="#57606a" stroke-width="2"/>
+<circle cx="320" cy="220" r="5" fill="#2563eb"/><circle cx="320" cy="290" r="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<line x1="312" y1="290" x2="328" y2="290" stroke="#57606a" stroke-width="2"/>
+<line x1="320" y1="282" x2="320" y2="298" stroke="#57606a" stroke-width="2"/>
+<rect x="354" y="268" width="52" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="380" y="295" font-size="13" font-weight="bold" text-anchor="middle">P01</text>
+<line x1="440" y1="220" x2="440" y2="290" stroke="#57606a" stroke-width="2"/>
+<circle cx="440" cy="220" r="5" fill="#2563eb"/><circle cx="440" cy="290" r="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<line x1="432" y1="290" x2="448" y2="290" stroke="#57606a" stroke-width="2"/>
+<line x1="440" y1="282" x2="440" y2="298" stroke="#57606a" stroke-width="2"/>
+<line x1="500" y1="290" x2="500" y2="360" stroke="#57606a" stroke-width="2"/>
+<circle cx="500" cy="290" r="5" fill="#2563eb"/><circle cx="500" cy="360" r="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<line x1="492" y1="360" x2="508" y2="360" stroke="#57606a" stroke-width="2"/>
+<line x1="500" y1="352" x2="500" y2="368" stroke="#57606a" stroke-width="2"/>
+<rect x="534" y="338" width="52" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="560" y="365" font-size="13" font-weight="bold" text-anchor="middle">P12</text>
+<line x1="620" y1="290" x2="620" y2="360" stroke="#57606a" stroke-width="2"/>
+<circle cx="620" cy="290" r="5" fill="#2563eb"/><circle cx="620" cy="360" r="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<line x1="612" y1="360" x2="628" y2="360" stroke="#57606a" stroke-width="2"/>
+<line x1="620" y1="352" x2="620" y2="368" stroke="#57606a" stroke-width="2"/>
+<line x1="680" y1="360" x2="680" y2="430" stroke="#57606a" stroke-width="2"/>
+<circle cx="680" cy="360" r="5" fill="#2563eb"/><circle cx="680" cy="430" r="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<line x1="672" y1="430" x2="688" y2="430" stroke="#57606a" stroke-width="2"/>
+<line x1="680" y1="422" x2="680" y2="438" stroke="#57606a" stroke-width="2"/>
+<rect x="714" y="408" width="52" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+<text x="740" y="435" font-size="13" font-weight="bold" text-anchor="middle">P23</text>
+<line x1="800" y1="360" x2="800" y2="430" stroke="#57606a" stroke-width="2"/>
+<circle cx="800" cy="360" r="5" fill="#2563eb"/><circle cx="800" cy="430" r="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<line x1="792" y1="430" x2="808" y2="430" stroke="#57606a" stroke-width="2"/>
+<line x1="800" y1="422" x2="800" y2="438" stroke="#57606a" stroke-width="2"/>
+<rect x="870" y="192" width="150" height="266" rx="12" fill="#eff6ff" stroke="#2563eb"/>
+<text x="945" y="310" font-size="16" font-weight="bold" text-anchor="middle">Inverse U(y)</text>
+<text x="945" y="337" font-size="12" font-weight="normal" text-anchor="middle">reverse gates</text>
+<text x="945" y="359" font-size="12" font-weight="normal" text-anchor="middle">negate phases</text>
+<rect x="1070" y="198" width="60" height="44" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="1100" y="225" font-size="14" font-weight="bold" text-anchor="middle">M</text>
+<rect x="1070" y="268" width="60" height="44" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="1100" y="295" font-size="14" font-weight="bold" text-anchor="middle">M</text>
+<rect x="1070" y="338" width="60" height="44" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="1100" y="365" font-size="14" font-weight="bold" text-anchor="middle">M</text>
+<rect x="1070" y="408" width="60" height="44" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="1100" y="435" font-size="14" font-weight="bold" text-anchor="middle">M</text>
+<rect x="40" y="540" width="550" height="130" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="60" y="571" font-size="16" font-weight="bold" text-anchor="start">Gate definitions</text>
+<text x="60" y="599" font-size="14" font-weight="normal" text-anchor="start">Pi = P(2*x[i])</text>
+<text x="60" y="626" font-size="14" font-weight="normal" text-anchor="start">Pij = P(2*(pi-x[i])*(pi-x[j]))</text>
+<text x="60" y="651" font-size="12" font-weight="normal" text-anchor="start">Each ZZ interaction is CX(i,j), Pij on j, CX(i,j).</text>
+<rect x="620" y="540" width="580" height="130" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="640" y="571" font-size="16" font-weight="bold" text-anchor="start">Measured similarity</text>
+<text x="640" y="599" font-size="14" font-weight="normal" text-anchor="start">Apply U(x), then inverse U(y), then measure all qubits.</text>
+<text x="640" y="626" font-size="14" font-weight="normal" text-anchor="start">K(x,y) = probability of 0000; 1,024 shots per pair.</text>
+<text x="640" y="651" font-size="12" font-weight="normal" text-anchor="start">All qubits are logical; physical layout is chosen by transpilation.</text>
+<rect x="40" y="710" width="1160" height="50" rx="12" fill="#eff6ff" stroke="#d0d7de"/>
+<text x="60" y="740" font-size="14" font-weight="normal" text-anchor="start">Inputs: four training-scaled values in [0, pi]. No trainable ansatz. Hardware results are pending.</text>
+</g></svg>

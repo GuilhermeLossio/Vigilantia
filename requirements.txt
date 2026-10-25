@@ -1,0 +1,27 @@
+# Initial dependency proposal for Vigilantia (design stage).
+# Versions are intentionally unpinned until the first implementation is tested.
+# This is NOT a lockfile or a validated, reproducible environment.
+# Install in an isolated environment: python -m pip install -r requirements.txt
+# Validate compatibility and pin resolved versions before publishing benchmarks.
+
+# API and input schemas
+fastapi
+uvicorn[standard]
+pydantic
+
+# Data acquisition, preparation, and classical baselines
+numpy
+pandas
+scikit-learn
+ucimlrepo
+tldextract
+
+# Quantum circuits, local simulation, and quantum-kernel classifiers
+qiskit
+qiskit-aer
+qiskit-machine-learning
+qiskit-ibm-runtime
+
+# Notebook experiments and benchmark plots
+jupyterlab
+matplotlib
