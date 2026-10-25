@@ -47,6 +47,7 @@ The project measures predictive quality and computational cost. Classical models
 | [API](#api) | Proposed FastAPI contract |
 | [Repository Structure](#repository-structure) | Planned modules and responsibilities |
 | [Getting Started](#getting-started) | Setup readiness and prerequisites |
+| [Development and CI](#development-and-ci) | Python checks, tests, and branch protection |
 | [Deployment Strategy](#deployment-strategy) | Target AWS infrastructure |
 | [Security and Data Handling](#security-and-data-handling) | Input, access, and evidence boundaries |
 | [Roadmap](#roadmap) | Delivery checklist |
@@ -258,21 +259,36 @@ Current checkout (application code has not been created):
 
 ```text
 Vigilantia/
+├── .github/
+│   ├── rulesets/
+│   │   └── protected-branches.json
+│   ├── workflows/
+│   │   └── ci.yml
+│   └── dependabot.yml
 ├── data/
 │   └── README.md
 ├── docs/
 │   ├── architecture-flow.svg
 │   ├── benchmark-protocol.md
+│   ├── ci-and-branch-protection.md
 │   ├── documentation-checklist.md
 │   ├── quantum-circuit.md
 │   └── quantum-circuit.svg
+├── scripts/
+│   └── check_repository.py
+├── tests/
+│   ├── unit/
+│   │   └── test_repository_checks.py
+│   └── README.md
 ├── .env.example
 ├── .gitattributes
 ├── .gitignore
 ├── Architecture.md
 ├── CONTRIBUTING.md
 ├── LICENSE
+├── pyproject.toml
 ├── README.md
+├── requirements-dev.txt
 └── requirements.txt
 ```
 
@@ -287,11 +303,9 @@ Vigilantia/
 | `src/exposure/` | Controlled evidence checks |
 | `notebooks/` | Assumptions, experiments, and interpretation |
 | `configs/` | Experiment configurations and seeds |
-| `tests/` | Data, inference, and API contract checks |
 | `reports/` | Metrics, plots, and limitations |
 | `infra/` | AWS deployment definitions |
 | `Dockerfile` | Application image |
-| `pyproject.toml` | Dependency and Python configuration |
 
 ## Getting Started
 
@@ -320,6 +334,12 @@ Before the first runnable release, validate the supported Python version and pac
 Required resources for the planned workflow are a compatible Python environment, the selected dataset, local simulator resources, and IBM Quantum Open Plan access with sufficient available quota for the hardware benchmark. No IBM credentials are needed for local simulator checks. AWS access and Docker belong to the later deployment phase.
 
 ---
+
+## Development and CI
+
+Development tooling is configured in `pyproject.toml` with pinned direct tools in `requirements-dev.txt`. GitHub Actions runs Ruff, Pytest, and offline repository checks on Python 3.12 and 3.13 for PRs and pushes to `develop` and `main`. Initial unit tests exercise the repository-checking helpers; application/model tests will accompany their implementations. This CI matrix does not establish compatibility of the untested QML runtime.
+
+Use feature branches targeting `develop`, then a PR from `develop` to `main`. The importable ruleset requires the stable **CI required** check and PRs, and blocks force-push and deletion. **Remote branch protection is not activated by these files.** See [CI and branch protection](docs/ci-and-branch-protection.md) for local commands, activation instructions, and current limitations; see [tests/README.md](tests/README.md) for test conventions.
 
 ## Deployment Strategy
 
@@ -439,3 +459,5 @@ Project: **Vigilantia**.
 - [Data guide](data/README.md): attribution, acquisition, storage, and inspection status.
 - [Contributing](CONTRIBUTING.md): branches, PRs, validation, and data handling.
 - [Documentation checklist](docs/documentation-checklist.md): review before the initial commit.
+- [CI and branch protection](docs/ci-and-branch-protection.md): workflow, local checks, and ruleset activation.
+- [Tests](tests/README.md): unit-test scope and future application tests.

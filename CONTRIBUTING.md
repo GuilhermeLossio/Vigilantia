@@ -4,13 +4,13 @@ Vigilantia is in the design stage. Start with the [README](README.md), [architec
 
 ## Change workflow
 
-Create a short-lived branch with a descriptive prefix such as `docs/`, `feat/`, or `fix/`. Keep each change focused and submit a pull request describing the problem, resulting behavior, validation performed, and remaining limitations. Update documentation in the same change as implementation or experimental protocol changes.
+Create a short-lived branch from `develop` with a descriptive prefix such as `docs/`, `feat/`, or `fix/`. Target `develop` in your PR; promote reviewed changes from `develop` to `main` through a separate PR. Keep each change focused and describe the problem, resulting behavior, validation performed, and remaining limitations. Update documentation in the same change as implementation or experimental protocol changes.
 
 Do not mark a proposed feature complete until evidence exists. Changes to sample selection, features, preprocessing, shots, circuits, or model settings must be versioned and documented before the final test set is evaluated. Do not overwrite a previous run's results with a different configuration.
 
 ## Local checks
 
-For documentation changes, follow the [readiness checklist](docs/documentation-checklist.md), check relative links and diagram rendering, and run `git diff --check`. No application test suite exists yet. When adding code, include checks appropriate to the behavior and document the commands; do not claim unrun checks passed.
+For documentation changes, follow the [readiness checklist](docs/documentation-checklist.md), check relative links and diagram rendering, and run `git diff --check`. Install `requirements-dev.txt`, then run `python -m ruff check .`, `python -m ruff format --check .`, `python -m pytest`, and `python scripts/check_repository.py`. Existing unit tests cover the repository validation helpers; application tests must accompany new code. See [CI and branch protection](docs/ci-and-branch-protection.md) for setup, required checks, and remote activation status.
 
 Dependencies are currently an unpinned proposal. Use an isolated environment and validate compatibility before recording a supported Python version or reproducible installation. Proposed `.env.example` settings require an explicit loader in future application code.
 
