@@ -4,10 +4,8 @@
 # Install in an isolated environment: python -m pip install -r requirements.txt
 # Validate compatibility and pin resolved versions before publishing benchmarks.
 
-# API and input schemas
-fastapi
-uvicorn[standard]
-pydantic
+# API: the Flask results service has pinned dependencies in requirements-app.txt.
+-r requirements-app.txt
 
 # Data acquisition, preparation, and classical baselines
 numpy

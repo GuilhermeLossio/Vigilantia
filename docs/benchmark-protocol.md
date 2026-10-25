@@ -1,6 +1,6 @@
 # Phishing Benchmark Protocol
 
-**Status: planned, not executed.** This is the initial exploratory benchmark specification. Completion requires real IBM Quantum hardware results; simulator results are separate diagnostics.
+**Status: planned, not executed.** This is the initial exploratory benchmark specification. It uses a hybrid design: classical training on a simulated kernel and quantum classification on IBM Quantum hardware. Completion requires the hardware classification results; simulator results are a separate reference.
 
 ## Dataset and split
 
@@ -25,22 +25,46 @@ The first run performs **no hyperparameter search, cross-validation model select
 - Majority baseline: `DummyClassifier(strategy="most_frequent")`.
 - Logistic regression: L2 regularization, `C=1.0`, `solver="lbfgs"`, `max_iter=1000`, no class weights. Treat a convergence warning as an unresolved run failure.
 - Classical SVM: `SVC(kernel="rbf", C=1.0, gamma="scale", probability=False)`, no class weights.
-- Quantum-kernel SVM: `SVC(kernel="precomputed", C=1.0, probability=False)`, no class weights, using the QPU matrices specified below. The SVM optimization itself runs classically.
+- Quantum-kernel SVM: `SVC(kernel="precomputed", C=1.0, probability=False)`, no class weights, fitted to the simulated training kernel and applied to the test kernels specified below. The SVM optimization runs classically.
 
 Use each classifier's default decision rule; report continuous decision scores for ranking metrics when available. Do not label SVM margins as probabilities. Larger simulator-only experiments, alternative seeds, and parameter sweeps are later extensions, separately labeled and never substituted for this QPU benchmark.
 
-## Hardware kernel acquisition
+## Hybrid execution design
 
-Use the [four-qubit circuit](quantum-circuit.md), **1,024 shots per circuit**, and one selected backend for the run:
+Training is classical, and quantum hardware is used only for classification. The SVM is fitted to a training kernel computed by exact statevector simulation of the [four-qubit circuit](quantum-circuit.md). IBM Quantum hardware measures the kernel between each test example and each training example. The fitted SVM then classifies the test set from those measurements.
 
-- 276 unique off-diagonal training pairs: `24 * 23 / 2`.
+Rationale:
+
+- The number of training circuits grows quadratically with the training sample count, so a hardware training kernel consumes most of the QPU budget.
+- Hardware noise in a measured training matrix can break the positive semidefinite property the SVM requires, which forces a heuristic correction before fitting.
+- An exact training kernel isolates the hardware effect in the classification step, where it can be compared with an ideal reference on the same examples.
+
+Tradeoff: the model is fitted to noise-free similarities and applied to noisy ones. Hardware noise tends to shrink kernel values while the fitted SVM bias stays fixed, so decisions can shift. The protocol measures this mismatch with a simulated reference and corrects it with a training-only calibration, both defined below. This design does not evaluate a model trained on hardware measurements.
+
+## Kernel computation
+
+**Training kernel.** Compute all `24 x 24` entries by exact statevector overlap, using the same circuit and pinned package versions. The matrix is symmetric with a unit diagonal by construction. Verify that its minimum eigenvalue is at least `-1e-10`; a lower value indicates an implementation error and stops the run. No PSD correction is applied. Report the mean and standard deviation of the off-diagonal entries as a concentration diagnostic: values clustered near one constant mean the kernel cannot separate examples. This diagnostic uses training data only and does not change the frozen settings of the first run.
+
+**Ideal test kernel.** Compute the `12 x 24` test-to-training matrix by the same exact simulation. It is the simulation reference for classification, not a hardware result.
+
+**Hardware workload.** Use **1,024 shots per circuit** and one selected backend for the run:
+
 - 288 test-to-training pairs: `12 * 24`.
+- 24 calibration pairs: off-diagonal training pairs drawn uniformly with seed 42 from the 276 available, frozen before submission.
 - 24 training diagonal controls.
-- **588 circuit evaluations and 602,112 requested shots in total**, excluding any separately approved diagnostic or retry jobs.
+- **336 circuit evaluations and 344,064 requested shots in total**, excluding any separately approved diagnostic or retry jobs.
 
-Measure the training upper triangle and mirror it to the lower triangle; this imposes symmetry by construction rather than measuring both physical directions. Preserve the measured diagonals as controls. Set the modeling diagonal to the ideal self-similarity value 1 and report this as a modeling choice, not a measured result.
+**Calibration.** Fit `measured = a * ideal + c` by ordinary least squares on the 24 calibration pairs. Map the hardware test kernel with `calibrated = clip((measured - c) / a, 0, 1)`. Record `a`, `c`, the residual error, and clipping counts. If `a <= 0`, the calibration has failed: report it and omit the calibrated variant. Calibration uses training pairs only; test labels and test kernel values never influence `a` or `c`. Diagonal circuits simplify toward an identity and mainly measure readout error, so they are reported as controls and not used for calibration.
 
-Preserve the raw matrix, the mirrored matrix, and the matrix supplied to the SVM separately. For the modeling training matrix, use the symmetric eigendecomposition and clip negative eigenvalues to zero. Record the original minimum eigenvalue, number of clipped eigenvalues, correction norm, and tolerance (`1e-10` for reporting materially negative eigenvalues). Retain the measured rectangular test-to-training matrix without PSD correction; explicitly report that correcting training only is a heuristic under hardware noise and does not guarantee a jointly PSD train/test kernel. Do not conceal the correction as hardware output.
+Preserve the raw counts, the hardware test kernel, the calibrated test kernel, and the ideal test kernel separately. Report the mean absolute difference between the hardware and ideal test kernels, before and after calibration. Do not present calibrated values as raw hardware output.
+
+**Quantum SVM variants.** The same fitted model is applied to three test kernels:
+
+- **Ideal:** the simulated test kernel. This is the simulation reference.
+- **QPU:** the uncorrected hardware test kernel.
+- **QPU calibrated:** the calibrated hardware test kernel.
+
+Report all three. No variant is selected using test results. Only the two QPU variants are hardware results.
 
 ## Runtime and resource boundaries
 
@@ -52,17 +76,18 @@ Batch circuit publications within the selected backend's current job limits; rec
 
 ## Evidence and reporting
 
-Save dataset/split/feature fingerprints, package and Python versions, model settings, circuit definition, backend name, job IDs, requested and actual shots, counts, kernel matrices, corrections, and artifact checksums. Keep tokens and account credentials out of reports. Record timestamps and distinguish client wall time, queue time, and provider-reported execution usage; unavailable timing fields are reported as unavailable.
+Save dataset/split/feature fingerprints, package and Python versions, model settings, circuit definition, backend name, job IDs, requested and actual shots, counts, kernel matrices, calibration parameters, and artifact checksums. Keep tokens and account credentials out of reports. Record timestamps and distinguish client wall time, queue time, and provider-reported execution usage; unavailable timing fields are reported as unavailable.
 
-Report average precision (the chosen PR summary), precision, recall, F1, balanced accuracy, confusion matrix, class counts, and training/inference runtime. Record zero-denominator metrics using `zero_division=0` with a note when applicable. This first run has one split and one seed; no fold/seed variability estimate is available. Twelve test examples yield coarse and uncertain estimates. Publish all four models regardless of which performs best.
+Report average precision (the chosen PR summary), accuracy, precision, recall, F1, balanced accuracy, confusion matrix, class counts, and training/inference runtime. Record zero-denominator metrics using `zero_division=0` with a note when applicable. This first run has one split and one seed; no fold/seed variability estimate is available. Twelve test examples yield coarse and uncertain estimates; each test example changes accuracy by about 8.3 percentage points. Publish all four models and all three quantum SVM variants regardless of which performs best.
 
 ## Acceptance checks
 
 - Snapshot attribution and checksum exist; target mapping and feature order are verified.
 - Train/test group sets do not overlap; both classes appear in both partitions.
 - Preprocessing uses training rows only, with clipping and constants handled as specified.
-- All 588 hardware evaluations have mapped results with expected shots, finite probabilities in `[0, 1]`, and complete `24 x 24` / `12 x 24` matrices.
-- Raw and corrected matrices are distinguishable; model settings and scores are reproducible from saved artifacts.
+- All 336 hardware evaluations have mapped results with expected shots, finite probabilities in `[0, 1]`, and a complete `12 x 24` hardware test matrix.
+- The simulated `24 x 24` training kernel passes the eigenvalue check, and its concentration diagnostic is reported.
+- Raw, calibrated, and simulated matrices are distinguishable; model settings and scores are reproducible from saved artifacts.
 - The report identifies simulation, QPU execution, and replay separately and makes no quantum-advantage claim from this small experiment.
 
 See [MVP completion criteria](../README.md#mvp-completion-criteria), [architecture](../Architecture.md), and the [documentation checklist](documentation-checklist.md).

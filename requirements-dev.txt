@@ -1,3 +1,4 @@
-# Lightweight CI tooling. Runtime/QML dependencies remain in requirements.txt.
+# CI tooling plus the pinned results-service runtime. Research/QML dependencies remain in requirements.txt.
+-r requirements-app.txt
 pytest==9.1.1
 ruff==0.17.2
