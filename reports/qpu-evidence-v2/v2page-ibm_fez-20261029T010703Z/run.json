@@ -1,0 +1,3079 @@
+{
+  "schema_version": 1,
+  "run_id": "v2page-ibm_fez-20261029T010703Z",
+  "created_at_utc": "2026-10-29T01:07:03.985251+00:00",
+  "pilot": false,
+  "full_plan_circuits": 576,
+  "backend": "ibm_fez",
+  "sampler": "v2",
+  "shots": 1024,
+  "inputs": {
+    "protocol_sha256": "8d1a06403c18aaaa0510b4c805fbce6f0a43e1141fdb07ab20fd174328e760bc",
+    "config_sha256": "9e09fb3fa7926b8430e164868da47303b06e83eb0da02e584943cc72c52cb842",
+    "test_partition_sha256": "c1ea33b0bf73562d29c5a168bc4e5333b736348996a05dca01189059c70bb005",
+    "quantum_bundle_sha256": "ee9a709347bda09ade643b22bb369a58d729174f0e4130e174daf1217b95e5b0",
+    "subset_row_index": [
+      13648,
+      19392,
+      28445,
+      33604,
+      39496,
+      45336,
+      96713,
+      101270,
+      101607,
+      120584,
+      140435,
+      152359,
+      154285,
+      158003,
+      168932,
+      172586,
+      177365,
+      179536,
+      182592,
+      197870,
+      207588,
+      229912
+    ],
+    "subset_group_hash": [
+      "d08feec68150ee9c",
+      "e77d7722a422a5ed",
+      "d3993dccac5dcb33",
+      "a701315e2378e45b",
+      "d81cb6e09437e81d",
+      "785f97cee1206e2f",
+      "f7b521be9f500f99",
+      "9e6c333b135f1df3",
+      "5f0cfac704bd0b8f",
+      "6e794402a139d5fe",
+      "985bcd79a50d9ea6",
+      "33bfaf1467e1e230",
+      "0f657ec222152ccb",
+      "5fa7e6e8e34ef073",
+      "514bd2634d41f7c0",
+      "ce7506a272814c5b",
+      "89056eb14a30b8b7",
+      "7884264c5256d148",
+      "2c4798812624e718",
+      "8f3df617d44f6e2d",
+      "e9a9f3043095d2a8",
+      "aa7b2d6f3136f159"
+    ]
+  },
+  "plan": [
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 0,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 1,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 2,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 3,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 4,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 5,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 6,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 7,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 8,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 9,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 10,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 11,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 12,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 13,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 14,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 15,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 16,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 17,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 18,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 19,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 20,
+      "right": 23
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 0
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 1
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 2
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 3
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 4
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 5
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 6
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 7
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 8
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 9
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 10
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 11
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 12
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 13
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 14
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 15
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 16
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 17
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 18
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 19
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 20
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 21
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 22
+    },
+    {
+      "kind": "test",
+      "left": 21,
+      "right": 23
+    },
+    {
+      "kind": "calibration",
+      "left": 0,
+      "right": 23
+    },
+    {
+      "kind": "calibration",
+      "left": 1,
+      "right": 3
+    },
+    {
+      "kind": "calibration",
+      "left": 1,
+      "right": 13
+    },
+    {
+      "kind": "calibration",
+      "left": 2,
+      "right": 8
+    },
+    {
+      "kind": "calibration",
+      "left": 2,
+      "right": 10
+    },
+    {
+      "kind": "calibration",
+      "left": 4,
+      "right": 20
+    },
+    {
+      "kind": "calibration",
+      "left": 5,
+      "right": 12
+    },
+    {
+      "kind": "calibration",
+      "left": 5,
+      "right": 13
+    },
+    {
+      "kind": "calibration",
+      "left": 5,
+      "right": 23
+    },
+    {
+      "kind": "calibration",
+      "left": 6,
+      "right": 20
+    },
+    {
+      "kind": "calibration",
+      "left": 6,
+      "right": 22
+    },
+    {
+      "kind": "calibration",
+      "left": 8,
+      "right": 19
+    },
+    {
+      "kind": "calibration",
+      "left": 9,
+      "right": 20
+    },
+    {
+      "kind": "calibration",
+      "left": 10,
+      "right": 17
+    },
+    {
+      "kind": "calibration",
+      "left": 10,
+      "right": 20
+    },
+    {
+      "kind": "calibration",
+      "left": 10,
+      "right": 22
+    },
+    {
+      "kind": "calibration",
+      "left": 11,
+      "right": 16
+    },
+    {
+      "kind": "calibration",
+      "left": 12,
+      "right": 13
+    },
+    {
+      "kind": "calibration",
+      "left": 13,
+      "right": 14
+    },
+    {
+      "kind": "calibration",
+      "left": 13,
+      "right": 20
+    },
+    {
+      "kind": "calibration",
+      "left": 17,
+      "right": 18
+    },
+    {
+      "kind": "calibration",
+      "left": 17,
+      "right": 20
+    },
+    {
+      "kind": "calibration",
+      "left": 17,
+      "right": 21
+    },
+    {
+      "kind": "calibration",
+      "left": 19,
+      "right": 22
+    },
+    {
+      "kind": "diagonal",
+      "left": 0,
+      "right": 0
+    },
+    {
+      "kind": "diagonal",
+      "left": 1,
+      "right": 1
+    },
+    {
+      "kind": "diagonal",
+      "left": 2,
+      "right": 2
+    },
+    {
+      "kind": "diagonal",
+      "left": 3,
+      "right": 3
+    },
+    {
+      "kind": "diagonal",
+      "left": 4,
+      "right": 4
+    },
+    {
+      "kind": "diagonal",
+      "left": 5,
+      "right": 5
+    },
+    {
+      "kind": "diagonal",
+      "left": 6,
+      "right": 6
+    },
+    {
+      "kind": "diagonal",
+      "left": 7,
+      "right": 7
+    },
+    {
+      "kind": "diagonal",
+      "left": 8,
+      "right": 8
+    },
+    {
+      "kind": "diagonal",
+      "left": 9,
+      "right": 9
+    },
+    {
+      "kind": "diagonal",
+      "left": 10,
+      "right": 10
+    },
+    {
+      "kind": "diagonal",
+      "left": 11,
+      "right": 11
+    },
+    {
+      "kind": "diagonal",
+      "left": 12,
+      "right": 12
+    },
+    {
+      "kind": "diagonal",
+      "left": 13,
+      "right": 13
+    },
+    {
+      "kind": "diagonal",
+      "left": 14,
+      "right": 14
+    },
+    {
+      "kind": "diagonal",
+      "left": 15,
+      "right": 15
+    },
+    {
+      "kind": "diagonal",
+      "left": 16,
+      "right": 16
+    },
+    {
+      "kind": "diagonal",
+      "left": 17,
+      "right": 17
+    },
+    {
+      "kind": "diagonal",
+      "left": 18,
+      "right": 18
+    },
+    {
+      "kind": "diagonal",
+      "left": 19,
+      "right": 19
+    },
+    {
+      "kind": "diagonal",
+      "left": 20,
+      "right": 20
+    },
+    {
+      "kind": "diagonal",
+      "left": 21,
+      "right": 21
+    },
+    {
+      "kind": "diagonal",
+      "left": 22,
+      "right": 22
+    },
+    {
+      "kind": "diagonal",
+      "left": 23,
+      "right": 23
+    }
+  ],
+  "transpilation": {
+    "optimization_level": 1,
+    "seed_transpiler": 42,
+    "depth": {
+      "min": 1,
+      "mean": 53.703125,
+      "max": 58
+    },
+    "two_qubit_gates": {
+      "min": 0,
+      "mean": 9.565972222222221,
+      "max": 10
+    },
+    "distinct_physical_layouts": [
+      [
+        0,
+        1,
+        2,
+        3
+      ]
+    ],
+    "transpile_seconds": 0.879168599996774
+  },
+  "status": "retrieved",
+  "jobs": [
+    {
+      "job_id": "dbh9oe9t9uhs73c9qdt0",
+      "start": 0,
+      "stop": 252,
+      "submitted_at_utc": "2026-10-29T01:07:06.307303+00:00",
+      "status": "DONE",
+      "checked_at_utc": "2026-10-29T01:28:36.486838+00:00",
+      "metrics": {
+        "caller": "qiskit_ibm_runtime~sampler.py",
+        "qiskit_version": "qiskit_ibm_runtime-0.51.0,qiskit-2.6.1*,qiskit_aer-0.18.0",
+        "timestamps": {
+          "created": "2026-10-29T01:07:05.759984Z",
+          "finished": "2026-10-29T01:09:11.92112Z",
+          "running": "2026-10-29T01:07:06.833456Z"
+        },
+        "usage": {
+          "qpu_charge_time_seconds": 70,
+          "value": 1.153315,
+          "unit": "resource_units",
+          "status": "complete",
+          "details": [
+            {
+              "value": 1.153315,
+              "unit": "resource_units",
+              "metric": {
+                "id": "caffe3ca-729c-5750-8777-df63bbf8bfd9",
+                "value": 70
+              }
+            }
+          ]
+        },
+        "circuits_execution_time_ns": 66993471488
+      }
+    },
+    {
+      "job_id": "dbh9oeote5oc738joqrg",
+      "start": 252,
+      "stop": 504,
+      "submitted_at_utc": "2026-10-29T01:07:08.128132+00:00",
+      "status": "DONE",
+      "checked_at_utc": "2026-10-29T01:28:39.036134+00:00",
+      "metrics": {
+        "caller": "qiskit_ibm_runtime~sampler.py",
+        "qiskit_version": "qiskit_ibm_runtime-0.51.0,qiskit-2.6.1*,qiskit_aer-0.18.0",
+        "timestamps": {
+          "created": "2026-10-29T01:07:07.569273Z",
+          "finished": "2026-10-29T01:09:54.885989Z",
+          "running": "2026-10-29T01:07:08.997773Z"
+        },
+        "usage": {
+          "qpu_charge_time_seconds": 70,
+          "value": 1.153307,
+          "unit": "resource_units",
+          "status": "complete",
+          "details": [
+            {
+              "value": 1.153307,
+              "unit": "resource_units",
+              "metric": {
+                "id": "caffe3ca-729c-5750-8777-df63bbf8bfd9",
+                "value": 70
+              }
+            }
+          ]
+        },
+        "circuits_execution_time_ns": 66993016576
+      }
+    },
+    {
+      "job_id": "dbh9of0te5oc738joqsg",
+      "start": 504,
+      "stop": 576,
+      "submitted_at_utc": "2026-10-29T01:07:09.425568+00:00",
+      "status": "DONE",
+      "checked_at_utc": "2026-10-29T01:28:41.024753+00:00",
+      "metrics": {
+        "caller": "qiskit_ibm_runtime~sampler.py",
+        "qiskit_version": "qiskit_ibm_runtime-0.51.0,qiskit-2.6.1*,qiskit_aer-0.18.0",
+        "timestamps": {
+          "created": "2026-10-29T01:07:08.851239Z",
+          "finished": "2026-10-29T01:08:57.938798Z",
+          "running": "2026-10-29T01:07:11.031433Z"
+        },
+        "usage": {
+          "qpu_charge_time_seconds": 21,
+          "value": 0.349316,
+          "unit": "resource_units",
+          "status": "complete",
+          "details": [
+            {
+              "value": 0.349316,
+              "unit": "resource_units",
+              "metric": {
+                "id": "caffe3ca-729c-5750-8777-df63bbf8bfd9",
+                "value": 21
+              }
+            }
+          ]
+        },
+        "circuits_execution_time_ns": 19114487552
+      }
+    }
+  ],
+  "protocol": {
+    "path": "configs/benchmark-v2-qpu-subset.json",
+    "sha256": "8d1a06403c18aaaa0510b4c805fbce6f0a43e1141fdb07ab20fd174328e760bc",
+    "frozen_at_utc": "2026-10-29T00:38:41+00:00"
+  }
+}

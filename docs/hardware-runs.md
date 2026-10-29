@@ -94,11 +94,12 @@ Account checks on 2026-10-25 found an Open Plan instance with 600 seconds of QPU
 | Pilot `pilot-ibm_fez-20261025T092140Z` | 12 | 3.2 s | 5 s | 0.082 |
 | Full `full-ibm_fez-20261025T094010Z` | 336 | 89.2 s | 92 s | 1.53 |
 | External subset `external-ibm_fez-20261025T132451Z` | 1,008 | 267.6 s | 280 s | 4.61 |
-| **Cumulative** | **1,356** | **360.0 s** | **377 s** | **6.21** |
+| V2 page kernel `v2page-ibm_fez-20261029T010703Z` | 576 | 153.1 s | 161 s | 2.66 |
+| **Cumulative** | **1,932** | **513.1 s** | **538 s** | **8.87** |
 
 Cumulative values are summed from the unrounded recorded usage, so they can differ in the last digit from the sum of the rounded rows.
 
-The instance reported 503 s of remaining quota just before the subset was submitted, so about 223 s of the 600 s per rolling 28-day window remained afterwards. That figure was printed by `submit` and is not part of the recorded evidence. Usage returns to the window as each run ages past 28 days.
+The instance reported 503 s of remaining quota just before the subset was submitted, so about 223 s of the 600 s per rolling 28-day window remained afterwards. That figure was printed by `submit` and is not part of the recorded evidence. The [v2 page-kernel run](benchmark-v2.md#hardware-check-of-the-page-kernel) was then reduced from 40 to 22 rows to fit those 223 s. It billed 161 s, leaving about 62 s of the 600 s window. Usage returns to the window as each run ages past 28 days.
 
 The pilot projected about 89 s of execution for the full run, which matched the measurement. The full run's test kernel error against the exact simulation was 0.037 uncorrected and 0.029 calibrated, about three times the fake-backend rehearsal; notebook 04 rebuilds these values from `reports/qpu-evidence/`. The [benchmark protocol](benchmark-protocol.md#ibm-quantum-hardware-full-run) records the calibration fit, diagonal controls, and the resulting predictions.
 

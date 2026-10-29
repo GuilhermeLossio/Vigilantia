@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "reference_report": "reports/benchmark-v2-20261028-093841.json",
+  "reference_config": "configs/benchmark-v2-20261028-093841.json",
+  "train_sizes": [24, 100],
+  "seeds": [42, 43, 44],
+  "folds": 3,
+  "c_values": [0.1, 1, 10],
+  "gamma_values": ["scale", 0.01, 0.1, 1],
+  "maps": ["z", "zz"],
+  "angle_maxima": [0.7853981633974483, 1.5707963267948966],
+  "components": 4,
+  "max_features": 20000,
+  "target_recall": 0.8,
+  "max_fpr": 0.1,
+  "subset_per_class": 20,
+  "subset_seed": 2026,
+  "shots": 1024,
+  "shot_seed": 2026,
+  "batch_size": 128,
+  "bootstrap_resamples": 2000
+}

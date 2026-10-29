@@ -35,7 +35,11 @@ def catalog_links() -> set[str]:
 
 
 def test_every_markdown_file_is_in_the_catalog() -> None:
-    missing = tracked("*.md") - catalog_links() - {"CATALOG.md"}
+    # Agent instruction files are local tooling context, not reader-facing docs.
+    documents = {
+        path for path in tracked("*.md") if Path(path).name not in {"AGENTS.md", "CLAUDE.md"}
+    }
+    missing = documents - catalog_links() - {"CATALOG.md"}
     assert not missing, f"Add to CATALOG.md: {sorted(missing)}"
 
 

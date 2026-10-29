@@ -142,6 +142,10 @@ Vigilantia/
 │   ├── replay.py
 │   └── results.py
 ├── configs/
+│   ├── benchmark-v2-text.json
+│   ├── benchmark-v2-20261028-093841.json
+│   ├── benchmark-v2-qpu-subset.json
+│   ├── benchmark-v2.json
 │   ├── benchmark-split.json
 │   ├── external-qpu-subset.json
 │   ├── external-validation.json
@@ -149,7 +153,18 @@ Vigilantia/
 ├── data/
 │   └── README.md
 ├── docs/
+│   ├── benchmark-v2-text/
+│   │   ├── portfolio-text-20261028-verified-representations.svg
+│   │   ├── portfolio-text-20261028-verified-external.svg
+│   │   └── portfolio-text-20261028-verified-measurements.svg
 │   ├── architecture-flow.svg
+│   ├── benchmark-v2-text.md
+│   ├── benchmark-v2-text-flow.svg
+│   ├── benchmark-v2.md
+│   ├── benchmark-v2-learning.svg
+│   ├── benchmark-v2-operating-points.svg
+│   ├── benchmark-v2-kernels.svg
+│   ├── benchmark-v2-qpu.svg
 │   ├── benchmark-protocol.md
 │   ├── benchmark-results.svg
 │   ├── ci-and-branch-protection.md
@@ -171,14 +186,22 @@ Vigilantia/
 │   ├── 04-ibm-hardware-results-from-recorded-counts.ipynb
 │   ├── 05-live-inference-runtime-and-service.ipynb
 │   ├── 06-external-validation.ipynb
-│   └── 07-external-subset-on-ibm-hardware.ipynb
+│   ├── 07-external-subset-on-ibm-hardware.ipynb
+│   └── 08-text-representation-and-local-qiskit.ipynb
 ├── reports/
+│   ├── benchmark-v2-text/
+│   │   └── portfolio-text-20261028-verified.json
 │   ├── qpu-evidence/
 │   │   ├── full-ibm_fez-20261025T094010Z/
 │   │   └── pilot-ibm_fez-20261025T092140Z/
 │   ├── qpu-evidence-external/
 │   │   └── external-ibm_fez-20261025T132451Z/
+│   ├── qpu-evidence-v2/
+│   │   └── v2page-ibm_fez-20261029T010703Z/
 │   ├── benchmark-replay.json
+│   ├── benchmark-v2.json
+│   ├── benchmark-v2-20261028-093841.json
+│   ├── benchmark-v2-qpu-subset.json
 │   ├── benchmark-results.json
 │   ├── external-qpu-subset.json
 │   ├── external-validation.json
@@ -197,8 +220,12 @@ Vigilantia/
 │   ├── rehearse_hardware.py
 │   ├── render_comparison_svg.py
 │   ├── render_results_svg.py
+│   ├── render_v2_qpu_svg.py
+│   ├── run_benchmark_v2_text.py
+│   ├── run_benchmark_v2.py
 │   ├── run_qpu.py
 │   ├── run_qpu_external.py
+│   ├── run_qpu_v2.py
 │   ├── scale_benchmark.py
 │   ├── time_benchmark.py
 │   └── train_benchmark.py
@@ -209,6 +236,16 @@ Vigilantia/
 │   ├── data/
 │   │   └── benchmark_split.py
 │   ├── evaluation/
+│   │   ├── benchmark_v2_text/
+│   │   │   ├── features.py
+│   │   │   ├── quantum.py
+│   │   │   ├── experiment.py
+│   │   │   └── report.py
+│   │   ├── benchmark_v2/
+│   │   │   ├── core.py
+│   │   │   ├── experiment.py
+│   │   │   └── report.py
+│   │   ├── benchmark_v2_qpu.py
 │   │   ├── external.py
 │   │   ├── external_qpu.py
 │   │   ├── inputs.py
@@ -230,6 +267,9 @@ Vigilantia/
 ├── tests/
 │   ├── unit/
 │   │   ├── test_app_inference_replay.py
+│   │   ├── test_benchmark_v2_qpu.py
+│   │   ├── test_benchmark_v2_text.py
+│   │   ├── test_benchmark_v2.py
 │   │   ├── test_benchmark_split.py
 │   │   ├── test_catalog.py
 │   │   ├── test_check_ibm_access.py
@@ -302,3 +342,19 @@ The benchmark is one small split with one seed, so its estimates are unstable. T
 Repository tooling includes unit-tested offline documentation/configuration checks and a Python CI workflow. See [development](docs/development.md) and [CI and branch protection](docs/ci-and-branch-protection.md).
 
 See the [README](README.md) for results and scope, the [documentation catalog](CATALOG.md) for every guide, [CONTRIBUTING.md](CONTRIBUTING.md) for change workflow, and the [documentation checklist](docs/documentation-checklist.md) for pre-commit review.
+
+## Benchmark v2 offline experiments
+
+The isolated `src/evaluation/benchmark_v2/` package prepares domain-disjoint development, threshold-calibration and test partitions, searches classical and exact simulated quantum kernels, freezes choices before test access, and publishes aggregate results. Models use either eight host features or four `log1p`-scaled PhiUSIIL page-content features; the quantum kernel encodes the page features on four qubits, and only host models are evaluated on the external dataset, which lacks page columns. The CLI `scripts/run_benchmark_v2.py` checkpoints each run under `artifacts/benchmark-v2/`; no service API or model artifact is replaced. See the [v2 protocol and reproduction guide](docs/benchmark-v2.md).
+
+The generated figures are [learning curves](docs/benchmark-v2-learning.svg), [recall versus false positives](docs/benchmark-v2-operating-points.svg), and [matched classical/quantum AP](docs/benchmark-v2-kernels.svg). All use internal-test means across training seeds. The report separates seed dispersion, paired test-row intervals and secondary external continuity evidence.
+
+## V2 portfolio expansion: hostname text and local Qiskit
+
+The isolated `src/evaluation/benchmark_v2_text/` package reconstructs private hostname text from verified snapshots and checks the numerical v2 partition membership. It learns TF-IDF and numeric feature blocks, compares the full representation with four SVD components, and evaluates actual local Qiskit circuits. The [protocol](docs/benchmark-v2-text.md) distinguishes representation quality, dimensionality reduction and kernel effects.
+
+![Text and local Qiskit pipeline](docs/benchmark-v2-text-flow.svg)
+
+`Statevector` supplies exact training, calibration and continuity kernels. `AerSimulator` supplies finite-shot compute-uncompute test kernels for fixed small subsets, retaining the ideal-trained SVM and threshold. No provider client or credential reader exists in this package. The CLI runs stages sequentially, locks source/data/model identities, freezes all comparison choices before evaluation, and publishes run-specific reports and SVGs. The explicit `publish` stage changes only a delimited README block. Model serving and historical evidence remain separate.
+
+The completed text study is [portfolio-text-20261028-verified](reports/benchmark-v2-text/portfolio-text-20261028-verified.json). Its run-specific figures are [representation AP](docs/benchmark-v2-text/portfolio-text-20261028-verified-representations.svg), [external operating points](docs/benchmark-v2-text/portfolio-text-20261028-verified-external.svg), and [ideal versus measured recall](docs/benchmark-v2-text/portfolio-text-20261028-verified-measurements.svg). These files do not overwrite the numerical v2 charts.

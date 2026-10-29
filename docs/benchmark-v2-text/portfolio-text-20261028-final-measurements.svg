@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 740" role="img">
+<title>Qiskit Statevector versus Aer: frozen SVM and threshold</title><desc>Source: portfolio-text-20261028-final | Same balanced subset | Conditional on one shot sample per fitted seed</desc>
+<rect width="1120" height="740" fill="#ffffff"/>
+<g font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="13">
+<text x="40" y="45" fill="#1f2328" font-size="23" font-weight="600">Qiskit Statevector versus Aer: frozen SVM and threshold</text>
+<line x1="100" x2="860" y1="500.0" y2="500.0" stroke="#d0d7de"/>
+<text x="88" y="504.0" fill="#1f2328" text-anchor="end">0%</text>
+<line x1="100" x2="860" y1="420.0" y2="420.0" stroke="#d0d7de"/>
+<text x="88" y="424.0" fill="#1f2328" text-anchor="end">20%</text>
+<line x1="100" x2="860" y1="340.0" y2="340.0" stroke="#d0d7de"/>
+<text x="88" y="344.0" fill="#1f2328" text-anchor="end">40%</text>
+<line x1="100" x2="860" y1="260.0" y2="260.0" stroke="#d0d7de"/>
+<text x="88" y="264.0" fill="#1f2328" text-anchor="end">60%</text>
+<line x1="100" x2="860" y1="180.0" y2="180.0" stroke="#d0d7de"/>
+<text x="88" y="184.0" fill="#1f2328" text-anchor="end">80%</text>
+<line x1="100" x2="860" y1="100.0" y2="100.0" stroke="#d0d7de"/>
+<text x="88" y="104.0" fill="#1f2328" text-anchor="end">100%</text>
+<text x="353.3333333333333" y="524" fill="#1f2328" text-anchor="middle">1</text>
+<text x="606.6666666666666" y="524" fill="#1f2328" text-anchor="middle">2</text>
+<text x="860.0" y="524" fill="#1f2328" text-anchor="middle">3</text>
+<text x="480.0" y="555" fill="#1f2328" text-anchor="middle">Training-seed index (ordered in configuration)</text>
+<text x="26" y="300" fill="#1f2328" transform="rotate(-90 26 300)" text-anchor="middle">40-row internal subset recall (%)</text>
+<polyline points="353.33,280.00 606.67,240.00 860.00,280.00" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<circle cx="353.3333333333333" cy="280.0" r="4" fill="#57606a"/>
+<circle cx="606.6666666666666" cy="240.0" r="4" fill="#57606a"/>
+<circle cx="860.0" cy="280.0" r="4" fill="#57606a"/>
+<line x1="105" x2="133" y1="588" y2="588" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<text x="143" y="592" fill="#1f2328" >Qiskit ideal / fixed subset</text>
+<polyline points="353.33,280.00 606.67,260.00 860.00,280.00" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 3"/>
+<circle cx="353.3333333333333" cy="280.0" r="4" fill="#2563eb"/>
+<circle cx="606.6666666666666" cy="260.0" r="4" fill="#2563eb"/>
+<circle cx="860.0" cy="280.0" r="4" fill="#2563eb"/>
+<line x1="595" x2="623" y1="588" y2="588" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="633" y="592" fill="#1f2328" >Aer finite shots / same subset</text>
+<text x="40" y="710" fill="#1f2328" font-size="12">Source: portfolio-text-20261028-final | Same balanced subset | Conditional on one shot sample per fitted seed</text>
+</g></svg>

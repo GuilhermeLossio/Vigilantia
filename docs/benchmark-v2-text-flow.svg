@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 470" role="img" aria-labelledby="title description">
+<title id="title">Benchmark v2: text representation and local Qiskit comparison</title>
+<desc id="description">Verified hosts become text and numeric features. The full representation feeds a classical model; four SVD components feed matched classical and quantum-kernel SVMs. Statevector and Aer run locally without a provider connection.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#57606a"/></marker></defs>
+<rect width="1120" height="470" fill="#ffffff"/>
+<g font-family="Segoe UI,Helvetica,Arial,sans-serif" fill="#1f2328">
+<text x="40" y="45" font-size="23" font-weight="600">Benchmark v2: text and local quantum simulation</text>
+<g fill="#f6f8fa" stroke="#d0d7de"><rect x="40" y="95" width="160" height="90" rx="8"/><rect x="240" y="95" width="220" height="90" rx="8"/><rect x="500" y="95" width="160" height="90" rx="8"/><rect x="740" y="95" width="330" height="90" rx="8"/><rect x="240" y="260" width="220" height="90" rx="8"/><rect x="500" y="260" width="160" height="90" rx="8"/><rect x="740" y="260" width="330" height="90" rx="8"/></g>
+<g fill="none" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"><path d="M200 140 H238"/><path d="M460 140 H498"/><path d="M660 140 H738"/><path d="M350 185 V258"/><path d="M580 185 V258"/><path d="M905 185 V258"/></g>
+<g text-anchor="middle" font-size="15" font-weight="600"><text x="120" y="128">Verified hosts</text><text x="350" y="128">Text + numeric features</text><text x="580" y="128">Four components</text><text x="905" y="128">Local Qiskit circuits</text><text x="350" y="293">Full classical model</text><text x="580" y="293">Reduced SVM</text><text x="905" y="293">Quantum-kernel SVM</text></g>
+<g text-anchor="middle" fill="#57606a" font-size="12"><text x="120" y="153">Same domain partitions</text><text x="120" y="173">as numerical v2</text><text x="350" y="153">Character TF-IDF, eight numeric values</text><text x="350" y="173">Training-only preprocessing</text><text x="580" y="153">Truncated SVD</text><text x="580" y="173">Training-fitted scaling</text><text x="905" y="153">Statevector: exact kernels</text><text x="905" y="173">Aer: finite-shot kernels</text><text x="350" y="319">Measure the benefit of host text</text><text x="580" y="319">Measure reduction loss</text><text x="905" y="319">Ideal training, frozen measured evaluation</text></g>
+<rect x="40" y="390" width="1030" height="40" rx="8" fill="#eff6ff" stroke="#d0d7de"/>
+<text x="555" y="415" text-anchor="middle" font-size="13">Portfolio research after the hackathon. No IBM connection, credentials, cloud jobs or quantum-advantage claim.</text>
+</g></svg>

@@ -58,6 +58,10 @@ No string in the file, keys included, may contain a URL or a local path; the rep
 
 No string in the file, keys included, may contain a URL or a local path; rows are identified only by `row_index` and hashed group, never by host or URL.
 
+### V2 page-kernel QPU evidence
+
+`scripts/run_qpu_v2.py evaluate <run-id>` writes `reports/benchmark-v2-qpu-subset.json` for the protocol in [configs/benchmark-v2-qpu-subset.json](../configs/benchmark-v2-qpu-subset.json). It covers six rows on the measured internal-test subset: three classical page models, plus the quantum-kernel SVM on the exact simulated kernel and on the uncorrected and calibrated `ibm_fez` kernels. Each row also carries `runtime_seconds` (local medians for fit, test kernel and predict; IBM's recorded execution time as the hardware test kernel), described under `runtime`, and `scripts/render_v2_qpu_svg.py` draws [docs/benchmark-v2-qpu.svg](../docs/benchmark-v2-qpu.svg) from the file. The published file holds run `v2page-ibm_fez-20261029T010703Z` (22 rows). `reports/qpu-evidence-v2/<run-id>/` holds that run's `run.json` and `counts-<job-id>.json` files, copied after the same credential, URL and local-path checks. See [Hardware check of the page kernel](../docs/benchmark-v2.md#hardware-check-of-the-page-kernel).
+
 ### External QPU evidence
 
 `reports/qpu-evidence-external/<run-id>/` holds the recorded subset run, copied by `evaluate`: `run.json` with the plan, the inputs it was planned from, the transpilation summary, job IDs, timestamps, and IBM's usage metrics, and `counts-<job-id>.json` with the raw counts of every circuit, one file per job. `evaluate` copies only those files, after checking each one for credentials, instance identifiers, URLs, and local paths. [Notebook 07](../notebooks/07-external-subset-on-ibm-hardware.ipynb) rebuilds every number of the report from this evidence and compares it with the published file.

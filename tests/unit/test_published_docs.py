@@ -229,11 +229,17 @@ def test_quota_table_units_are_plain_and_totals_explained() -> None:
     assert "summed from the unrounded recorded usage" in guide
 
 
-def test_roadmap_leaves_only_submission_and_later_work_open() -> None:
+def test_roadmap_distinguishes_historical_submission_and_future_research() -> None:
     roadmap = (ROOT / "docs" / "roadmap.md").read_text(encoding="utf-8")
     section = None
     for line in roadmap.splitlines():
         if line.startswith("#"):
             section = line.lstrip("#").strip()
         elif line.startswith("- [ ]"):
-            assert section in {"8. Submission", "Research", "Product"}, (section, line)
+            assert section in {
+                "8. Submission (historical, closed event)",
+                "Research",
+                "Product",
+                "Active portfolio phase: v2 text and local Qiskit",
+            }, (section, line)
+    assert "no submission status is asserted" in roadmap

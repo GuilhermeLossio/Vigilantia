@@ -144,3 +144,9 @@ The commands are in [Run the benchmark on IBM Quantum hardware](hardware-runs.md
 - the raw counts for every circuit.
 
 The files contain no token, instance, or account identifier. See [hardware runs](hardware-runs.md#recorded-evidence).
+
+## Post-hackathon v2 expansion
+
+The original 01 to 07 sequence above remains the hardware-MVP reproduction path. [08 ? Text Representation and Local Qiskit](../notebooks/08-text-representation-and-local-qiskit.ipynb) is a separate portfolio-study notebook: it demonstrates a small synthetic text/SVD/classical/Qiskit/Aer workflow, then inspects the full measured report without contacting IBM or fetching data. Its toy metrics are not dataset-validation results.
+
+Use the [text expansion guide](benchmark-v2-text.md#reproduce-locally) for the full dataset run. It reuses verified local snapshots and the v2 partitions, writes run-specific reports and charts, and requires an explicit `publish` command to update the README. `all` ends at report generation. No environment credentials or remote backend access is needed.

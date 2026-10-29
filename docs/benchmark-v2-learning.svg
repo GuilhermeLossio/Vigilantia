@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 740" role="img">
+<title>Learning curves at calibrated operating points</title><desc>Source: reports/benchmark-v2.json | Historical PhiUSIIL internal test | Mean across training seeds</desc>
+<rect width="1120" height="740" fill="#ffffff"/>
+<g font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="13">
+<text x="40" y="45" fill="#1f2328" font-size="23" font-weight="600">Learning curves at calibrated operating points</text>
+<line x1="100" x2="860" y1="500.0" y2="500.0" stroke="#d0d7de"/>
+<text x="88" y="504.0" fill="#1f2328" text-anchor="end">0%</text>
+<line x1="100" x2="860" y1="420.0" y2="420.0" stroke="#d0d7de"/>
+<text x="88" y="424.0" fill="#1f2328" text-anchor="end">20%</text>
+<line x1="100" x2="860" y1="340.0" y2="340.0" stroke="#d0d7de"/>
+<text x="88" y="344.0" fill="#1f2328" text-anchor="end">40%</text>
+<line x1="100" x2="860" y1="260.0" y2="260.0" stroke="#d0d7de"/>
+<text x="88" y="264.0" fill="#1f2328" text-anchor="end">60%</text>
+<line x1="100" x2="860" y1="180.0" y2="180.0" stroke="#d0d7de"/>
+<text x="88" y="184.0" fill="#1f2328" text-anchor="end">80%</text>
+<line x1="100" x2="860" y1="100.0" y2="100.0" stroke="#d0d7de"/>
+<text x="88" y="104.0" fill="#1f2328" text-anchor="end">100%</text>
+<text x="109.12" y="524" fill="#1f2328" text-anchor="middle">24</text>
+<text x="138.0" y="524" fill="#1f2328" text-anchor="middle">100</text>
+<text x="290.0" y="524" fill="#1f2328" text-anchor="middle">500</text>
+<text x="860.0" y="524" fill="#1f2328" text-anchor="middle">2000</text>
+<text x="480.0" y="555" fill="#1f2328" text-anchor="middle">Training examples (count)</text>
+<text x="26" y="300" fill="#1f2328" transform="rotate(-90 26 300)" text-anchor="middle">Internal test recall (%)</text>
+<polyline points="109.12,445.62 138.00,378.07 290.00,348.52 860.00,348.59" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<circle cx="109.12" cy="445.62474562474563" r="4" fill="#57606a"/>
+<circle cx="138.0" cy="378.07285307285304" r="4" fill="#57606a"/>
+<circle cx="290.0" cy="348.5246235246235" r="4" fill="#57606a"/>
+<circle cx="860.0" cy="348.5856735856736" r="4" fill="#57606a"/>
+<line x1="105" x2="133" y1="588" y2="588" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<text x="143" y="592" fill="#1f2328" >logistic_regression / host</text>
+<polyline points="109.12,118.05 138.00,113.97 290.00,109.24 860.00,108.71" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="6 3"/>
+<circle cx="109.12" cy="118.05046805046806" r="4" fill="#57606a"/>
+<circle cx="138.0" cy="113.97028897028893" r="4" fill="#57606a"/>
+<circle cx="290.0" cy="109.23890923890926" r="4" fill="#57606a"/>
+<circle cx="860.0" cy="108.70980870980875" r="4" fill="#57606a"/>
+<line x1="595" x2="623" y1="588" y2="588" stroke="#57606a" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="633" y="592" fill="#1f2328" >logistic_regression / page</text>
+<polyline points="109.12,488.39 138.00,408.06 290.00,357.89 860.00,365.28" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="2 3"/>
+<circle cx="109.12" cy="488.3903133903134" r="4" fill="#57606a"/>
+<circle cx="138.0" cy="408.05860805860806" r="4" fill="#57606a"/>
+<circle cx="290.0" cy="357.8856328856329" r="4" fill="#57606a"/>
+<circle cx="860.0" cy="365.28286528286526" r="4" fill="#57606a"/>
+<line x1="105" x2="133" y1="613" y2="613" stroke="#57606a" stroke-width="2" stroke-dasharray="2 3"/>
+<text x="143" y="617" fill="#1f2328" >rbf_svm / host</text>
+<polyline points="109.12,124.14 138.00,111.41 290.00,107.45 860.00,105.75" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="9 3 2 3"/>
+<circle cx="109.12" cy="124.13512413512416" r="4" fill="#57606a"/>
+<circle cx="138.0" cy="111.40618640618638" r="4" fill="#57606a"/>
+<circle cx="290.0" cy="107.44810744810746" r="4" fill="#57606a"/>
+<circle cx="860.0" cy="105.74888074888077" r="4" fill="#57606a"/>
+<line x1="595" x2="623" y1="613" y2="613" stroke="#57606a" stroke-width="2" stroke-dasharray="9 3 2 3"/>
+<text x="633" y="617" fill="#1f2328" >rbf_svm / page</text>
+<polyline points="109.12,480.38 138.00,390.40 290.00,349.86 860.00,337.10" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<circle cx="109.12" cy="480.3825803825804" r="4" fill="#57606a"/>
+<circle cx="138.0" cy="390.4049654049654" r="4" fill="#57606a"/>
+<circle cx="290.0" cy="349.8575498575499" r="4" fill="#57606a"/>
+<circle cx="860.0" cy="337.0980870980871" r="4" fill="#57606a"/>
+<line x1="105" x2="133" y1="638" y2="638" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<text x="143" y="642" fill="#1f2328" >random_forest / host</text>
+<polyline points="109.12,122.83 138.00,114.73 290.00,113.46 860.00,106.90" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="6 3"/>
+<circle cx="109.12" cy="122.83272283272288" r="4" fill="#57606a"/>
+<circle cx="138.0" cy="114.73341473341475" r="4" fill="#57606a"/>
+<circle cx="290.0" cy="113.46153846153845" r="4" fill="#57606a"/>
+<circle cx="860.0" cy="106.89865689865692" r="4" fill="#57606a"/>
+<line x1="595" x2="623" y1="638" y2="638" stroke="#57606a" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="633" y="642" fill="#1f2328" >random_forest / page</text>
+<text x="40" y="710" fill="#1f2328" font-size="12">Source: reports/benchmark-v2.json | Historical PhiUSIIL internal test | Mean across training seeds</text>
+</g></svg>

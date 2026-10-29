@@ -7,3 +7,7 @@ Add tests of Python behavior under `tests/unit/test_<component>.py` with each im
 The notebooks are end-to-end replication checks, run manually from a fresh environment as described in the [reproduction guide](../docs/reproducing.md); unit tests only check their structure and outputs. QPU benchmarks are separate manual experiments, not unit tests.
 
 No coverage percentage is claimed. Pytest's no-tests-collected exit code is not suppressed, and failing/skipped CI jobs cannot satisfy the required gate.
+
+The benchmark v2 tests run a reduced synthetic prepare/train/simulate/report workflow in the normal CI suite. They check domain-disjoint partitions and nested training samples, the development-only page-feature ranking, `log1p` page matrices, host-only external tables, the three-part accuracy/recall/FPR target, train-only scaling, tied-score thresholds, Qiskit-equivalent vectorized kernels, paired bootstrap AP, frozen selection, checkpoint identity and artifact corruption, and aggregate-only output. No dataset download or full experiment runs in CI. See the [v2 guide](../docs/benchmark-v2.md) for the full local run.
+
+The v2 text expansion adds a synthetic end-to-end study with all network connections blocked, actual local Qiskit Statevector and Aer checks, seed/count/pair-order validation, fold-only text/SVD transformations, corrupted-cache rejection and idempotent README publication. The full dataset study is a local manual run. [Notebook 08](../notebooks/08-text-representation-and-local-qiskit.ipynb) is checked by the notebook-hygiene suite.

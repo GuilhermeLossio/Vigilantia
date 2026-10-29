@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 740" role="img">
+<title>External continuity: recall and false positives</title><desc>Source: portfolio-text-20261028-final | PhiUSIIL continuity | Mean across fitted training seeds</desc>
+<rect width="1120" height="740" fill="#ffffff"/>
+<g font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="13">
+<text x="40" y="45" fill="#1f2328" font-size="23" font-weight="600">External continuity: recall and false positives</text>
+<line x1="100" x2="860" y1="500.0" y2="500.0" stroke="#d0d7de"/>
+<text x="88" y="504.0" fill="#1f2328" text-anchor="end">0%</text>
+<line x1="100" x2="860" y1="420.0" y2="420.0" stroke="#d0d7de"/>
+<text x="88" y="424.0" fill="#1f2328" text-anchor="end">20%</text>
+<line x1="100" x2="860" y1="340.0" y2="340.0" stroke="#d0d7de"/>
+<text x="88" y="344.0" fill="#1f2328" text-anchor="end">40%</text>
+<line x1="100" x2="860" y1="260.0" y2="260.0" stroke="#d0d7de"/>
+<text x="88" y="264.0" fill="#1f2328" text-anchor="end">60%</text>
+<line x1="100" x2="860" y1="180.0" y2="180.0" stroke="#d0d7de"/>
+<text x="88" y="184.0" fill="#1f2328" text-anchor="end">80%</text>
+<line x1="100" x2="860" y1="100.0" y2="100.0" stroke="#d0d7de"/>
+<text x="88" y="104.0" fill="#1f2328" text-anchor="end">100%</text>
+<text x="100.0" y="524" fill="#1f2328" text-anchor="middle">0</text>
+<text x="176.0" y="524" fill="#1f2328" text-anchor="middle">10</text>
+<text x="290.0" y="524" fill="#1f2328" text-anchor="middle">25</text>
+<text x="480.0" y="524" fill="#1f2328" text-anchor="middle">50</text>
+<text x="670.0" y="524" fill="#1f2328" text-anchor="middle">75</text>
+<text x="860.0" y="524" fill="#1f2328" text-anchor="middle">100</text>
+<text x="480.0" y="555" fill="#1f2328" text-anchor="middle">External false positive rate (%)</text>
+<text x="26" y="300" fill="#1f2328" transform="rotate(-90 26 300)" text-anchor="middle">External recall (%)</text>
+<polyline points="182.50,409.62 232.73,320.58" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<circle cx="182.49759846301635" cy="409.61516885448225" r="4" fill="#57606a"/>
+<circle cx="232.72622478386165" cy="320.57668573993044" r="4" fill="#57606a"/>
+<line x1="105" x2="133" y1="588" y2="588" stroke="#57606a" stroke-width="2" stroke-dasharray=""/>
+<text x="143" y="592" fill="#1f2328" >numeric_rbf</text>
+<polyline points="189.00,422.32 245.58,314.20" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="6 3"/>
+<circle cx="188.99519692603266" cy="422.31571861326154" r="4" fill="#57606a"/>
+<circle cx="245.5754082612872" cy="314.2039717266914" r="4" fill="#57606a"/>
+<line x1="595" x2="623" y1="588" y2="588" stroke="#57606a" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="633" y="592" fill="#1f2328" >full_linear</text>
+<polyline points="186.29,425.01 239.52,314.38" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="2 3"/>
+<circle cx="186.29394812680115" cy="425.00841467519354" r="4" fill="#57606a"/>
+<circle cx="239.5158501440922" cy="314.3834847974868" r="4" fill="#57606a"/>
+<line x1="105" x2="133" y1="613" y2="613" stroke="#57606a" stroke-width="2" stroke-dasharray="2 3"/>
+<text x="143" y="617" fill="#1f2328" >reduced_rbf</text>
+<polyline points="191.70,420.30 238.71,314.02" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="9 3 2 3"/>
+<circle cx="191.6964457252642" cy="420.2961965668125" r="4" fill="#2563eb"/>
+<circle cx="238.71277617675312" cy="314.02445865589584" r="4" fill="#2563eb"/>
+<line x1="595" x2="623" y1="613" y2="613" stroke="#2563eb" stroke-width="2" stroke-dasharray="9 3 2 3"/>
+<text x="633" y="617" fill="#1f2328" >quantum</text>
+<text x="40" y="710" fill="#1f2328" font-size="12">Source: portfolio-text-20261028-final | PhiUSIIL continuity | Mean across fitted training seeds</text>
+</g></svg>

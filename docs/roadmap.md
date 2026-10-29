@@ -1,6 +1,6 @@
 # Roadmap
 
-The MVP is complete: the [completion criteria](../README.md#mvp-completion-criteria) are all met. What remains before submission is publishing the repository, recording the demo, and submitting. This page records the delivery checklist by phase, the next steps after the submission, how the open decisions were resolved, the planned capabilities, and the later phases.
+The original MVP is complete. The hackathon has ended; its delivery checklist below is historical, and no submission status is asserted. Active development is the [v2 text and local Qiskit expansion](benchmark-v2-text.md), a reproducible portfolio study with no IBM Quantum connection or cloud execution.
 
 ## Delivery checklist
 
@@ -56,7 +56,9 @@ The MVP is complete: the [completion criteria](../README.md#mvp-completion-crite
 - [x] Organize the documentation with the [catalog](../CATALOG.md) and a test that requires every document and notebook to be listed.
 - [x] Scan the full Git history for credentials, datasets, and local paths before publishing.
 
-### 8. Submission
+### 8. Submission (historical, closed event)
+
+These unchecked items record the original delivery intentions; they are not outstanding requirements for the portfolio expansion and do not imply that a submission happened.
 
 - [ ] Merge `develop` into `main` through a pull request with a passing **CI required** check.
 - [ ] Confirm that the branch ruleset enforces **CI required** on `main` and `develop`; see [CI and branch protection](ci-and-branch-protection.md#activate-protection).
@@ -66,7 +68,7 @@ The MVP is complete: the [completion criteria](../README.md#mvp-completion-crite
 
 Delivery priority: data inspection, frozen protocol, local circuit checks, QPU acquisition, fair comparison, and local API. Exposure workflows and AWS deployment follow the MVP.
 
-## Next steps after the submission
+## Research after the hackathon
 
 ### Research
 
@@ -149,3 +151,15 @@ Deployment sequence:
 | Cost | Bounded experiment sizes and separate training tasks |
 
 See the [architecture](../Architecture.md#deployment-boundaries) and the [service guide](service.md#security-and-data-handling) for the current boundaries.
+
+## Active portfolio phase: v2 text and local Qiskit
+
+- [x] Recover hostnames against the frozen v2 membership and prepare text/numeric representations.
+- [x] Implement train-only TF-IDF, four-component SVD and matched classical baselines.
+- [x] Implement direct Qiskit Statevector and seeded local Aer measurement workflows.
+- [x] Freeze model and hypothesis selections before evaluation, and isolate run artifacts.
+- [x] Add a reproducible notebook, aggregate reports, uncertainty analysis and explicit README publication.
+- [ ] Collect a genuinely new temporal evaluation dataset under a new protocol.
+- [ ] Design a separately authorized hardware experiment if the local results justify that research question.
+
+The study is complete when its experiment is verifiable, even if the recall/FPR target is not reached. The application keeps its existing served model. No new hackathon submission, IBM quota use or AWS deployment belongs to this phase.

@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-29T01:36:12.113731+00:00",
+  "source": "ibm_quantum",
+  "protocol": {
+    "path": "configs/benchmark-v2-qpu-subset.json",
+    "sha256": "8d1a06403c18aaaa0510b4c805fbce6f0a43e1141fdb07ab20fd174328e760bc",
+    "frozen_at_utc": "2026-10-29T00:38:41+00:00"
+  },
+  "inputs": {
+    "protocol_sha256": "8d1a06403c18aaaa0510b4c805fbce6f0a43e1141fdb07ab20fd174328e760bc",
+    "config_sha256": "9e09fb3fa7926b8430e164868da47303b06e83eb0da02e584943cc72c52cb842",
+    "test_partition_sha256": "c1ea33b0bf73562d29c5a168bc4e5333b736348996a05dca01189059c70bb005",
+    "quantum_bundle_sha256": "ee9a709347bda09ade643b22bb369a58d729174f0e4130e174daf1217b95e5b0",
+    "subset_row_index": [
+      13648,
+      19392,
+      28445,
+      33604,
+      39496,
+      45336,
+      96713,
+      101270,
+      101607,
+      120584,
+      140435,
+      152359,
+      154285,
+      158003,
+      168932,
+      172586,
+      177365,
+      179536,
+      182592,
+      197870,
+      207588,
+      229912
+    ],
+    "subset_group_hash": [
+      "d08feec68150ee9c",
+      "e77d7722a422a5ed",
+      "d3993dccac5dcb33",
+      "a701315e2378e45b",
+      "d81cb6e09437e81d",
+      "785f97cee1206e2f",
+      "f7b521be9f500f99",
+      "9e6c333b135f1df3",
+      "5f0cfac704bd0b8f",
+      "6e794402a139d5fe",
+      "985bcd79a50d9ea6",
+      "33bfaf1467e1e230",
+      "0f657ec222152ccb",
+      "5fa7e6e8e34ef073",
+      "514bd2634d41f7c0",
+      "ce7506a272814c5b",
+      "89056eb14a30b8b7",
+      "7884264c5256d148",
+      "2c4798812624e718",
+      "8f3df617d44f6e2d",
+      "e9a9f3043095d2a8",
+      "aa7b2d6f3136f159"
+    ]
+  },
+  "subset": {
+    "size": 22,
+    "class_counts": {
+      "legitimate": 11,
+      "phishing": 11
+    },
+    "clipping": {
+      "per_feature": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "rows_with_any_clipped": 1,
+      "constant_features": [],
+      "constant_feature_shift_rows": 0
+    }
+  },
+  "hardware": {
+    "backend": "ibm_fez",
+    "run_id": "v2page-ibm_fez-20261029T010703Z",
+    "sampler": "v2",
+    "shots": 1024,
+    "job_ids": [
+      "dbh9oe9t9uhs73c9qdt0",
+      "dbh9oeote5oc738joqrg",
+      "dbh9of0te5oc738joqsg"
+    ],
+    "circuits": 576,
+    "shots_returned": [
+      1024
+    ],
+    "usage": {
+      "charged_seconds": 161.0,
+      "resource_units": 2.6559380000000004,
+      "execution_seconds": 153.100975616
+    }
+  },
+  "kernel": {
+    "mean_abs_circuit_error_vs_ideal": 0.07239256450702322,
+    "test_kernel_error_vs_ideal": {
+      "qpu": 0.07308601150399825,
+      "qpu_calibrated": 0.012743887049987027
+    },
+    "ideal_test_kernel_spread": {
+      "min": 0.00014456437943915067,
+      "max": 1.0
+    },
+    "calibration": {
+      "valid": true,
+      "a": 0.769226180962941,
+      "c": 0.011275922396890738,
+      "rmse": 0.00983482811917101,
+      "clipped_test_values": 99
+    },
+    "diagonal_controls_mean": 0.942626953125
+  },
+  "bootstrap": {
+    "method": "percentile bootstrap over the 40 rows, shared across rows",
+    "level": 0.95,
+    "resamples": 2000,
+    "seed": 42,
+    "resamples_used": 2000
+  },
+  "runtime": {
+    "method": "median wall-clock seconds over 25 repeats on one machine, for fitting on the training examples, computing the test kernel, and scoring the subset rows; quantum fit includes simulating the training kernel. Hardware rows take their test-kernel time from IBM's recorded execution time for all of the run's circuits, including calibration pairs and diagonal controls; queueing is excluded and both hardware rows share the same jobs.",
+    "repeats": 25,
+    "environment": "Windows 10, AMD64, Python 3.12.10, numpy 2.5.4, scikit-learn 1.9.1, qiskit 2.6.1"
+  },
+  "models": [
+    {
+      "model": "logistic_regression",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.9545454545454546,
+        "balanced_accuracy": 0.9545454545454546,
+        "precision": 1.0,
+        "recall": 0.9090909090909091,
+        "false_positive_rate": 0.0,
+        "f1": 0.9523809523809523,
+        "average_precision": 1.0
+      },
+      "confusion_matrix": [
+        [
+          11,
+          0
+        ],
+        [
+          1,
+          10
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.8636363636363636,
+          1.0
+        ],
+        "recall": [
+          0.7,
+          1.0
+        ],
+        "false_positive_rate": [
+          0.0,
+          0.0
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.0019651000038720667,
+        "test_kernel": null,
+        "predict": 0.0003998000029241666
+      }
+    },
+    {
+      "model": "rbf_svm",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 0.9545454545454546,
+        "balanced_accuracy": 0.9545454545454546,
+        "precision": 1.0,
+        "recall": 0.9090909090909091,
+        "false_positive_rate": 0.0,
+        "f1": 0.9523809523809523,
+        "average_precision": 1.0
+      },
+      "confusion_matrix": [
+        [
+          11,
+          0
+        ],
+        [
+          1,
+          10
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          0.8636363636363636,
+          1.0
+        ],
+        "recall": [
+          0.7,
+          1.0
+        ],
+        "false_positive_rate": [
+          0.0,
+          0.0
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.0011377000046195462,
+        "test_kernel": null,
+        "predict": 0.0004837000014958903
+      }
+    },
+    {
+      "model": "random_forest",
+      "kernel_source": "classical",
+      "metrics": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate": 0.0,
+        "f1": 1.0,
+        "average_precision": 1.0
+      },
+      "confusion_matrix": [
+        [
+          11,
+          0
+        ],
+        [
+          0,
+          11
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          1.0,
+          1.0
+        ],
+        "recall": [
+          1.0,
+          1.0
+        ],
+        "false_positive_rate": [
+          0.0,
+          0.0
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.18329980000271462,
+        "test_kernel": null,
+        "predict": 0.010456500000145752
+      }
+    },
+    {
+      "model": "quantum_kernel_svm",
+      "kernel_source": "simulation",
+      "metrics": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate": 0.0,
+        "f1": 1.0,
+        "average_precision": 1.0
+      },
+      "confusion_matrix": [
+        [
+          11,
+          0
+        ],
+        [
+          0,
+          11
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          1.0,
+          1.0
+        ],
+        "recall": [
+          1.0,
+          1.0
+        ],
+        "false_positive_rate": [
+          0.0,
+          0.0
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.0005772000004071742,
+        "test_kernel": 4.320000152802095e-05,
+        "predict": 8.679999882588163e-05
+      }
+    },
+    {
+      "model": "quantum_kernel_svm",
+      "kernel_source": "qpu",
+      "metrics": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate": 0.0,
+        "f1": 1.0,
+        "average_precision": 1.0
+      },
+      "confusion_matrix": [
+        [
+          11,
+          0
+        ],
+        [
+          0,
+          11
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          1.0,
+          1.0
+        ],
+        "recall": [
+          1.0,
+          1.0
+        ],
+        "false_positive_rate": [
+          0.0,
+          0.0
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.0005772000004071742,
+        "test_kernel": 153.100975616,
+        "predict": 8.590000652475283e-05
+      }
+    },
+    {
+      "model": "quantum_kernel_svm",
+      "kernel_source": "qpu_calibrated",
+      "metrics": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate": 0.0,
+        "f1": 1.0,
+        "average_precision": 1.0
+      },
+      "confusion_matrix": [
+        [
+          11,
+          0
+        ],
+        [
+          0,
+          11
+        ]
+      ],
+      "confidence_intervals": {
+        "accuracy": [
+          1.0,
+          1.0
+        ],
+        "recall": [
+          1.0,
+          1.0
+        ],
+        "false_positive_rate": [
+          0.0,
+          0.0
+        ]
+      },
+      "runtime_seconds": {
+        "fit": 0.0005772000004071742,
+        "test_kernel": 153.100975616,
+        "predict": 8.549999620299786e-05
+      }
+    }
+  ],
+  "limitations": [
+    "22 rows: each row changes accuracy by 4.5 percentage points; intervals are wide.",
+    "Rows come from the v2 internal PhiUSIIL test partition, which shares the training data's collection process; page features largely reflect that process.",
+    "One hardware run of one fitted seed; it measures kernel fidelity on hardware, not general phishing detection.",
+    "The subset was reduced from 40 to 22 rows before submission to fit the remaining QPU quota; it is the first half of each class in the frozen draw order."
+  ]
+}

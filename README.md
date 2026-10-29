@@ -7,11 +7,11 @@
 [![Flask](https://img.shields.io/badge/API-Flask-000000?style=flat-square&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Qiskit](https://img.shields.io/badge/QML-Qiskit-6929C4?style=flat-square)](https://github.com/Qiskit/qiskit)
 [![IBM Quantum](https://img.shields.io/badge/Quantum%20hardware-IBM%20Quantum-6929C4?style=flat-square)](https://quantum.cloud.ibm.com/)
-![Status](https://img.shields.io/badge/Status-MVP%20complete-22C55E?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Portfolio%20research-22C55E?style=flat-square)
 
 **A research prototype for phishing detection and data-exposure evidence triage.**
 
-**Dataset:** PhiUSIIL | **External validation:** Hannousse & Yahiouche (2020) | **Track:** Quantum Machine Learning | **Event:** Qiskit Fall Fest Hackathon
+**Dataset:** PhiUSIIL | **External validation:** Hannousse & Yahiouche (2020) | **Focus:** Hybrid machine learning research | **Origin:** Qiskit Fall Fest Hackathon
 
 **[Documentation catalog](CATALOG.md)** · [Reproduce the results](docs/reproducing.md) · [Notebooks](notebooks/)
 
@@ -29,7 +29,7 @@ Vigilantia explores whether quantum kernels improve phishing classification unde
 
 The project measures predictive quality and computational cost. Classical models outperforming the quantum model is a valid outcome. Statistical similarity alone cannot establish the authenticity, source, or authorship of a breach.
 
-**Current status: benchmark run complete; external validation and its 40-row hardware subset complete; local service implemented.** The dataset downloaders, the frozen split and features, the four models, the IBM Quantum run tooling, the external validation, and the Flask service with its Docker image are implemented and unit-tested. The full benchmark and a 40-row external subset ran on `ibm_fez`, and their quality, runtime, and evidence are published. Cloud resources are not implemented, and no deployment exists. Remaining before submission: publishing the repository, recording the demo video, and submitting; see the [roadmap](docs/roadmap.md#delivery-checklist).
+**Current status: benchmark run complete; external validation and its 40-row hardware subset complete; local service implemented.** The dataset downloaders, the frozen split and features, the four models, the IBM Quantum run tooling, the external validation, and the Flask service with its Docker image are implemented and unit-tested. The full benchmark and a 40-row external subset ran on `ibm_fez`, and their quality, runtime, and evidence are published. Cloud resources are not implemented, and no deployment exists. The hackathon has ended. Active work is a post-hackathon portfolio study of text representations and local Qiskit simulation; see the [research guide](docs/benchmark-v2-text.md) and [roadmap](docs/roadmap.md#delivery-checklist). No hackathon submission is asserted.
 
 ---
 
@@ -158,9 +158,9 @@ Simulator diagnostics alone do not complete the hardware criterion. Exposure ana
 - Exposure experiments must separate source databases and their variants across splits; recognizing generator artifacts is not proof of authenticity.
 - Incident replay does not provide continuous monitoring or establish causality between phishing and exposure.
 
-## Hackathon Submission
+## Hackathon origin (historical)
 
-The following event details were supplied in the project brief and have not been independently verified. Confirm the deadline, track, and submission requirements with the organizers before submitting.
+The following event details were supplied in the original project brief and were not independently verified. The hackathon has ended; these are historical requirements, not an active submission workflow. The portfolio expansion is not being submitted to that event.
 
 | Item | Detail |
 | --- | --- |
@@ -187,3 +187,57 @@ Project: **Vigilantia**.
 - [Qiskit Machine Learning — Quantum Kernel Tutorial](https://qiskit-community.github.io/qiskit-machine-learning/tutorials/03_quantum_kernel.html).
 - [Qiskit Machine Learning Repository](https://github.com/qiskit-community/qiskit-machine-learning).
 - [Xanadu — qml-benchmarks](https://github.com/XanaduAI/qml-benchmarks).
+
+## Benchmark v2: local improvement experiments
+
+The [v2 protocol and reproduction guide](docs/benchmark-v2.md) describes the isolated CPU-only experiment comparing eight host features with four page-content features (`LineOfCode`, `NoOfSelfRef`, `LargestLineLength`, `NoOfImage`), classical model search, threshold calibration and an exact four-qubit Z/ZZ quantum kernel on the page features. Its research target is accuracy of at least 98%, recall of at least 95% and a false positive rate no greater than 1%. It is evaluated on an internal PhiUSIIL test and is not an operational-readiness criterion.
+
+See the [aggregate v2 report](reports/benchmark-v2.json), [learning curves](docs/benchmark-v2-learning.svg), [operating points](docs/benchmark-v2-operating-points.svg), and [matched classical/quantum comparison](docs/benchmark-v2-kernels.svg). The existing service and original benchmark retain their original behavior and results.
+
+The complete 114-run experiment selected a page-feature RBF SVM (2,000 examples) and a page-feature ZZ quantum kernel (500 examples). Mean internal-test accuracy was **98.8%** (classical) and **98.6%** (quantum), and every seed of both reached 98%. With only 24 training examples, the ZZ kernel already reached **98.5%**. False positives were **1.0–1.15%** per seed, slightly above the 1% point target, so the report's formal conclusions are `no_consistent_improvement` and `target_not_met`. Page features largely reflect how PhiUSIIL was collected and have no external check; host-only models stay near 80% internally. See the [interpretation](docs/benchmark-v2.md#interpretation-and-next-experiment).
+
+**Page kernel on IBM Quantum hardware: 22 internal-test rows (11 per class), run once on `ibm_fez`.** Run `v2page-ibm_fez-20261029T010703Z` measured the 24-example ZZ page model (seed 42) with 576 circuits in 3 jobs. The protocol was frozen before submission and reduced from 40 to 22 rows, before any job was sent, to fit the remaining quota. None of the rows shares a domain with the model's training or calibration data. Each model uses its frozen v2 threshold. Values come from [reports/benchmark-v2-qpu-subset.json](reports/benchmark-v2-qpu-subset.json), with 95% bootstrap intervals for accuracy; details are in [Hardware check of the page kernel](docs/benchmark-v2.md#hardware-check-of-the-page-kernel).
+
+| Model (24 training examples) | Kernel source | Accuracy | 95% interval | Recall | FPR |
+|---|---|---|---|---|---|
+| Logistic regression | classical | 95.5% (21/22) | 86.4–100% | 90.9% | 0.0% |
+| RBF SVM | classical | 95.5% (21/22) | 86.4–100% | 90.9% | 0.0% |
+| Random Forest | classical | 100% (22/22) | 100–100% | 100% | 0.0% |
+| Quantum-kernel SVM (ZZ) | exact simulation | 100% (22/22) | 100–100% | 100% | 0.0% |
+| Quantum-kernel SVM (ZZ) | `ibm_fez`, uncorrected | 100% (22/22) | 100–100% | 100% | 0.0% |
+| Quantum-kernel SVM (ZZ) | `ibm_fez`, calibrated | 100% (22/22) | 100–100% | 100% | 0.0% |
+
+The hardware kernel differed from the exact simulation by a mean of 0.073 uncorrected and 0.013 after the linear calibration on the run's own training pairs. Diagonal controls averaged 0.943 (ideal 1). IBM billed 161 seconds. With 22 rows, each row moves accuracy by about 4.5 points, so this shows that hardware noise did not change the model's decisions on these rows. It is not a precise accuracy estimate or a quantum-advantage claim.
+
+Runtime on the same 22 rows. Fit and predict are local medians over 25 runs on one machine. The hardware test-kernel time is IBM's recorded execution of all 576 circuits, including calibration pairs and diagonal controls, without queueing. Both hardware rows reuse the same jobs.
+
+| Model (24 training examples) | Kernel source | Fit | Test kernel | Predict |
+|---|---|---|---|---|
+| Logistic regression | classical | 2.0 ms | — | 400 µs |
+| RBF SVM | classical | 1.1 ms | — | 484 µs |
+| Random Forest | classical | 183 ms | — | 10 ms |
+| Quantum-kernel SVM (ZZ) | exact simulation | 577 µs | 43 µs | 87 µs |
+| Quantum-kernel SVM (ZZ) | `ibm_fez`, uncorrected | 577 µs | 153.1 s | 86 µs |
+| Quantum-kernel SVM (ZZ) | `ibm_fez`, calibrated | 577 µs | 153.1 s (same jobs) | 85 µs |
+
+Computing the test kernel takes 43 µs in exact simulation and 153.1 s on `ibm_fez`, about 3.5 million times longer. A four-qubit kernel is cheap to simulate, so the hardware run tests fidelity, not speed.
+
+![Benchmark v2 page kernel on IBM Quantum: accuracy and 95% intervals, and fit, test-kernel and predict runtime per model](docs/benchmark-v2-qpu.svg)
+
+## Why expand the second experiment?
+
+The earlier host-only v2 run, preserved as [reports/benchmark-v2-20261028-093841.json](reports/benchmark-v2-20261028-093841.json), tested more training data, richer numeric host features, parameter search and calibrated thresholds. It exposed limited gains from increasing the sample and poor transfer of false-positive control to external data. The text expansion asks whether hostname character patterns help, how much information four-component SVD discards, and whether a local quantum kernel changes the result. This is a continuation of v2, not a replacement of the historical evidence or a new production model.
+
+See the [rationale and full protocol](docs/benchmark-v2-text.md), [local pipeline diagram](docs/benchmark-v2-text-flow.svg), and [notebook 08](notebooks/08-text-representation-and-local-qiskit.ipynb). The original numerical v2 uses vectorized analytic states; this expansion executes Qiskit Statevector and local Aer circuits directly, without IBM Quantum connections.
+
+<!-- BENCHMARK-V2-TEXT:BEGIN -->
+## Benchmark v2 expansion: hostname text and local Qiskit
+
+**Portfolio research, post-hackathon.** Run `portfolio-text-20261028-verified`, generated 2026-10-28 (UTC): **target_not_met**.
+
+The selected classical path is `full_logistic` with 100 training examples. Mean internal continuity accuracy is **78.52%**, recall **55.11%**, and false positive rate **9.86%**. External continuity accuracy is **65.24%**, recall **47.35%**, and false positive rate **19.43%**.
+
+The study separates text representation, four-component reduction, ideal Qiskit kernels and local Aer sampling. These are previously inspected continuity datasets; no quantum advantage or production readiness is claimed. No IBM Quantum connection is used in this phase.
+
+[Protocol and interpretation](docs/benchmark-v2-text.md) | [Run report](reports/benchmark-v2-text/portfolio-text-20261028-verified.json) | [representations](docs/benchmark-v2-text/portfolio-text-20261028-verified-representations.svg) | [external](docs/benchmark-v2-text/portfolio-text-20261028-verified-external.svg) | [measurements](docs/benchmark-v2-text/portfolio-text-20261028-verified-measurements.svg)
+<!-- BENCHMARK-V2-TEXT:END -->
