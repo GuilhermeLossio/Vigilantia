@@ -9,7 +9,7 @@ tldextract==5.4.0
 
 # Quantum kernel: circuit construction, exact statevector simulation, and local sampling.
 qiskit==2.6.1
-qiskit-aer==0.18.0
+qiskit-aer==0.18.2
 qiskit-ibm-runtime==0.51.0
 
 # Reads IBM Quantum settings from the local .env file.
